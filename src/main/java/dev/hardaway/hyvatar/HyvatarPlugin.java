@@ -5,6 +5,7 @@ import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.server.OpenCustomUIInteraction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import dev.hardaway.hyvatar.cosmetic.CustomiseAvatarCommand;
 import dev.hardaway.hyvatar.cosmetic.TestCommand;
 import dev.hardaway.hyvatar.ui.AvatarCustomisationPage;
 
@@ -21,9 +22,10 @@ public class HyvatarPlugin extends JavaPlugin {
     @Override
     protected void setup() {
         OpenCustomUIInteraction.registerCustomPageSupplier(this, AvatarCustomisationPage.class, "AvatarCustomisation", (_, _, playerRef, _) ->
-                new AvatarCustomisationPage(playerRef, CustomPageLifetime.CanDismiss, AvatarCustomisationPage.PageEventData.CODEC)
+                new AvatarCustomisationPage(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction)
         );
 
         this.getCommandRegistry().registerCommand(new TestCommand());
+        this.getCommandRegistry().registerCommand(new CustomiseAvatarCommand());
     }
 }

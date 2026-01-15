@@ -15,30 +15,19 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class AvatarCustomisationPage extends InteractiveCustomUIPage<AvatarCustomisationPage.PageEventData> {
 
-    public AvatarCustomisationPage(@Nonnull PlayerRef playerRef, @Nonnull CustomPageLifetime lifetime, @Nonnull BuilderCodec<PageEventData> eventDataCodec) {
-        super(playerRef, lifetime, eventDataCodec);
+    public AvatarCustomisationPage(@Nonnull PlayerRef playerRef, @Nonnull CustomPageLifetime lifetime) {
+        super(playerRef, lifetime, PageEventData.CODEC);
     }
 
     @Override
     public void build(@Nonnull Ref<EntityStore> ref, @Nonnull UICommandBuilder commandBuilder, @Nonnull UIEventBuilder eventBuilder, @Nonnull Store<EntityStore> store) {
         commandBuilder.append("Pages/AvatarCustomisation/AvatarCustomisation.ui");
 
-        resetCategories(commandBuilder);
-        resetSubCategories(commandBuilder);
-        commandBuilder.set("#TabHead #Button #Selected.Visible", true);
-        commandBuilder.set("#CategoryName.Text", "Head");
-        commandBuilder.set("#TabHaircut.Visible", true);
-        commandBuilder.set("#TabHaircut #Button #Selected.Visible", true);
-        commandBuilder.set("#SubCategoryName.Text", "Haircut");
-        commandBuilder.set("#TabEyebrows.Visible", true);
-        commandBuilder.set("#TabEyes.Visible", true);
-        commandBuilder.set("#TabFacialHair.Visible", true);
-        commandBuilder.set("#TabHeadAccessory.Visible", true);
-        commandBuilder.set("#TabFaceAccessory.Visible", true);
-        commandBuilder.set("#TabEarAccessory.Visible", true);
+        switchCategory(commandBuilder, "Head");
 
         eventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#SearchField", EventData.of("@SearchQuery", "#SearchField.Value"), false);
 
@@ -76,79 +65,77 @@ public class AvatarCustomisationPage extends InteractiveCustomUIPage<AvatarCusto
     @Override
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull PageEventData data) {
         super.handleDataEvent(ref, store, data);
+
         UICommandBuilder commandBuilder = new UICommandBuilder();
-        UIEventBuilder eventBuilder = new UIEventBuilder();
-
-        if (data.category != null) {
-            switchCategory(commandBuilder, data.category);
-            commandBuilder.set("#CategoryName.Text", data.category);
-        }
-
-        if (data.subCategory != null) {
-            resetSubCategories(commandBuilder);
-            commandBuilder.set("#Tab" + data.subCategory.replace(" ", "") + " #Button #Selected.Visible", true);
-            commandBuilder.set("#SubCategoryName.Text", data.subCategory);
-        }
-
-        sendUpdate(commandBuilder, eventBuilder, false);
+        switchCategory(commandBuilder, data.category);
+        switchSubCategory(commandBuilder, data.subCategory);
+        sendUpdate(commandBuilder);
     }
 
-    public static void switchCategory(UICommandBuilder commandBuilder, String category) {
+    public static void switchCategory(UICommandBuilder commandBuilder, @Nullable String category) {
+        if (category == null) return;
+
+        commandBuilder.set("#CategoryName.Text", category);
+
         switch (category) {
             case "Head" -> {
                 resetCategories(commandBuilder);
-                resetSubCategories(commandBuilder);
                 commandBuilder.set("#TabHead #Button #Selected.Visible", true);
+
                 commandBuilder.set("#TabHaircut.Visible", true);
-                commandBuilder.set("#TabHaircut #Button #Selected.Visible", true);
                 commandBuilder.set("#TabEyebrows.Visible", true);
                 commandBuilder.set("#TabEyes.Visible", true);
                 commandBuilder.set("#TabFacialHair.Visible", true);
                 commandBuilder.set("#TabHeadAccessory.Visible", true);
                 commandBuilder.set("#TabFaceAccessory.Visible", true);
                 commandBuilder.set("#TabEarAccessory.Visible", true);
+                switchSubCategory(commandBuilder, "Haircut");
             }
             case "General" -> {
                 resetCategories(commandBuilder);
-                resetSubCategories(commandBuilder);
                 commandBuilder.set("#TabGeneral #Button #Selected.Visible", true);
+
                 commandBuilder.set("#TabUnderwear.Visible", true);
-                commandBuilder.set("#TabUnderwear #Button #Selected.Visible", true);
                 commandBuilder.set("#TabBodyCharacteristics.Visible", true);
                 commandBuilder.set("#TabFace.Visible", true);
                 commandBuilder.set("#TabMouth.Visible", true);
                 commandBuilder.set("#TabEars.Visible", true);
+                switchSubCategory(commandBuilder, "Underwear");
             }
             case "Torso" -> {
                 resetCategories(commandBuilder);
-                resetSubCategories(commandBuilder);
                 commandBuilder.set("#TabTorso #Button #Selected.Visible", true);
+
                 commandBuilder.set("#TabUndertop.Visible", true);
-                commandBuilder.set("#TabUndertop #Button #Selected.Visible", true);
                 commandBuilder.set("#TabOvertop.Visible", true);
                 commandBuilder.set("#TabGloves.Visible", true);
+                switchSubCategory(commandBuilder, "Undertop");
             }
             case "Legs" -> {
                 resetCategories(commandBuilder);
-                resetSubCategories(commandBuilder);
                 commandBuilder.set("#TabLegs #Button #Selected.Visible", true);
+
                 commandBuilder.set("#TabPants.Visible", true);
-                commandBuilder.set("#TabPants #Button #Selected.Visible", true);
                 commandBuilder.set("#TabOverpants.Visible", true);
                 commandBuilder.set("#TabShoes.Visible", true);
+                switchSubCategory(commandBuilder, "Pants");
             }
             case "Capes" -> {
                 resetCategories(commandBuilder);
-                resetSubCategories(commandBuilder);
                 commandBuilder.set("#TabCapes #Button #Selected.Visible", true);
+
                 commandBuilder.set("#TabCape.Visible", true);
-                commandBuilder.set("#TabCape #Button #Selected.Visible", true);
+                switchSubCategory(commandBuilder, "Cape");
             }
         }
     }
 
-    public static void switchSubCategory(String subCategory) {
+    public static void switchSubCategory(UICommandBuilder commandBuilder, @Nullable String subCategory) {
+        if (subCategory == null) return;
 
+        resetSubCategories(commandBuilder);
+        commandBuilder.set("#Tab" + subCategory.replace(" ", "") + " #Button #Selected.Visible", true);
+        commandBuilder.set("#SubCategoryName.Text", subCategory);
     }
 
     public static void resetCategories(UICommandBuilder commandBuilder) {
