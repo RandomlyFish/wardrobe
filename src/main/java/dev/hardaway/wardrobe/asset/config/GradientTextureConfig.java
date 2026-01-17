@@ -1,4 +1,4 @@
-package dev.hardaway.hyvatar.asset.config;
+package dev.hardaway.wardrobe.asset.config;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;

@@ -1,4 +1,4 @@
-package dev.hardaway.hyvatar;
+package dev.hardaway.wardrobe;
 
 import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
@@ -11,32 +11,31 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.ser
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.hyvatar.asset.BodyCharacteristicCosmeticAsset;
-import dev.hardaway.hyvatar.asset.CosmeticAsset;
-import dev.hardaway.hyvatar.asset.config.DefaultTextureConfig;
-import dev.hardaway.hyvatar.asset.config.GradientTextureConfig;
-import dev.hardaway.hyvatar.asset.config.TextureConfig;
-import dev.hardaway.hyvatar.asset.config.VariantTextureConfig;
-import dev.hardaway.hyvatar.command.CustomiseAvatarCommand;
-import dev.hardaway.hyvatar.command.TestCommand;
-import dev.hardaway.hyvatar.cosmetic.PlayerWardrobeComponent;
-import dev.hardaway.hyvatar.cosmetic.PlayerWardrobeSystem;
-import dev.hardaway.hyvatar.cosmetic.SetupPlayerWardrobeSystem;
-import dev.hardaway.hyvatar.ui.AvatarCustomisationPage;
+import dev.hardaway.wardrobe.asset.CosmeticAsset;
+import dev.hardaway.wardrobe.asset.config.DefaultTextureConfig;
+import dev.hardaway.wardrobe.asset.config.GradientTextureConfig;
+import dev.hardaway.wardrobe.asset.config.TextureConfig;
+import dev.hardaway.wardrobe.asset.config.VariantTextureConfig;
+import dev.hardaway.wardrobe.command.CustomiseAvatarCommand;
+import dev.hardaway.wardrobe.command.TestCommand;
+import dev.hardaway.wardrobe.cosmetic.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.cosmetic.PlayerWardrobeSystem;
+import dev.hardaway.wardrobe.cosmetic.SetupPlayerWardrobeSystem;
+import dev.hardaway.wardrobe.ui.AvatarCustomisationPage;
 
 import javax.annotation.Nonnull;
 
-public class HyvatarPlugin extends JavaPlugin {
+public class WardrobePlugin extends JavaPlugin {
 
-    private static HyvatarPlugin instance;
+    private static WardrobePlugin instance;
     private ComponentType<EntityStore, PlayerWardrobeComponent> playerWardrobeComponentType;
 
-    public HyvatarPlugin(@Nonnull JavaPluginInit init) {
+    public WardrobePlugin(@Nonnull JavaPluginInit init) {
         super(init);
         instance = this;
     }
 
-    public static HyvatarPlugin get() {
+    public static WardrobePlugin get() {
         return instance;
     }
 

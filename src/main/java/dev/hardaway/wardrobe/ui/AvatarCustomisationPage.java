@@ -1,4 +1,4 @@
-package dev.hardaway.hyvatar.ui;
+package dev.hardaway.wardrobe.ui;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
@@ -92,7 +92,8 @@ public class AvatarCustomisationPage extends InteractiveCustomUIPage<AvatarCusto
         commandBuilder.set("#Tab" + tab.toString().replace("_", "") + " #Button #Selected.Visible", true);
 
         for (CosmeticSubTab subTab : CosmeticSubTab.values()) {
-            if (tab.subTabs.contains(subTab)) commandBuilder.set("#Tab" + subTab.toString().replace("_", "") + ".Visible", true);
+            if (tab.subTabs.contains(subTab))
+                commandBuilder.set("#Tab" + subTab.toString().replace("_", "") + ".Visible", true);
         }
 
         commandBuilder.set("#Tab" + tab.defaultSubTab.toString().replace("_", "") + ".Visible", true);

@@ -1,6 +1,6 @@
 {
     "Group": "Hardaway",
-    "Name": "Hyvatar",
+    "Name": "Wardrobe",
     "Version": "0.0.1",
     "Description": "An example plugin for HyTale!",
     "Authors": [
@@ -21,6 +21,6 @@
         
     },
     "DisabledByDefault": false,
-    "Main": "dev.hardaway.hyvatar.HyvatarPlugin",
+    "Main": "dev.hardaway.wardrobe.WardrobePlugin",
     "IncludesAssetPack": true
 }

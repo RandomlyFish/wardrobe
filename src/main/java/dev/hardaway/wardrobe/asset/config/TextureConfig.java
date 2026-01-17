@@ -1,8 +1,7 @@
-package dev.hardaway.hyvatar.asset.config;
+package dev.hardaway.wardrobe.asset.config;
 
 import com.hypixel.hytale.codec.lookup.BuilderCodecMapCodec;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface TextureConfig {

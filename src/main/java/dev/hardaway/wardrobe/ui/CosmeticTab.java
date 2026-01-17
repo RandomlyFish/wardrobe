@@ -1,9 +1,9 @@
-package dev.hardaway.hyvatar.ui;
+package dev.hardaway.wardrobe.ui;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static dev.hardaway.hyvatar.ui.CosmeticSubTab.*;
+import static dev.hardaway.wardrobe.ui.CosmeticSubTab.*;
 
 public enum CosmeticTab {
     Head(Haircuts, Eyebrows, Eyes, Facial_Hair, Head_Accessory, Face_Accessory, Ear_Accessory),

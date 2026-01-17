@@ -1,4 +1,4 @@
-package dev.hardaway.hyvatar.asset;
+package dev.hardaway.wardrobe.asset;
 
 import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.assetstore.AssetStore;
@@ -8,10 +8,9 @@ import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.codec.lookup.Priority;
 import com.hypixel.hytale.server.core.asset.common.CommonAssetValidator;
-import dev.hardaway.hyvatar.HyvatarUtil;
-import dev.hardaway.hyvatar.asset.config.TextureConfig;
+import dev.hardaway.wardrobe.WardrobeUtil;
+import dev.hardaway.wardrobe.asset.config.TextureConfig;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -38,7 +37,7 @@ public class CosmeticAsset implements JsonAssetWithMap<String, DefaultAssetMap<S
             Codec.STRING, (t, k) -> t.id = k, t -> t.id, (t, data) -> t.data = data, t -> t.data, true
     );
 
-    public static final Supplier<AssetStore<String, CosmeticAsset, DefaultAssetMap<String, CosmeticAsset>>> ASSET_STORE = HyvatarUtil.createAssetStore(CosmeticAsset.class);
+    public static final Supplier<AssetStore<String, CosmeticAsset, DefaultAssetMap<String, CosmeticAsset>>> ASSET_STORE = WardrobeUtil.createAssetStore(CosmeticAsset.class);
 
     public static DefaultAssetMap<String, CosmeticAsset> getAssetMap() {
         return ASSET_STORE.get().getAssetMap();

@@ -1,4 +1,4 @@
-package dev.hardaway.hyvatar.ui;
+package dev.hardaway.wardrobe.ui;
 
 public enum CosmeticSubTab {
     Haircuts(true),

@@ -1,26 +1,25 @@
-package dev.hardaway.hyvatar;
+package dev.hardaway.wardrobe;
 
 import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.AssetStore;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
-import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
 import com.hypixel.hytale.server.core.cosmetics.*;
-import dev.hardaway.hyvatar.cosmetic.CosmeticAssetData;
+import dev.hardaway.wardrobe.cosmetic.CosmeticAssetData;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 // TODO: split this up
-public class HyvatarUtil {
+public class WardrobeUtil {
 
     // Extra Codecs
     public static final EnumCodec<PlayerSkinPart.HeadAccessoryType> HEAD_ACCESSORY_TYPE_CODEC = new EnumCodec<>(PlayerSkinPart.HeadAccessoryType.class, EnumCodec.EnumStyle.LEGACY);
     public static final EnumCodec<PlayerSkinPartType> SKIN_PART_TYPE_CODEC = new EnumCodec<>(PlayerSkinPartType.class, EnumCodec.EnumStyle.LEGACY);
 
     public static <T extends JsonAssetWithMap<String, DefaultAssetMap<String, T>>> Supplier<AssetStore<String, T, DefaultAssetMap<String, T>>> createAssetStore(Class<T> clazz) {
-        return HyvatarUtil.memoize(() -> AssetRegistry.getAssetStore(clazz));
+        return WardrobeUtil.memoize(() -> AssetRegistry.getAssetStore(clazz));
     }
 
     public static <Z> Supplier<Z> memoize(Supplier<Z> supplier) {

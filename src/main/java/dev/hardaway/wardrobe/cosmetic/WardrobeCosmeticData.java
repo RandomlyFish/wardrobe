@@ -1,4 +1,4 @@
-package dev.hardaway.hyvatar.cosmetic;
+package dev.hardaway.wardrobe.cosmetic;
 
 import javax.annotation.Nullable;
 

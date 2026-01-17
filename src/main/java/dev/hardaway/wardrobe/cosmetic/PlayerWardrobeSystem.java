@@ -1,4 +1,4 @@
-package dev.hardaway.hyvatar.cosmetic;
+package dev.hardaway.wardrobe.cosmetic;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -14,9 +14,9 @@ import com.hypixel.hytale.server.core.cosmetics.PlayerSkin;
 import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
 import com.hypixel.hytale.server.core.modules.entity.player.PlayerSkinComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.hyvatar.HyvatarUtil;
-import dev.hardaway.hyvatar.asset.CosmeticAsset;
-import dev.hardaway.hyvatar.asset.config.TextureConfig;
+import dev.hardaway.wardrobe.WardrobeUtil;
+import dev.hardaway.wardrobe.asset.CosmeticAsset;
+import dev.hardaway.wardrobe.asset.config.TextureConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,7 +50,7 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
         }
 
         List<ModelAttachment> attachmentList = new ArrayList<>();
-        PlayerSkin skin = HyvatarUtil.skinFromProtocol(playerSkinComponent.getPlayerSkin());
+        PlayerSkin skin = WardrobeUtil.skinFromProtocol(playerSkinComponent.getPlayerSkin());
 
         for (CosmeticType slot : CosmeticType.values()) {
             if (slot == CosmeticType.BODY_CHARACTERISTICS) // Skip body characteristics, we handle that separately.
@@ -72,14 +72,14 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
                 }
             }
 
-            CosmeticAssetData assetData = HyvatarUtil.createCosmeticData(slot, skin);
+            CosmeticAssetData assetData = WardrobeUtil.createCosmeticData(slot, skin);
             if (assetData != null) {
                 attachmentList.add(assetData.toModelAttachment());
             }
         }
 
 
-        CosmeticAssetData bodyCharacteristicsData = HyvatarUtil.createCosmeticData(CosmeticType.BODY_CHARACTERISTICS, skin);
+        CosmeticAssetData bodyCharacteristicsData = WardrobeUtil.createCosmeticData(CosmeticType.BODY_CHARACTERISTICS, skin);
         Model baseModel = cosmeticsModule.createModel(playerSkinComponent.getPlayerSkin());
 
         String baseModelName = bodyCharacteristicsData.model();

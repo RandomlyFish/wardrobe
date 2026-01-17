@@ -1,4 +1,4 @@
-package dev.hardaway.hyvatar.cosmetic;
+package dev.hardaway.wardrobe.cosmetic;
 
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
@@ -40,7 +40,8 @@ public class PlayerWardrobeComponent implements Component<EntityStore> {
     private Map<CosmeticType, WardrobeCosmeticData> cosmeticData = new HashMap<>();
     protected boolean dirty = true;
 
-    public PlayerWardrobeComponent() {}
+    public PlayerWardrobeComponent() {
+    }
 
     protected PlayerWardrobeComponent(Map<CosmeticType, WardrobeCosmeticData> cosmeticData) {
         this.cosmeticData = cosmeticData;

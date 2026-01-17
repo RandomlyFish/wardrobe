@@ -1,4 +1,4 @@
-package dev.hardaway.hyvatar.cosmetic;
+package dev.hardaway.wardrobe.cosmetic;
 
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.dependency.Dependency;
