@@ -1,5 +1,8 @@
 package dev.hardaway.wardrobe.cosmetic;
 
+import com.hypixel.hytale.codec.KeyedCodec;
+import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.codecs.map.EnumMapCodec;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -37,14 +40,18 @@ import java.util.Map;
  */
 public class PlayerWardrobeComponent implements Component<EntityStore> {
 
-    private Map<CosmeticType, WardrobeCosmeticData> cosmeticData = new HashMap<>();
+    public static final BuilderCodec<PlayerWardrobeComponent> CODEC = BuilderCodec.builder(PlayerWardrobeComponent.class, PlayerWardrobeComponent::new)
+            .append(new KeyedCodec<>("Cosmetics", new EnumMapCodec<>(CosmeticType.class, WardrobeCosmeticData.CODEC, false), true), (t, value) -> t.cosmetics = value, t -> t.cosmetics).add()
+            .build();
+
+    private Map<CosmeticType, WardrobeCosmeticData> cosmetics;
     protected boolean dirty = true;
 
     public PlayerWardrobeComponent() {
     }
 
-    protected PlayerWardrobeComponent(Map<CosmeticType, WardrobeCosmeticData> cosmeticData) {
-        this.cosmeticData = cosmeticData;
+    protected PlayerWardrobeComponent(Map<CosmeticType, WardrobeCosmeticData> cosmetics) {
+        this.cosmetics = cosmetics;
     }
 
     public void setDirty(boolean dirty) {
@@ -55,15 +62,15 @@ public class PlayerWardrobeComponent implements Component<EntityStore> {
         return dirty;
     }
 
-    public Map<CosmeticType, WardrobeCosmeticData> getCosmeticData() {
-        return Collections.unmodifiableMap(this.cosmeticData);
+    public Map<CosmeticType, WardrobeCosmeticData> getCosmetics() {
+        return Collections.unmodifiableMap(this.cosmetics);
     }
 
     public void setCosmetic(CosmeticType slot, WardrobeCosmeticData cosmetic) {
         if (cosmetic == null) {
-            this.cosmeticData.remove(slot);
+            this.cosmetics.remove(slot);
         } else {
-            this.cosmeticData.put(slot, cosmetic);
+            this.cosmetics.put(slot, cosmetic);
         }
         this.dirty = true;
     }
@@ -71,6 +78,6 @@ public class PlayerWardrobeComponent implements Component<EntityStore> {
     @Nullable
     @Override
     public Component<EntityStore> clone() {
-        return new PlayerWardrobeComponent(this.cosmeticData);
+        return new PlayerWardrobeComponent(this.cosmetics);
     }
 }

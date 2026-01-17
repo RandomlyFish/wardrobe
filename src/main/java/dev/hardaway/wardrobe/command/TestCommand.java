@@ -32,8 +32,9 @@ public class TestCommand extends AbstractPlayerCommand {
     @Override
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
         PlayerWardrobeComponent component = store.getComponent(ref, this.playerWardrobeComponentType);
-        component.setCosmetic(CosmeticType.CAPES, new WardrobeCosmeticData("Hyvatar_Cape_Test", "Red"));
-        component.setCosmetic(CosmeticType.FACIAL_HAIR, new WardrobeCosmeticData("Hyvatar_FacialHair_Test", "Brown"));
+        component.setCosmetic(CosmeticType.CAPES, new WardrobeCosmeticData("Wardrobe_Cape_Test", "Red"));
+        component.setCosmetic(CosmeticType.FACIAL_HAIR, new WardrobeCosmeticData("Wardrobe_FacialHair_Test", "Brown"));
+        component.setCosmetic(CosmeticType.BODY_CHARACTERISTICS, new WardrobeCosmeticData("Wardrobe_BodyCharacteristic_Test"));
 //        component.setCosmetic(CosmeticType.CAPES, null);
         component.setDirty(true);
         context.sendMessage(Message.raw("Changed model"));

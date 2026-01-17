@@ -59,7 +59,8 @@ public class WardrobePlugin extends JavaPlugin {
 
         this.playerWardrobeComponentType = this.getEntityStoreRegistry().registerComponent(
                 PlayerWardrobeComponent.class,
-                PlayerWardrobeComponent::new
+                "PlayerWardrobe",
+                PlayerWardrobeComponent.CODEC
         );
 
         this.getEntityStoreRegistry().registerSystem(new SetupPlayerWardrobeSystem(this.playerWardrobeComponentType));

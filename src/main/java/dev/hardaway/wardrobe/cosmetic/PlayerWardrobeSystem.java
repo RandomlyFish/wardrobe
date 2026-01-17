@@ -34,11 +34,11 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
     @Override
     public void tick(float v, int i, @Nonnull ArchetypeChunk<EntityStore> chunk, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
         PlayerWardrobeComponent wardrobeComponent = chunk.getComponent(i, this.wardrobeComponentType);
-        if (!wardrobeComponent.isDirty())
+        if (!wardrobeComponent.isDirty()) // TODO: use events instead of ticking
             return;
 
         wardrobeComponent.setDirty(false);
-        Map<CosmeticType, WardrobeCosmeticData> cosmeticData = wardrobeComponent.getCosmeticData();
+        Map<CosmeticType, WardrobeCosmeticData> cosmeticData = wardrobeComponent.getCosmetics();
         PlayerSkinComponent playerSkinComponent = chunk.getComponent(i, PlayerSkinComponent.getComponentType());
         CosmeticsModule cosmeticsModule = CosmeticsModule.get();
 
@@ -58,14 +58,14 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
 
             if (cosmeticData.containsKey(slot)) {
                 WardrobeCosmeticData data = cosmeticData.get(slot);
-                CosmeticAsset cosmetic = CosmeticAsset.getAssetMap().getAsset(data.id());
+                CosmeticAsset cosmetic = CosmeticAsset.getAssetMap().getAsset(data.getId());
                 if (cosmetic != null) {
                     TextureConfig textureConfig = cosmetic.getTextureConfig();
                     attachmentList.add(new ModelAttachment(
                             cosmetic.getModel(),
-                            textureConfig.getTexture(data.variantId()),
+                            textureConfig.getTexture(data.getVariantId()),
                             textureConfig.getGradientSet(),
-                            textureConfig.getGradientSet() != null ? data.variantId() : null,
+                            textureConfig.getGradientSet() != null ? data.getVariantId() : null,
                             1.0
                     ));
                     continue;
@@ -88,13 +88,13 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
         String baseModelGradientId = bodyCharacteristicsData.gradientId();
         if (cosmeticData.containsKey(CosmeticType.BODY_CHARACTERISTICS)) {
             WardrobeCosmeticData bodyData = cosmeticData.get(CosmeticType.BODY_CHARACTERISTICS);
-            CosmeticAsset cosmetic = CosmeticAsset.getAssetMap().getAsset(bodyData.id());
+            CosmeticAsset cosmetic = CosmeticAsset.getAssetMap().getAsset(bodyData.getId());
             if (cosmetic != null) {
                 TextureConfig textureConfig = cosmetic.getTextureConfig();
                 baseModelName = cosmetic.getModel();
-                baseModelTexture = textureConfig.getTexture(bodyData.variantId());
+                baseModelTexture = textureConfig.getTexture(bodyData.getVariantId());
                 baseModelGradientSet = textureConfig.getGradientSet();
-                baseModelGradientId = textureConfig.getGradientSet() != null ? bodyData.variantId() : null;
+                baseModelGradientId = textureConfig.getGradientSet() != null ? bodyData.getVariantId() : null;
             }
         }
 
