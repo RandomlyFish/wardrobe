@@ -9,6 +9,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +49,7 @@ public class PlayerWardrobeComponent implements Component<EntityStore> {
     protected boolean dirty = true;
 
     public PlayerWardrobeComponent() {
+        this.cosmetics = new EnumMap<>(CosmeticType.class);
     }
 
     protected PlayerWardrobeComponent(Map<CosmeticType, WardrobeCosmeticData> cosmetics) {
