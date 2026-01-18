@@ -1,0 +1,26 @@
+$AC = "Wardrobe.ui";
+$Common = "../../Common.ui";
+$Sounds = "../../Sounds.ui";
+
+Group {
+  Anchor: (Width: 47, Height: 47, Top: 2, Bottom: 2);
+  Background: (TexturePath: "../Icons/CategoryIconBackground.png");
+
+  Button #Button {
+  Anchor: Anchor(Width: 66, Height: 50);
+  Style: (
+  Default: (Background: "../Icons/Categories/Head.png"),
+  Sounds: $Sounds.@ButtonsLight
+  );
+
+  Group #Selected {
+  Visible: false;
+  Background: "../Icons/Categories/HeadSelected.png";
+
+  Group {
+    Anchor: Anchor(Width: 67, Height: 33, Left: -2);
+    Background: "../Icons/SelectedCategoryArrow.png";
+  }
+}
+}
+}

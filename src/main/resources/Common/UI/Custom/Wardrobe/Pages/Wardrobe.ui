@@ -1,0 +1,166 @@
+$Common = "../../Common.ui";
+$Sounds = "../../Sounds.ui";
+
+@PartPreviewHeight = 149;
+@PartPreviewMargin = 10;
+@PartPreviewRows = 4.75;
+
+@HeadlineLabelStyle = (
+  LabelStyle(RenderBold: true, RenderUppercase: true, FontSize: 18, TextColor: #96a9be, VerticalAlignment: Start)
+);
+
+
+@TabButton = Group {
+  Anchor: (Width: 47, Height: 47, Top: 2, Bottom: 2);
+  Background: (TexturePath: "Icons/CategoryIconBackground.png");
+  Visible: true;
+
+  Button #Button {
+  Anchor: Anchor(Width: 66, Height: 50);
+
+  Group #Selected {
+  Visible: false;
+  Group {
+    Anchor: Anchor(Width: 67, Height: 33, Left: -2);
+    Background: "Icons/SelectedCategoryArrow.png";
+  }
+}
+}
+};
+
+Group {
+  Anchor: (Top: 110, Left: 30, MaxWidth: 400, Height: 924);
+  LayoutMode: Left;
+  Padding: (Horizontal: 1);
+
+  $Common.@DecoratedContainer {
+  @ContentPadding = Padding(Full: 9);
+
+  Anchor: (Width: 716);
+
+  #Title {
+  $Common.@Title #NameLabel {
+  @Text = %client.myAvatar.title;
+}
+}
+
+  #Content {
+  LayoutMode: Left;
+  Padding: (Horizontal: 10, Top: 2, Bottom: 5);
+
+  Group #Categories {
+    Anchor: (Width: 65, Left: 2);
+    Padding: (Top: 10);
+    LayoutMode: Top;
+  }
+
+  $Common.@VerticalSeparator {}
+
+  Group #PartListContainer {
+  LayoutMode: Left;
+
+  Group #Groups {
+  Anchor: (Width: 65, Left: 2);
+  Padding: (Top: 10);
+  LayoutMode: Top;
+}
+
+  $Common.@VerticalSeparator {}
+
+  Group {
+    FlexWeight: 1;
+    LayoutMode: Top;
+    Padding: (Horizontal: 20, Top: 16);
+    Anchor: (Width: 553 + 10);
+
+    Group {
+      LayoutMode: Left;
+      Anchor: (Height: 25);
+
+      Label #CategoryName {
+      Style: @HeadlineLabelStyle;
+      Anchor: (Top: -3);
+      Text: "";
+    }
+
+      Group #CategoryLabelArrow {
+      Anchor: (Width: 6, Height: 10, Top: 4, Horizontal: 8);
+      Background: (TexturePath: "../../Common/ContainerTitleArrow.png");
+      Visible: true;
+    }
+
+      Label #SubCategoryName {
+      Style: @HeadlineLabelStyle;
+      Anchor: (Top: -3);
+      Text: "";
+    }
+
+      Group {
+        FlexWeight: 1;
+      }
+    }
+
+    $Common.@ContentSeparator {}
+
+      Group #Filters {
+        LayoutMode: Left;
+        Anchor: (Top: 10);
+
+        TextField #SearchField {
+          Anchor: (Height: 32);
+          FlexWeight: 1;
+          PlaceholderText: %client.general.searchField.placeholder;
+          Style: (FontSize: 15);
+          PlaceholderStyle: (TextColor: #4b576c, FontSize: 15);
+          Padding: (Horizontal: 12, Left: 28);
+          Decoration: (
+            Default: (
+              Background: (TexturePath: "../Icons/SearchFieldPatch.png", Border: 8),
+              Icon: (Texture: "../Icons/SearchFieldIcon.png", Width: 15, Height: 15, Offset: 8)
+            )
+          );
+        }
+      }
+
+    Group #Cosmetics {
+    Anchor: (Height: @PartPreviewHeight * @PartPreviewRows + @PartPreviewMargin * (@PartPreviewRows - 1) + 14, Top: 10);
+    LayoutMode: TopScrolling;
+    ScrollbarStyle: $Common.@DefaultScrollbarStyle;
+  }
+  }
+}
+}
+}
+
+  Group {
+    FlexWeight: 1;
+    Anchor: (Left: 30, Top: 10);
+
+    Group {
+      Anchor: (Bottom: 0, Height: 36);
+      LayoutMode: Left;
+
+
+      $Common.@SecondaryButton #Left {
+        @Sounds = $Sounds.@ButtonsLight;
+        @Anchor = Anchor(Right: 8);
+
+         Group {
+//          Background: "ResetSkinIcon.png";
+          Anchor: (Width: 24, Height: 21);
+        }
+      }
+
+
+      $Common.@SecondaryButton #Right {
+        @Sounds = $Sounds.@ButtonsLight;
+        @Anchor = Anchor(Right: 8);
+
+         Group {
+//          Background: "ResetClothingIcon.png";
+          Anchor: (Width: 24, Height: 21);
+        }
+      }
+    }
+  }
+}
