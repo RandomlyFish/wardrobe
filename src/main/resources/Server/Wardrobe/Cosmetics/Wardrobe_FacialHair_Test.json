@@ -1,6 +1,5 @@
 {
-  "Type": "Default",
-  "CosmeticType": "Facial_Hair",
+  "Group": "FacialHair",
   "Model": "Characters/Body_Attachments/Beards/DoubleBraid.blockymodel",
   "TextureConfig": {
     "Type": "Gradient",

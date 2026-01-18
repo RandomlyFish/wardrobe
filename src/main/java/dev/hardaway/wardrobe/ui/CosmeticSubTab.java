@@ -1,5 +1,6 @@
 package dev.hardaway.wardrobe.ui;
 
+// TODO: cosmetic groups Wardrobe/Groups
 public enum CosmeticSubTab {
     Haircuts,
     Eyebrows,

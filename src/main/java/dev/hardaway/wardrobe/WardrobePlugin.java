@@ -6,21 +6,22 @@ import com.hypixel.hytale.codec.lookup.Priority;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
-import com.hypixel.hytale.server.core.asset.type.model.config.ModelAsset;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.server.OpenCustomUIInteraction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.asset.CosmeticAsset;
-import dev.hardaway.wardrobe.asset.config.DefaultTextureConfig;
-import dev.hardaway.wardrobe.asset.config.GradientTextureConfig;
-import dev.hardaway.wardrobe.asset.config.TextureConfig;
-import dev.hardaway.wardrobe.asset.config.VariantTextureConfig;
+import dev.hardaway.wardrobe.cosmetic.asset.CosmeticAsset;
+import dev.hardaway.wardrobe.cosmetic.asset.config.DefaultTextureConfig;
+import dev.hardaway.wardrobe.cosmetic.asset.config.GradientTextureConfig;
+import dev.hardaway.wardrobe.cosmetic.asset.config.TextureConfig;
+import dev.hardaway.wardrobe.cosmetic.asset.config.VariantTextureConfig;
 import dev.hardaway.wardrobe.command.TestCommand;
 import dev.hardaway.wardrobe.command.WardrobeCommand;
-import dev.hardaway.wardrobe.cosmetic.PlayerWardrobeComponent;
-import dev.hardaway.wardrobe.cosmetic.PlayerWardrobeSystem;
-import dev.hardaway.wardrobe.cosmetic.SetupPlayerWardrobeSystem;
+import dev.hardaway.wardrobe.cosmetic.system.component.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.cosmetic.system.PlayerWardrobeSystem;
+import dev.hardaway.wardrobe.cosmetic.system.SetupPlayerWardrobeSystem;
+import dev.hardaway.wardrobe.cosmetic.asset.category.CosmeticCategory;
+import dev.hardaway.wardrobe.cosmetic.asset.category.CosmeticGroup;
 import dev.hardaway.wardrobe.ui.WardrobePage;
 
 import javax.annotation.Nonnull;
@@ -46,16 +47,27 @@ public class WardrobePlugin extends JavaPlugin {
                 .register("Gradient", GradientTextureConfig.class, GradientTextureConfig.CODEC)
                 .register("Variant", VariantTextureConfig.class, VariantTextureConfig.CODEC);
 
-        this.getCodecRegistry(CosmeticAsset.CODEC)
-                .register(Priority.DEFAULT, "Default", CosmeticAsset.class, CosmeticAsset.BASE_CODEC);
-
+        AssetRegistry.register(HytaleAssetStore.builder(CosmeticCategory.class, new DefaultAssetMap<>())
+                .setPath("Wardrobe/Categories")
+                .setCodec(CosmeticCategory.CODEC)
+                .setKeyFunction(CosmeticCategory::getId)
+                .build()
+        );
+        AssetRegistry.register(HytaleAssetStore.builder(CosmeticGroup.class, new DefaultAssetMap<>())
+                .setPath("Wardrobe/Groups")
+                .setCodec(CosmeticGroup.CODEC)
+                .setKeyFunction(CosmeticGroup::getId)
+                .loadsAfter(CosmeticCategory.class)
+                .build()
+        );
         AssetRegistry.register(HytaleAssetStore.builder(CosmeticAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Cosmetics")
                 .setCodec(CosmeticAsset.CODEC)
                 .setKeyFunction(CosmeticAsset::getId)
-                .loadsAfter(ModelAsset.class)
+                .loadsAfter(CosmeticGroup.class)
                 .build()
         );
+
 
         this.playerWardrobeComponentType = this.getEntityStoreRegistry().registerComponent(
                 PlayerWardrobeComponent.class,

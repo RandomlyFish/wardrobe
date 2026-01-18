@@ -5,6 +5,7 @@ import java.util.List;
 
 import static dev.hardaway.wardrobe.ui.CosmeticSubTab.*;
 
+// TODO: Wardrobe/
 public enum CosmeticTab {
     Head(Haircuts, Eyebrows, Eyes, Facial_Hair, Head_Accessory, Face_Accessory, Ear_Accessory),
     General(Underwear, Body_Characteristics, Face, Mouth, Ears),

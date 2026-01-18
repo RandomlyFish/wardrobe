@@ -19,7 +19,7 @@ import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.asset.CosmeticAsset;
+import dev.hardaway.wardrobe.cosmetic.asset.CosmeticAsset;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
@@ -104,7 +104,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
         ArrayList<CosmeticAsset> tabCosmetics = new ArrayList<>();
         for (CosmeticAsset cosmetic : CosmeticAsset.getAssetMap().getAssetMap().values()) {
-            if (cosmetic.getCosmeticType() == cosmeticType) tabCosmetics.add(cosmetic);
+//            if (cosmetic.getGroup() == cosmeticType) tabCosmetics.add(cosmetic);
         }
 
         if (tabCosmetics.isEmpty()) return;
