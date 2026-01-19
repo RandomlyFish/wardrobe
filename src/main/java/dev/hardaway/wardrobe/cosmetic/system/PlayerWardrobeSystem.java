@@ -12,11 +12,10 @@ import com.hypixel.hytale.server.core.cosmetics.*;
 import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
 import com.hypixel.hytale.server.core.modules.entity.player.PlayerSkinComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.WardrobeUtil;
-import dev.hardaway.wardrobe.cosmetic.asset.CosmeticAsset;
 import dev.hardaway.wardrobe.cosmetic.BuiltinCosmetic;
-import dev.hardaway.wardrobe.cosmetic.system.component.PlayerCosmeticData;
+import dev.hardaway.wardrobe.cosmetic.asset.CosmeticAsset;
 import dev.hardaway.wardrobe.cosmetic.asset.config.TextureConfig;
+import dev.hardaway.wardrobe.cosmetic.system.component.PlayerCosmeticData;
 import dev.hardaway.wardrobe.cosmetic.system.component.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;

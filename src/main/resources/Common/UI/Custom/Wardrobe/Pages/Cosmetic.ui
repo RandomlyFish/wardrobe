@@ -25,14 +25,14 @@ $Sounds = "../../Sounds.ui";
 Group {
   LayoutMode: Left;
 
+  AssetImage #Icon {
+    Anchor: (Width: 44, Height: 44);
+  }
+
   TextButton #Button {
     Padding: (Full: 6);
     Style: @LabelStyle;
-    FlexWeight: 1;
-  }
-
-  Group #Icon {
-      Anchor: (Width: 22, Height: 22);
+    FlexWeight: 5;
   }
 }
 

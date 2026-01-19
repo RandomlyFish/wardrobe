@@ -9,13 +9,17 @@ Group {
   Button #Button {
   Anchor: Anchor(Width: 66, Height: 50);
   Style: (
-  Default: (Background: "../Icons/Categories/Head.png"),
   Sounds: $Sounds.@ButtonsLight
   );
 
+  AssetImage #Icon {
+  }
+
   Group #Selected {
   Visible: false;
-  Background: "../Icons/Categories/HeadSelected.png";
+
+  AssetImage #Icon {
+  }
 
   Group {
     Anchor: Anchor(Width: 67, Height: 33, Left: -2);

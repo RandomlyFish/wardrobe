@@ -10,18 +10,18 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.ser
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import dev.hardaway.wardrobe.command.TestCommand;
+import dev.hardaway.wardrobe.command.WardrobeCommand;
 import dev.hardaway.wardrobe.cosmetic.asset.CosmeticAsset;
+import dev.hardaway.wardrobe.cosmetic.asset.category.CosmeticCategory;
+import dev.hardaway.wardrobe.cosmetic.asset.category.CosmeticGroup;
 import dev.hardaway.wardrobe.cosmetic.asset.config.DefaultTextureConfig;
 import dev.hardaway.wardrobe.cosmetic.asset.config.GradientTextureConfig;
 import dev.hardaway.wardrobe.cosmetic.asset.config.TextureConfig;
 import dev.hardaway.wardrobe.cosmetic.asset.config.VariantTextureConfig;
-import dev.hardaway.wardrobe.command.TestCommand;
-import dev.hardaway.wardrobe.command.WardrobeCommand;
-import dev.hardaway.wardrobe.cosmetic.system.component.PlayerWardrobeComponent;
 import dev.hardaway.wardrobe.cosmetic.system.PlayerWardrobeSystem;
 import dev.hardaway.wardrobe.cosmetic.system.SetupPlayerWardrobeSystem;
-import dev.hardaway.wardrobe.cosmetic.asset.category.CosmeticCategory;
-import dev.hardaway.wardrobe.cosmetic.asset.category.CosmeticGroup;
+import dev.hardaway.wardrobe.cosmetic.system.component.PlayerWardrobeComponent;
 import dev.hardaway.wardrobe.ui.WardrobePage;
 
 import javax.annotation.Nonnull;
@@ -79,11 +79,11 @@ public class WardrobePlugin extends JavaPlugin {
         this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystem(this.playerWardrobeComponentType));
 
         OpenCustomUIInteraction.registerCustomPageSupplier(this, WardrobePage.class, "AvatarCustomisation", (_, _, playerRef, _) ->
-                new WardrobePage(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction)
+                new WardrobePage(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, this.playerWardrobeComponentType)
         );
 
         this.getCommandRegistry().registerCommand(new TestCommand(this.playerWardrobeComponentType));
-        this.getCommandRegistry().registerCommand(new WardrobeCommand());
+        this.getCommandRegistry().registerCommand(new WardrobeCommand(this.playerWardrobeComponentType));
 
     }
 }

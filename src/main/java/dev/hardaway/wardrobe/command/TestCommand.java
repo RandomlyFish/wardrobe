@@ -12,8 +12,8 @@ import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.cosmetic.system.component.PlayerWardrobeComponent;
 import dev.hardaway.wardrobe.cosmetic.system.component.PlayerCosmeticData;
+import dev.hardaway.wardrobe.cosmetic.system.component.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;
 

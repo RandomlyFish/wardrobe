@@ -4,11 +4,7 @@ import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.AssetStore;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
-import com.hypixel.hytale.codec.codecs.EnumCodec;
-import com.hypixel.hytale.server.core.cosmetics.*;
-import dev.hardaway.wardrobe.cosmetic.BuiltinCosmetic;
 
-import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 // TODO: split this up
