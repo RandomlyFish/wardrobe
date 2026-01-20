@@ -1,6 +1,7 @@
 {
+  "Type": "PlayerModel",
   "Group": "BodyCharacteristic",
-  "Model": "Characters/Player.blockymodel",
+  "ModelAsset": "Player",
   "TextureConfig": {
     "Texture": "Characters/Player_Textures/Outlander_1.png"
   }

@@ -74,7 +74,7 @@ public class CosmeticCategory implements JsonAssetWithMap<String, DefaultAssetMa
             return nameKey;
         }
 
-        return "server.wardrobe.category." + this.id + ".name";
+        return "wardrobe.categories." + this.id + ".name";
     }
 
     public Message getName() {

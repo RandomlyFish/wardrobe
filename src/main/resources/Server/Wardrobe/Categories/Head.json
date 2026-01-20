@@ -1,4 +1,5 @@
 {
+  "NameKey": "client.myAvatar.tabs.Head",
   "Icon": "Icons/Wardrobe/Categories/Head@2x.png",
   "SelectedIcon": "Icons/Wardrobe/Categories/HeadSelected@2x.png",
   "Order": 0

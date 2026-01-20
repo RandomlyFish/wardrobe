@@ -91,7 +91,7 @@ public class CosmeticGroup implements JsonAssetWithMap<String, DefaultAssetMap<S
             return nameKey;
         }
 
-        return "server.wardrobe.group." + this.id + ".name";
+        return "wardrobe.groups." + this.id + ".name";
     }
 
     public Message getName() {

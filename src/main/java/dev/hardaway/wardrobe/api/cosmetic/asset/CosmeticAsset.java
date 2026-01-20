@@ -72,7 +72,7 @@ public abstract class CosmeticAsset implements JsonAssetWithMap<String, DefaultA
             return nameKey;
         }
 
-        return "server.wardrobe.cosmetic." + this.id + ".name";
+        return "wardrobe.cosmetics." + this.id + ".name";
     }
 
     public Message getName() {
