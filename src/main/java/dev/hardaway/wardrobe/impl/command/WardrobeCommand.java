@@ -23,14 +23,15 @@ public class WardrobeCommand extends AbstractPlayerCommand {
     private final ComponentType<EntityStore, PlayerWardrobeComponent> playerWardrobeComponentType;
 
     public WardrobeCommand(ComponentType<EntityStore, PlayerWardrobeComponent> wardrobeComponentType) {
-        super("wardrobe", "Customise the player's Wardrobe cosmetics");
+        super("wardrobe", "Customise your avatar's cosmetics");
         this.setPermissionGroup(GameMode.Adventure);
         this.playerWardrobeComponentType = wardrobeComponentType;
+        this.addSubCommand(new WardrobeRemoveCommand(wardrobeComponentType));
+        this.addSubCommand(new WardrobeWearCommand(wardrobeComponentType));
     }
 
     @Override
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-        PlayerWardrobeComponent wardrobeComponent = store.ensureAndGetComponent(ref, this.playerWardrobeComponentType);
         Player player = store.getComponent(ref, Player.getComponentType());
 
         if (player != null)

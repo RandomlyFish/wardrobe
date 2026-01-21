@@ -9,9 +9,11 @@ import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.TextureConfig;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.VariantTextureConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class PlayerModelCosmetic extends CosmeticAsset {
 
@@ -76,6 +78,15 @@ public class PlayerModelCosmetic extends CosmeticAsset {
                 model.getPhobiaModelAssetId()
         ));
         // TODO: warn if the model asset has attachments? they will be removed!
+    }
+
+    @Override
+    public List<String> getVariants() {
+        if (textureConfig instanceof VariantTextureConfig variantTextureConfig) {
+            return variantTextureConfig.getVariants().keySet().stream().toList();
+        }
+
+        return List.of();
     }
 
 }

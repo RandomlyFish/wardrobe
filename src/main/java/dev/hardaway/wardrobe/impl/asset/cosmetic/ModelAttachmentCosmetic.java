@@ -14,9 +14,11 @@ import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.TextureConfig;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.VariantTextureConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 // HiddenCosmeticGroups[] - array of CosmeticGroups that will be hidden when this cosmetic is worn
 public class ModelAttachmentCosmetic extends CosmeticAsset {
@@ -91,6 +93,15 @@ public class ModelAttachmentCosmetic extends CosmeticAsset {
                 textureConfig.getGradientSet() != null ? playerCosmetic.getTextureId() : null,
                 1.0
         ));
+    }
+
+    @Override
+    public List<String> getVariants() {
+        if (textureConfig instanceof VariantTextureConfig variantTextureConfig) {
+            return variantTextureConfig.getVariants().keySet().stream().toList();
+        }
+
+        return List.of();
     }
 
     @Nullable

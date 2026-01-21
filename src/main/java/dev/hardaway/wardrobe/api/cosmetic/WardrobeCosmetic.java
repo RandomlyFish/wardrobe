@@ -4,6 +4,8 @@ import dev.hardaway.wardrobe.api.WardrobePermissionHolder;
 import dev.hardaway.wardrobe.api.WardrobeTranslatable;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 
+import java.util.List;
+
 public interface WardrobeCosmetic extends WardrobePermissionHolder, WardrobeTranslatable {
 
     String getId();
@@ -17,4 +19,6 @@ public interface WardrobeCosmetic extends WardrobePermissionHolder, WardrobeTran
     String getIconPath();
 
     void applyCosmetic(WardrobeContext context, WardrobeGroup group, PlayerCosmetic playerCosmetic);
+
+    List<String> getVariants();
 }
