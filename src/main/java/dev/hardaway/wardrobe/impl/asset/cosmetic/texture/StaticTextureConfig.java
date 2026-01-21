@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.impl.cosmetic.asset.texture;
+package dev.hardaway.wardrobe.impl.asset.cosmetic.texture;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;

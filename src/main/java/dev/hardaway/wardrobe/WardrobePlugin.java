@@ -13,22 +13,22 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.ser
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import dev.hardaway.wardrobe.impl.asset.CosmeticCategoryAsset;
+import dev.hardaway.wardrobe.impl.asset.CosmeticGroupAsset;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.HaircutCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.HeadAccessoryCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.ModelAttachmentCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.PlayerModelCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.GradientTextureConfig;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.StaticTextureConfig;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.TextureConfig;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.VariantTextureConfig;
 import dev.hardaway.wardrobe.impl.command.TestCommand;
 import dev.hardaway.wardrobe.impl.command.WardrobeCommand;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticAsset;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticCategory;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticGroup;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.HaircutCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.HeadAccessoryCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.ModelAttachmentCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.PlayerModelCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.GradientTextureConfig;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.StaticTextureConfig;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.TextureConfig;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.VariantTextureConfig;
-import dev.hardaway.wardrobe.impl.cosmetic.system.PlayerWardrobeComponent;
-import dev.hardaway.wardrobe.impl.cosmetic.system.PlayerWardrobeSystem;
-import dev.hardaway.wardrobe.impl.cosmetic.system.ResetPlayerModelSystem;
+import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.impl.system.PlayerWardrobeSystem;
+import dev.hardaway.wardrobe.impl.system.ResetPlayerModelSystem;
 import dev.hardaway.wardrobe.impl.ui.WardrobePage;
 
 import javax.annotation.Nonnull;
@@ -61,24 +61,24 @@ public class WardrobePlugin extends JavaPlugin {
                 .register(Priority.NORMAL, "Haircut", HaircutCosmetic.class, HaircutCosmetic.CODEC)
                 .register(Priority.NORMAL, "HeadAccessory", HeadAccessoryCosmetic.class, HeadAccessoryCosmetic.CODEC);
 
-        AssetRegistry.register(HytaleAssetStore.builder(CosmeticCategory.class, new DefaultAssetMap<>())
+        AssetRegistry.register(HytaleAssetStore.builder(CosmeticCategoryAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Categories")
-                .setCodec(CosmeticCategory.CODEC)
-                .setKeyFunction(CosmeticCategory::getId)
+                .setCodec(CosmeticCategoryAsset.CODEC)
+                .setKeyFunction(CosmeticCategoryAsset::getId)
                 .build()
         );
-        AssetRegistry.register(HytaleAssetStore.builder(CosmeticGroup.class, new DefaultAssetMap<>())
+        AssetRegistry.register(HytaleAssetStore.builder(CosmeticGroupAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Groups")
-                .setCodec(CosmeticGroup.CODEC)
-                .setKeyFunction(CosmeticGroup::getId)
-                .loadsAfter(CosmeticCategory.class)
+                .setCodec(CosmeticGroupAsset.CODEC)
+                .setKeyFunction(CosmeticGroupAsset::getId)
+                .loadsAfter(CosmeticCategoryAsset.class)
                 .build()
         );
         AssetRegistry.register(HytaleAssetStore.builder(CosmeticAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Cosmetics")
                 .setCodec(CosmeticAsset.CODEC)
                 .setKeyFunction(CosmeticAsset::getId)
-                .loadsAfter(ModelAsset.class, CosmeticGroup.class)
+                .loadsAfter(ModelAsset.class, CosmeticGroupAsset.class)
                 .build()
         );
 

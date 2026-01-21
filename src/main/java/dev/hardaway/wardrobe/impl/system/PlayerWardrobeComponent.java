@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.impl.cosmetic.system;
+package dev.hardaway.wardrobe.impl.system;
 
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;

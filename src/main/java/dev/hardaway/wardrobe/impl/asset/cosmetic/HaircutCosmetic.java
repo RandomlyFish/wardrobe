@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.impl.cosmetic.asset;//package dev.hardaway.wardrobe.impl.cosmetic.asset;
+package dev.hardaway.wardrobe.impl.asset.cosmetic;//package dev.hardaway.wardrobe.impl.asset;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
@@ -13,7 +13,8 @@ import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.TextureConfig;
+import dev.hardaway.wardrobe.impl.asset.CosmeticGroupAsset;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.TextureConfig;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -91,7 +92,7 @@ public class HaircutCosmetic extends ModelAttachmentCosmetic {
         String gradientSet = textureConfig.getGradientSet();
 
         // TODO: make this data driven or something
-        CosmeticGroup headAccessoryGroup = CosmeticGroup.getAssetMap().getAsset("HeadAccessory");
+        CosmeticGroupAsset headAccessoryGroup = CosmeticGroupAsset.getAssetMap().getAsset("HeadAccessory");
         if (headAccessoryGroup != null) {
             PlayerCosmetic headCosmetic = context.getCosmetic(headAccessoryGroup);
             if (headCosmetic != null) {

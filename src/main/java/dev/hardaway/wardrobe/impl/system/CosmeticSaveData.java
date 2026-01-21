@@ -1,11 +1,11 @@
-package dev.hardaway.wardrobe.impl.cosmetic.system;
+package dev.hardaway.wardrobe.impl.system;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 
 import javax.annotation.Nullable;
 

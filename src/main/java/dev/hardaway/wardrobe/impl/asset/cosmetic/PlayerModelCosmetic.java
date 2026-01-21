@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.impl.cosmetic.asset;
+package dev.hardaway.wardrobe.impl.asset.cosmetic;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
@@ -8,7 +8,7 @@ import com.hypixel.hytale.server.core.asset.type.model.config.ModelAsset;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.TextureConfig;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.TextureConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

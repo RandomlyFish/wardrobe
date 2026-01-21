@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.impl.cosmetic.system;
+package dev.hardaway.wardrobe.impl.system;
 
 import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;

@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.impl.cosmetic.system;
+package dev.hardaway.wardrobe.impl.system;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -21,7 +21,7 @@ import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticGroup;
+import dev.hardaway.wardrobe.impl.asset.CosmeticGroupAsset;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,7 +61,7 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
         );
 
         PlayerSkin skin = skinFromProtocol(skinComponent.getPlayerSkin());
-        for (WardrobeGroup group : CosmeticGroup.getAssetMap().getAssetMap().values()) {
+        for (WardrobeGroup group : CosmeticGroupAsset.getAssetMap().getAssetMap().values()) {
             PlayerCosmetic playerCosmetic = wardrobeComponent.getCosmetic(group);
             if (playerCosmetic != null) {
                 WardrobeCosmetic cosmetic = playerCosmetic.getCosmetic();
@@ -121,8 +121,8 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
         return new PlayerSkin(protocolPlayerSkin.bodyCharacteristic, protocolPlayerSkin.underwear, protocolPlayerSkin.face, protocolPlayerSkin.ears, protocolPlayerSkin.mouth, protocolPlayerSkin.eyes, protocolPlayerSkin.facialHair, protocolPlayerSkin.haircut, protocolPlayerSkin.eyebrows, protocolPlayerSkin.pants, protocolPlayerSkin.overpants, protocolPlayerSkin.undertop, protocolPlayerSkin.overtop, protocolPlayerSkin.shoes, protocolPlayerSkin.headAccessory, protocolPlayerSkin.faceAccessory, protocolPlayerSkin.earAccessory, protocolPlayerSkin.skinFeature, protocolPlayerSkin.gloves, protocolPlayerSkin.cape);
     }
 
-    // TODO: support hytale generic hair
-    // TODO: support hytale headaccessorytype
+    // TODO: support hytale RequiresGenericHair
+    // TODO: support hytale HeadAccessoryType
     public static void applyHytaleCosmetic(WardrobeContext context, WardrobeGroup group, PlayerSkin skin) {
         PlayerSkin.PlayerSkinPartId skinPartId = switch (group.getHytaleCosmeticType()) {
             case EMOTES, GRADIENT_SETS, EYE_COLORS, SKIN_TONES, BODY_CHARACTERISTICS -> null;

@@ -22,11 +22,11 @@ import dev.hardaway.wardrobe.api.cosmetic.WardrobeCategory;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticAsset;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticCategory;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticGroup;
-import dev.hardaway.wardrobe.impl.cosmetic.system.CosmeticSaveData;
-import dev.hardaway.wardrobe.impl.cosmetic.system.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.impl.asset.CosmeticCategoryAsset;
+import dev.hardaway.wardrobe.impl.asset.CosmeticGroupAsset;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.system.CosmeticSaveData;
+import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
@@ -44,8 +44,8 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
     private final ComponentType<EntityStore, PlayerWardrobeComponent> playerWardrobeComponentType;
 
-    private final List<WardrobeCategory> categories = CosmeticCategory.getAssetMap().getAssetMap().values().stream().sorted(Comparator.comparing(WardrobeCategory::getTabOrder)).collect(Collectors.toUnmodifiableList());
-    private final Map<WardrobeCategory, List<WardrobeGroup>> groupMap = HashMap.newHashMap(CosmeticCategory.getAssetMap().getAssetCount());
+    private final List<WardrobeCategory> categories = CosmeticCategoryAsset.getAssetMap().getAssetMap().values().stream().sorted(Comparator.comparing(WardrobeCategory::getTabOrder)).collect(Collectors.toUnmodifiableList());
+    private final Map<WardrobeCategory, List<WardrobeGroup>> groupMap = HashMap.newHashMap(CosmeticCategoryAsset.getAssetMap().getAssetCount());
     private final Map<WardrobeGroup, List<WardrobeCosmetic>> cosmeticMap = HashMap.newHashMap(CosmeticAsset.getAssetMap().getAssetCount());
 
     private WardrobeCategory selectedCategory;
@@ -77,8 +77,8 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, selector, EventData.of("Category", category.getId()), false);
         }
 
-        List<CosmeticGroup> sortedGroups = CosmeticGroup.getAssetMap().getAssetMap().values().stream().sorted(Comparator.comparing(CosmeticGroup::getTabOrder)).toList();
-        for (CosmeticGroup group : sortedGroups) {
+        List<CosmeticGroupAsset> sortedGroups = CosmeticGroupAsset.getAssetMap().getAssetMap().values().stream().sorted(Comparator.comparing(CosmeticGroupAsset::getTabOrder)).toList();
+        for (CosmeticGroupAsset group : sortedGroups) {
             groupMap.getOrDefault(group.getCategory(), new ArrayList<>()).add(group);
             cosmeticMap.put(group, new ArrayList<>());
         }
@@ -108,9 +108,9 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
         if (data.searchQuery != null) buildCosmeticList(commandBuilder, eventBuilder, ref, store, data.searchQuery);
         if (data.category != null)
-            selectCategory(commandBuilder, eventBuilder, ref, store, CosmeticCategory.getAssetMap().getAsset(data.category));
+            selectCategory(commandBuilder, eventBuilder, ref, store, CosmeticCategoryAsset.getAssetMap().getAsset(data.category));
         if (data.group != null)
-            selectGroup(commandBuilder, eventBuilder, ref, store, CosmeticGroup.getAssetMap().getAsset(data.group));
+            selectGroup(commandBuilder, eventBuilder, ref, store, CosmeticGroupAsset.getAssetMap().getAsset(data.group));
         if (data.cosmetic != null)
             selectCosmetic(commandBuilder, eventBuilder, ref, store, Objects.requireNonNull(CosmeticAsset.getAssetMap().getAsset(data.cosmetic)));
 

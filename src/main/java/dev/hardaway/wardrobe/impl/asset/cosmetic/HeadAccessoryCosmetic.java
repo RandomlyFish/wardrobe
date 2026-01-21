@@ -1,9 +1,9 @@
-package dev.hardaway.wardrobe.impl.cosmetic.asset;
+package dev.hardaway.wardrobe.impl.asset.cosmetic;
 
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.TextureConfig;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.TextureConfig;
 
 import javax.annotation.Nullable;
 

@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.impl.cosmetic.asset;
+package dev.hardaway.wardrobe.impl.asset.cosmetic;
 
 import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.assetstore.AssetStore;
@@ -12,6 +12,7 @@ import com.hypixel.hytale.codec.validation.Validators;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
+import dev.hardaway.wardrobe.impl.asset.CosmeticGroupAsset;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -84,7 +85,7 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
 
     @Nonnull
     public WardrobeGroup getGroup() {
-        WardrobeGroup group = CosmeticGroup.getAssetMap().getAsset(this.group);
+        WardrobeGroup group = CosmeticGroupAsset.getAssetMap().getAsset(this.group);
         if (group == null) {
             throw new IllegalStateException("Group not found: " + this.group);
         }
