@@ -13,20 +13,20 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.ser
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.component.PlayerWardrobeComponent;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticAsset;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticCategory;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticGroup;
-import dev.hardaway.wardrobe.api.cosmetic.asset.config.TextureConfig;
 import dev.hardaway.wardrobe.impl.command.TestCommand;
 import dev.hardaway.wardrobe.impl.command.WardrobeCommand;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticCategory;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.CosmeticGroup;
 import dev.hardaway.wardrobe.impl.cosmetic.asset.HaircutCosmetic;
 import dev.hardaway.wardrobe.impl.cosmetic.asset.HeadAccessoryCosmetic;
 import dev.hardaway.wardrobe.impl.cosmetic.asset.ModelAttachmentCosmetic;
 import dev.hardaway.wardrobe.impl.cosmetic.asset.PlayerModelCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.config.GradientTextureConfig;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.config.StaticTextureConfig;
-import dev.hardaway.wardrobe.impl.cosmetic.asset.config.VariantTextureConfig;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.GradientTextureConfig;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.StaticTextureConfig;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.TextureConfig;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.VariantTextureConfig;
+import dev.hardaway.wardrobe.impl.cosmetic.system.PlayerWardrobeComponent;
 import dev.hardaway.wardrobe.impl.cosmetic.system.PlayerWardrobeSystem;
 import dev.hardaway.wardrobe.impl.cosmetic.system.ResetPlayerModelSystem;
 import dev.hardaway.wardrobe.impl.ui.WardrobePage;
@@ -99,6 +99,10 @@ public class WardrobePlugin extends JavaPlugin {
         this.getCommandRegistry().registerCommand(new TestCommand(this.playerWardrobeComponentType));
         this.getCommandRegistry().registerCommand(new WardrobeCommand(this.playerWardrobeComponentType));
 
+    }
+
+    public ComponentType<EntityStore, PlayerWardrobeComponent> getPlayerWardrobeComponentType() {
+        return playerWardrobeComponentType;
     }
 
     public static <T extends JsonAssetWithMap<String, DefaultAssetMap<String, T>>> Supplier<AssetStore<String, T, DefaultAssetMap<String, T>>> createAssetStore(Class<T> clazz) {

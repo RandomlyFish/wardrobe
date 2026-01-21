@@ -9,11 +9,11 @@ import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
-import dev.hardaway.wardrobe.api.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.PlayerCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticAsset;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticGroup;
-import dev.hardaway.wardrobe.api.cosmetic.asset.config.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
+import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.TextureConfig;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -83,27 +83,28 @@ public class HaircutCosmetic extends ModelAttachmentCosmetic {
     }
 
     @Override
-    public void applyCosmetic(WardrobeContext context, CosmeticGroup group, PlayerCosmetic playerCosmetic) {
+    public void applyCosmetic(WardrobeContext context, WardrobeGroup group, PlayerCosmetic playerCosmetic) {
         TextureConfig textureConfig = this.getTextureConfig();
 
         String model = this.getModel();
-        String texture = textureConfig.getTexture(playerCosmetic.getVariantId());
+        String texture = textureConfig.getTexture(playerCosmetic.getTextureId());
         String gradientSet = textureConfig.getGradientSet();
 
         // TODO: make this data driven or something
         CosmeticGroup headAccessoryGroup = CosmeticGroup.getAssetMap().getAsset("HeadAccessory");
         if (headAccessoryGroup != null) {
-            PlayerCosmetic headCosmetic = context.getComponent().getCosmetic(headAccessoryGroup);
+            PlayerCosmetic headCosmetic = context.getCosmetic(headAccessoryGroup);
             if (headCosmetic != null) {
-                CosmeticAsset headAsset = CosmeticAsset.getAssetMap().getAsset(headCosmetic.getId());
+                WardrobeCosmetic headAsset = headCosmetic.getCosmetic();
                 if (headAsset instanceof HeadAccessoryCosmetic headAccessory) {
                     switch (headAccessory.getHatStyle()) {
-                        case DEFAULT -> {} // Continue as normal
+                        case DEFAULT -> {
+                        } // Continue as normal
                         case HALF -> {
                             if (this.hatFallbackModel != null)
                                 model = this.hatFallbackModel;
                             if (this.hatFallbackTextureConfig != null) {
-                                texture = this.hatFallbackTextureConfig.getTexture(playerCosmetic.getVariantId());
+                                texture = this.hatFallbackTextureConfig.getTexture(playerCosmetic.getTextureId());
                                 gradientSet = this.hatFallbackTextureConfig.getGradientSet();
                             }
                         }
@@ -116,7 +117,7 @@ public class HaircutCosmetic extends ModelAttachmentCosmetic {
         }
 
         Player player = context.getPlayer();
-        if (group.getCosmeticType() != null) {
+        if (group.getHytaleCosmeticType() != null) {
             ItemContainer armorContainer = player.getInventory().getArmor();
             for (short i = 0; i < armorContainer.getCapacity(); i++) {
                 ItemStack stack = armorContainer.getItemStack(i);
@@ -130,7 +131,7 @@ public class HaircutCosmetic extends ModelAttachmentCosmetic {
                     if (this.helmFallbackModel != null)
                         model = this.helmFallbackModel;
                     if (this.helmFallbackTextureConfig != null) {
-                        texture = this.helmFallbackTextureConfig.getTexture(playerCosmetic.getVariantId());
+                        texture = this.helmFallbackTextureConfig.getTexture(playerCosmetic.getTextureId());
                         gradientSet = this.helmFallbackTextureConfig.getGradientSet();
                     }
                     break;
@@ -138,11 +139,11 @@ public class HaircutCosmetic extends ModelAttachmentCosmetic {
             }
         }
 
-        context.addAttachment(new ModelAttachment(
+        context.addAttachment(group, new ModelAttachment(
                 model,
                 texture,
                 gradientSet,
-                gradientSet != null ? playerCosmetic.getVariantId() : null,
+                gradientSet != null ? playerCosmetic.getTextureId() : null,
                 1.0
         ));
     }

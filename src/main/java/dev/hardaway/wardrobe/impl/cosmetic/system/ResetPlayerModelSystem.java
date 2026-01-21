@@ -12,7 +12,6 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
 import com.hypixel.hytale.server.core.modules.entity.player.PlayerSkinComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.component.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

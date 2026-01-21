@@ -10,15 +10,15 @@ import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
-import dev.hardaway.wardrobe.api.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.PlayerCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticAsset;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticGroup;
-import dev.hardaway.wardrobe.api.cosmetic.asset.config.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
+import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.TextureConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+// HiddenCosmeticGroups[] - array of CosmeticGroups that will be hidden when this cosmetic is worn
 public class ModelAttachmentCosmetic extends CosmeticAsset {
 
     public static final BuilderCodec<ModelAttachmentCosmetic> CODEC = BuilderCodec.builder(ModelAttachmentCosmetic.class, ModelAttachmentCosmetic::new, CosmeticAsset.ABSTRACT_CODEC)
@@ -55,11 +55,11 @@ public class ModelAttachmentCosmetic extends CosmeticAsset {
     }
 
     @Override
-    public void applyCosmetic(WardrobeContext context, CosmeticGroup group, PlayerCosmetic playerCosmetic) {
+    public void applyCosmetic(WardrobeContext context, WardrobeGroup group, PlayerCosmetic playerCosmetic) {
         TextureConfig textureConfig = this.getTextureConfig();
 
         Player player = context.getPlayer();
-        if (group.getCosmeticType() != null) {
+        if (group.getHytaleCosmeticType() != null) {
             ItemContainer armorContainer = player.getInventory().getArmor();
             for (short i = 0; i < armorContainer.getCapacity(); i++) {
                 ItemStack stack = armorContainer.getItemStack(i);
@@ -78,17 +78,17 @@ public class ModelAttachmentCosmetic extends CosmeticAsset {
                     if (type == null)
                         continue;
 
-                    if (group.getCosmeticType().equals(type))
+                    if (group.getHytaleCosmeticType().equals(type))
                         return; // Cosmetic is hidden
                 }
             }
         }
 
-        context.addAttachment(new ModelAttachment(
+        context.addAttachment(group, new ModelAttachment(
                 this.getModel(),
-                textureConfig.getTexture(playerCosmetic.getVariantId()),
+                textureConfig.getTexture(playerCosmetic.getTextureId()),
                 textureConfig.getGradientSet(),
-                textureConfig.getGradientSet() != null ? playerCosmetic.getVariantId() : null,
+                textureConfig.getGradientSet() != null ? playerCosmetic.getTextureId() : null,
                 1.0
         ));
     }

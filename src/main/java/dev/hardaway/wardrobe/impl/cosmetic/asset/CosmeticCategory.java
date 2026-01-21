@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.api.cosmetic.asset;
+package dev.hardaway.wardrobe.impl.cosmetic.asset;
 
 import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.assetstore.AssetStore;
@@ -9,13 +9,12 @@ import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.validation.Validators;
-import com.hypixel.hytale.server.core.Message;
 import dev.hardaway.wardrobe.WardrobePlugin;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCategory;
 
-import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
-public class CosmeticCategory implements JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticCategory>> {
+public class CosmeticCategory implements WardrobeCategory, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticCategory>> {
 
     public static final AssetCodec<String, CosmeticCategory> CODEC = AssetBuilderCodec
             .builder(CosmeticCategory.class, CosmeticCategory::new,
@@ -68,28 +67,27 @@ public class CosmeticCategory implements JsonAssetWithMap<String, DefaultAssetMa
         return id;
     }
 
-    @Nonnull
+    @Override
     public String getTranslationKey() {
         if (this.nameKey != null) {
             return nameKey;
         }
 
-        return "wardrobe.categories." + this.id + ".name";
+        return WardrobeCategory.super.getTranslationKey();
     }
 
-    public Message getName() {
-        return Message.translation(this.getTranslationKey());
-    }
-
-    public String getIcon() {
+    @Override
+    public String getIconPath() {
         return icon;
     }
 
-    public String getSelectedIcon() {
+    @Override
+    public String getSelectedIconPath() {
         return selectedIcon;
     }
 
-    public int getOrder() {
+    @Override
+    public int getTabOrder() {
         return order;
     }
 }

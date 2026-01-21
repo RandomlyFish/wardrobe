@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.api.cosmetic.asset;
+package dev.hardaway.wardrobe.impl.cosmetic.asset;
 
 import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.assetstore.AssetStore;
@@ -10,15 +10,15 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.validation.Validators;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import dev.hardaway.wardrobe.WardrobePlugin;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCategory;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public class CosmeticGroup implements JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticGroup>> {
+public class CosmeticGroup implements WardrobeGroup, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticGroup>> {
 
     public static final AssetCodec<String, CosmeticGroup> CODEC = AssetBuilderCodec
             .builder(CosmeticGroup.class, CosmeticGroup::new,
@@ -85,37 +85,41 @@ public class CosmeticGroup implements JsonAssetWithMap<String, DefaultAssetMap<S
         return id;
     }
 
-    @Nonnull
+    @Override
     public String getTranslationKey() {
         if (this.nameKey != null) {
             return nameKey;
         }
 
-        return "wardrobe.groups." + this.id + ".name";
-    }
-
-    public Message getName() {
-        return Message.translation(this.getTranslationKey());
+        return WardrobeGroup.super.getTranslationKey();
     }
 
     @Nullable
-    public CosmeticType getCosmeticType() {
+    @Override
+    public CosmeticType getHytaleCosmeticType() {
         return cosmeticType;
     }
 
-    public String getCategory() {
+    public WardrobeCategory getCategory() {
+        WardrobeCategory category = CosmeticCategory.getAssetMap().getAsset(this.category);
+        if (category == null) {
+            throw new IllegalStateException("Category not found: " + this.category);
+        }
         return category;
     }
 
-    public String getIcon() {
+    @Override
+    public String getIconPath() {
         return icon;
     }
 
-    public String getSelectedIcon() {
+    @Override
+    public String getSelectedIconPath() {
         return selectedIcon;
     }
 
-    public int getOrder() {
+    @Override
+    public int getTabOrder() {
         return order;
     }
 }

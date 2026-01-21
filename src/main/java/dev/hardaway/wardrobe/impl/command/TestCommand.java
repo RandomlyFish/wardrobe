@@ -11,9 +11,7 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.component.PlayerWardrobeComponent;
-import dev.hardaway.wardrobe.api.cosmetic.PlayerCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticGroup;
+import dev.hardaway.wardrobe.impl.cosmetic.system.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;
 
@@ -37,12 +35,13 @@ public class TestCommand extends AbstractPlayerCommand {
         }
 
         PlayerWardrobeComponent component = store.ensureAndGetComponent(ref, this.playerWardrobeComponentType);
-        component.setCosmetic(CosmeticGroup.getAssetMap().getAsset("Cape"), new PlayerCosmetic("Wardrobe_Cape_Test", "Red"));
-        component.setCosmetic(CosmeticGroup.getAssetMap().getAsset("FacialHair"), new PlayerCosmetic("Wardrobe_FacialHair_Test", "Brown"));
-        component.setCosmetic(CosmeticGroup.getAssetMap().getAsset("Haircut"), new PlayerCosmetic("Wardrobe_Haircut_Test", "Brown"));
-        component.setCosmetic(CosmeticGroup.getAssetMap().getAsset("BodyCharacteristic"), new PlayerCosmetic("Wardrobe_BodyCharacteristic_Test"));
+//        component.setCosmetic(CosmeticGroup.getAssetMap().getAsset("Cape"), new PlayerCosmetic("Wardrobe_Cape_Test", "Red"));
+//        component.setCosmetic(CosmeticGroup.getAssetMap().getAsset("FacialHair"), new PlayerCosmetic("Wardrobe_FacialHair_Test", "Brown"));
+//        component.setCosmetic(CosmeticGroup.getAssetMap().getAsset("Haircut"), new PlayerCosmetic("Wardrobe_Haircut_Test", "Brown"));
+//        component.setCosmetic(CosmeticGroup.getAssetMap().getAsset("BodyCharacteristic"), new PlayerCosmetic("Wardrobe_BodyCharacteristic_Test"));
 //        component.setCosmetic(CosmeticType.CAPES, null);
 //        component.setDirty(true);
+        component.rebuild();
         context.sendMessage(Message.raw("Applied Test Wardrobe Model"));
     }
 }

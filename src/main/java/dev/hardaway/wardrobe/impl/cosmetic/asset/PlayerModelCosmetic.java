@@ -5,11 +5,10 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAsset;
-import dev.hardaway.wardrobe.api.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.PlayerCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticAsset;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticGroup;
-import dev.hardaway.wardrobe.api.cosmetic.asset.config.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
+import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.TextureConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,12 +50,32 @@ public class PlayerModelCosmetic extends CosmeticAsset {
     }
 
     @Override
-    public void applyCosmetic(WardrobeContext context, CosmeticGroup group, PlayerCosmetic playerCosmetic) {
-        ModelAsset model = ModelAsset.getAssetMap().getAsset(this.modelAsset);
-        context.setPlayerModel(Model.createUnitScaleModel(model));
-        context.setPlayerTexture(this.textureConfig);
-        context.setPlayerTextureVariantId(playerCosmetic.getVariantId());
-        // TODO: warn if the model asset has attachments, they will be removed!
+    public void applyCosmetic(WardrobeContext context, WardrobeGroup group, PlayerCosmetic playerCosmetic) {
+        ModelAsset modelAsset = ModelAsset.getAssetMap().getAsset(this.getModelAsset());
+        Model model = Model.createUnitScaleModel(modelAsset);
+        context.setPlayerModel(new Model(
+                model.getModelAssetId(),
+                model.getScale(),
+                model.getRandomAttachmentIds(),
+                model.getAttachments(),
+                model.getBoundingBox(),
+                model.getModel(),
+                this.getTextureConfig().getTexture(playerCosmetic.getTextureId()),
+                this.getTextureConfig().getGradientSet(),
+                this.getTextureConfig().getGradientSet() != null ? playerCosmetic.getTextureId() : null,
+                model.getEyeHeight(),
+                model.getCrouchOffset(),
+                model.getAnimationSetMap(),
+                model.getCamera(),
+                model.getLight(),
+                model.getParticles(),
+                model.getTrails(),
+                model.getPhysicsValues(),
+                model.getDetailBoxes(),
+                model.getPhobia(),
+                model.getPhobiaModelAssetId()
+        ));
+        // TODO: warn if the model asset has attachments? they will be removed!
     }
 
 }

@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.api.cosmetic.asset;
+package dev.hardaway.wardrobe.impl.cosmetic.asset;
 
 import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.assetstore.AssetStore;
@@ -9,18 +9,16 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.validation.Validators;
-import com.hypixel.hytale.server.core.Message;
-import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 import dev.hardaway.wardrobe.WardrobePlugin;
-import dev.hardaway.wardrobe.api.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.PlayerCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.UUID;
 import java.util.function.Supplier;
 
-public abstract class CosmeticAsset implements JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticAsset>> {
+// RequiredCosmetics[] - array of cosmetics that must be worn for this cosmetic to appear wearable
+public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticAsset>> {
 
     public static final BuilderCodec<CosmeticAsset> ABSTRACT_CODEC = BuilderCodec.abstractBuilder(CosmeticAsset.class)
             .append(new KeyedCodec<>("NameKey", Codec.STRING),
@@ -57,12 +55,12 @@ public abstract class CosmeticAsset implements JsonAssetWithMap<String, DefaultA
     protected String nameKey;
     protected String group;
     protected String icon;
-    protected @Nullable String permissionNode;
+    protected String permissionNode;
 
     protected CosmeticAsset() {
     }
 
-    public CosmeticAsset(String id, String nameKey, String group, String icon, @Nullable String permissionNode) {
+    public CosmeticAsset(String id, String nameKey, String group, String icon, String permissionNode) {
         this.id = id;
         this.nameKey = nameKey;
         this.group = group;
@@ -75,26 +73,26 @@ public abstract class CosmeticAsset implements JsonAssetWithMap<String, DefaultA
         return id;
     }
 
-    @Nonnull
+    @Override
     public String getTranslationKey() {
         if (this.nameKey != null) {
             return nameKey;
         }
 
-        return "wardrobe.cosmetics." + this.id + ".name";
-    }
-
-    public Message getName() {
-        return Message.translation(this.getTranslationKey());
+        return WardrobeCosmetic.super.getTranslationKey();
     }
 
     @Nonnull
-    public String getGroup() {
+    public WardrobeGroup getGroup() {
+        WardrobeGroup group = CosmeticGroup.getAssetMap().getAsset(this.group);
+        if (group == null) {
+            throw new IllegalStateException("Group not found: " + this.group);
+        }
         return group;
     }
 
-
-    public String getIcon() {
+    @Override
+    public String getIconPath() {
         return icon;
     }
 
@@ -102,12 +100,4 @@ public abstract class CosmeticAsset implements JsonAssetWithMap<String, DefaultA
     public String getPermissionNode() {
         return permissionNode;
     }
-
-    public boolean hasPermission(@Nonnull UUID uuid) {
-        String permissionNode = this.getPermissionNode();
-        if (permissionNode == null) return true;
-        return PermissionsModule.get().hasPermission(uuid, permissionNode);
-    }
-
-    public abstract void applyCosmetic(WardrobeContext context, CosmeticGroup group, PlayerCosmetic playerCosmetic);
 }

@@ -1,10 +1,9 @@
-package dev.hardaway.wardrobe.impl.cosmetic.asset.config;
+package dev.hardaway.wardrobe.impl.cosmetic.asset.texture;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.server.core.asset.common.CommonAssetValidator;
-import dev.hardaway.wardrobe.api.cosmetic.asset.config.TextureConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +21,7 @@ public class StaticTextureConfig implements TextureConfig {
     private String texture;
 
     @Nonnull
-    public String getTexture(@Nullable String variant) {
+    public String getTexture(@Nullable String textureId) {
         return texture;
     }
 }

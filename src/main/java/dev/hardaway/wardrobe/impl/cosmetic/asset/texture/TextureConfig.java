@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.api.cosmetic.asset.config;
+package dev.hardaway.wardrobe.impl.cosmetic.asset.texture;
 
 import com.hypixel.hytale.codec.lookup.BuilderCodecMapCodec;
 
@@ -8,7 +8,7 @@ public interface TextureConfig {
 
     BuilderCodecMapCodec<TextureConfig> CODEC = new BuilderCodecMapCodec<>("Type", true);
 
-    String getTexture(@Nullable String variant);
+    String getTexture(@Nullable String textureId);
 
     @Nullable
     default String getGradientSet() {

@@ -1,23 +1,11 @@
 package dev.hardaway.wardrobe.impl.cosmetic.asset;
 
-import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
-import com.hypixel.hytale.protocol.ItemArmorSlot;
-import com.hypixel.hytale.server.core.asset.type.item.config.ItemArmor;
-import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
-import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.ItemStack;
-import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
-import dev.hardaway.wardrobe.api.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.PlayerCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticAsset;
-import dev.hardaway.wardrobe.api.cosmetic.asset.CosmeticGroup;
-import dev.hardaway.wardrobe.api.cosmetic.asset.config.TextureConfig;
+import dev.hardaway.wardrobe.impl.cosmetic.asset.texture.TextureConfig;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 // Style
 // Cover, Half, Default
