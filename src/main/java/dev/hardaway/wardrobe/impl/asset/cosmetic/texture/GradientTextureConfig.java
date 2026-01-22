@@ -6,9 +6,14 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.server.core.asset.common.CommonAssetValidator;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticAssetValidator;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
+import com.hypixel.hytale.server.core.cosmetics.CosmeticsModule;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GradientTextureConfig implements TextureConfig {
 
@@ -16,12 +21,12 @@ public class GradientTextureConfig implements TextureConfig {
             .append(new KeyedCodec<>("GradientSet", Codec.STRING, true),
                     (t, value) -> t.gradientSet = value,
                     t -> t.gradientSet
-            ).addValidator(new CosmeticAssetValidator(CosmeticType.GRADIENT_SETS)).add()
+            ).add()
 
             .append(new KeyedCodec<>("GrayscaleTexture", Codec.STRING, true),
                     (t, value) -> t.grayscaleTexture = value,
                     t -> t.grayscaleTexture
-            ).addValidator(CommonAssetValidator.TEXTURE_CHARACTER_ATTACHMENT).add()
+            ).add()
             .build();
 
     private String gradientSet;
@@ -45,5 +50,10 @@ public class GradientTextureConfig implements TextureConfig {
     @Override
     public String getGradientSet() {
         return gradientSet;
+    }
+
+    @Override
+    public String[] collectVariants() {
+        return CosmeticsModule.get().getRegistry().getGradientSets().get(this.getGradientSet()).getGradients().keySet().toArray(String[]::new);
     }
 }

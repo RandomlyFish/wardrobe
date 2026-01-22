@@ -1,8 +1,11 @@
 package dev.hardaway.wardrobe.api.cosmetic;
 
+import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
+import dev.hardaway.wardrobe.impl.asset.CosmeticCategoryAsset;
+
 public interface WardrobeCategory extends WardrobeTab {
 
-    default String getTranslationKey() {
-        return "wardrobe.categories." + this.getId() + ".name";
+    static DefaultAssetMap<String, ? extends WardrobeCategory> getAssetMap() {
+        return CosmeticCategoryAsset.getAssetMap(); // TODO: registry
     }
 }

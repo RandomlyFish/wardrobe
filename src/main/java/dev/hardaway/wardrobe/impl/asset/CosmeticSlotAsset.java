@@ -12,16 +12,17 @@ import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import dev.hardaway.wardrobe.WardrobePlugin;
+import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCategory;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public class CosmeticGroupAsset implements WardrobeGroup, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticGroupAsset>> {
+public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticSlotAsset>> {
 
-    public static final AssetCodec<String, CosmeticGroupAsset> CODEC = AssetBuilderCodec
-            .builder(CosmeticGroupAsset.class, CosmeticGroupAsset::new,
+    public static final AssetCodec<String, CosmeticSlotAsset> CODEC = AssetBuilderCodec
+            .builder(CosmeticSlotAsset.class, CosmeticSlotAsset::new,
                     Codec.STRING,
                     (t, k) -> t.id = k,
                     (t) -> t.id,
@@ -29,9 +30,9 @@ public class CosmeticGroupAsset implements WardrobeGroup, JsonAssetWithMap<Strin
                     (asset) -> asset.data
             )
 
-            .append(new KeyedCodec<>("NameKey", Codec.STRING),
-                    (t, value) -> t.nameKey = value,
-                    t -> t.nameKey
+            .append(new KeyedCodec<>("TranslationProperties", WardrobeTranslationProperties.CODEC),
+                    (t, value) -> t.translationProperties = value,
+                    t -> t.translationProperties
             ).add()
 
             .append(new KeyedCodec<>("CosmeticType", new EnumCodec<>(CosmeticType.class)),
@@ -62,16 +63,16 @@ public class CosmeticGroupAsset implements WardrobeGroup, JsonAssetWithMap<Strin
             ).add().build();
 
 
-    public static final Supplier<AssetStore<String, CosmeticGroupAsset, DefaultAssetMap<String, CosmeticGroupAsset>>> ASSET_STORE = WardrobePlugin.createAssetStore(CosmeticGroupAsset.class);
+    public static final Supplier<AssetStore<String, CosmeticSlotAsset, DefaultAssetMap<String, CosmeticSlotAsset>>> ASSET_STORE = WardrobePlugin.createAssetStore(CosmeticSlotAsset.class);
 
-    public static DefaultAssetMap<String, CosmeticGroupAsset> getAssetMap() {
+    public static DefaultAssetMap<String, CosmeticSlotAsset> getAssetMap() {
         return ASSET_STORE.get().getAssetMap();
     }
 
     private String id;
     private AssetExtraInfo.Data data;
 
-    protected String nameKey;
+    private WardrobeTranslationProperties translationProperties;
 
     private CosmeticType cosmeticType;
 
@@ -86,12 +87,8 @@ public class CosmeticGroupAsset implements WardrobeGroup, JsonAssetWithMap<Strin
     }
 
     @Override
-    public String getTranslationKey() {
-        if (this.nameKey != null) {
-            return nameKey;
-        }
-
-        return WardrobeGroup.super.getTranslationKey();
+    public WardrobeTranslationProperties getTranslationProperties() {
+        return translationProperties;
     }
 
     @Nullable
@@ -121,5 +118,10 @@ public class CosmeticGroupAsset implements WardrobeGroup, JsonAssetWithMap<Strin
     @Override
     public int getTabOrder() {
         return order;
+    }
+
+    @Override
+    public String getPermissionNode() {
+        return "";
     }
 }

@@ -13,13 +13,14 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.ser
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import dev.hardaway.wardrobe.api.cosmetic.CosmeticAppearance;
 import dev.hardaway.wardrobe.impl.asset.CosmeticCategoryAsset;
-import dev.hardaway.wardrobe.impl.asset.CosmeticGroupAsset;
+import dev.hardaway.wardrobe.impl.asset.CosmeticSlotAsset;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.HaircutCosmetic;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.HeadAccessoryCosmetic;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.ModelAttachmentCosmetic;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.PlayerModelCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.appearance.ModelCosmeticAppearance;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.appearance.VariantCosmeticAppearance;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.GradientTextureConfig;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.StaticTextureConfig;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.TextureConfig;
@@ -57,9 +58,11 @@ public class WardrobePlugin extends JavaPlugin {
 
         this.getCodecRegistry(CosmeticAsset.CODEC)
                 .register(Priority.DEFAULT, "ModelAttachment", ModelAttachmentCosmetic.class, ModelAttachmentCosmetic.CODEC)
-                .register(Priority.NORMAL, "PlayerModel", PlayerModelCosmetic.class, PlayerModelCosmetic.CODEC)
-                .register(Priority.NORMAL, "Haircut", HaircutCosmetic.class, HaircutCosmetic.CODEC)
-                .register(Priority.NORMAL, "HeadAccessory", HeadAccessoryCosmetic.class, HeadAccessoryCosmetic.CODEC);
+                .register(Priority.NORMAL, "PlayerModel", PlayerModelCosmetic.class, PlayerModelCosmetic.CODEC);
+
+        this.getCodecRegistry(CosmeticAppearance.CODEC)
+                .register(Priority.DEFAULT, "Model", ModelCosmeticAppearance.class, ModelCosmeticAppearance.CODEC)
+                .register(Priority.NORMAL, "Variant", VariantCosmeticAppearance.class, VariantCosmeticAppearance.CODEC);
 
         AssetRegistry.register(HytaleAssetStore.builder(CosmeticCategoryAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Categories")
@@ -67,10 +70,10 @@ public class WardrobePlugin extends JavaPlugin {
                 .setKeyFunction(CosmeticCategoryAsset::getId)
                 .build()
         );
-        AssetRegistry.register(HytaleAssetStore.builder(CosmeticGroupAsset.class, new DefaultAssetMap<>())
+        AssetRegistry.register(HytaleAssetStore.builder(CosmeticSlotAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Groups")
-                .setCodec(CosmeticGroupAsset.CODEC)
-                .setKeyFunction(CosmeticGroupAsset::getId)
+                .setCodec(CosmeticSlotAsset.CODEC)
+                .setKeyFunction(CosmeticSlotAsset::getId)
                 .loadsAfter(CosmeticCategoryAsset.class)
                 .build()
         );
@@ -78,7 +81,7 @@ public class WardrobePlugin extends JavaPlugin {
                 .setPath("Wardrobe/Cosmetics")
                 .setCodec(CosmeticAsset.CODEC)
                 .setKeyFunction(CosmeticAsset::getId)
-                .loadsAfter(ModelAsset.class, CosmeticGroupAsset.class)
+                .loadsAfter(ModelAsset.class, CosmeticSlotAsset.class)
                 .build()
         );
 

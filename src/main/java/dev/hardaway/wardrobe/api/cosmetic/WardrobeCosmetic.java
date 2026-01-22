@@ -1,24 +1,28 @@
 package dev.hardaway.wardrobe.api.cosmetic;
 
+import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import dev.hardaway.wardrobe.api.WardrobePermissionHolder;
 import dev.hardaway.wardrobe.api.WardrobeTranslatable;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-
-import java.util.List;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 
 public interface WardrobeCosmetic extends WardrobePermissionHolder, WardrobeTranslatable {
 
-    String getId();
-
-    default String getTranslationKey() {
-        return "wardrobe.cosmetics." + this.getId() + ".name";
+    static DefaultAssetMap<String, ? extends WardrobeCosmetic> getAssetMap() {
+        return CosmeticAsset.getAssetMap(); // TODO: registry
     }
 
-    WardrobeGroup getGroup();
+    String getId();
+
+    WardrobeVisibility getWardrobeVisibility();
+
+    String getCosmeticSlotId();
+
+    String[] getRequiredCosmeticIds();
+
+    String[] getHiddenCosmeticSlotIds();
 
     String getIconPath();
 
-    void applyCosmetic(WardrobeContext context, WardrobeGroup group, PlayerCosmetic playerCosmetic);
-
-    List<String> getVariants();
+    void applyCosmetic(WardrobeContext context, WardrobeCosmeticSlot slot, PlayerCosmetic playerCosmetic);
 }

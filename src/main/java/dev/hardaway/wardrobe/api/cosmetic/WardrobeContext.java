@@ -16,13 +16,13 @@ public interface WardrobeContext {
     Collection<PlayerCosmetic> getCosmetics();
 
     @Nullable
-    PlayerCosmetic getCosmetic(WardrobeGroup group);
+    PlayerCosmetic getCosmetic(WardrobeCosmeticSlot group);
 
-    Map<WardrobeGroup, ModelAttachment> getModelAttachments();
+    Map<WardrobeCosmeticSlot, ModelAttachment> getModelAttachments();
 
-    void addAttachment(WardrobeGroup group, ModelAttachment attachment);
+    void addAttachment(WardrobeCosmeticSlot group, ModelAttachment attachment);
 
-    void hideGroup(WardrobeGroup group);
+    void hideGroup(String group);
 
     Model getPlayerModel();
 

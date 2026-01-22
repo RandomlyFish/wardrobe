@@ -10,6 +10,7 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.validation.Validators;
 import dev.hardaway.wardrobe.WardrobePlugin;
+import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCategory;
 
 import java.util.function.Supplier;
@@ -25,9 +26,9 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
                     (asset) -> asset.data
             )
 
-            .append(new KeyedCodec<>("NameKey", Codec.STRING),
-                    (t, value) -> t.nameKey = value,
-                    t -> t.nameKey
+            .append(new KeyedCodec<>("TranslationProperties", WardrobeTranslationProperties.CODEC),
+                    (t, value) -> t.translationProperties = value,
+                    t -> t.translationProperties
             ).add()
 
             .append(new KeyedCodec<>("Icon", Codec.STRING, true),
@@ -56,7 +57,7 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
     private String id;
     private AssetExtraInfo.Data data;
 
-    protected String nameKey;
+    private WardrobeTranslationProperties translationProperties;
 
     private String icon;
     private String selectedIcon;
@@ -68,12 +69,8 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
     }
 
     @Override
-    public String getTranslationKey() {
-        if (this.nameKey != null) {
-            return nameKey;
-        }
-
-        return WardrobeCategory.super.getTranslationKey();
+    public WardrobeTranslationProperties getTranslationProperties() {
+       return translationProperties;
     }
 
     @Override
@@ -89,5 +86,10 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
     @Override
     public int getTabOrder() {
         return order;
+    }
+
+    @Override
+    public String getPermissionNode() {
+        return "";
     }
 }

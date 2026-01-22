@@ -1,95 +1,46 @@
 package dev.hardaway.wardrobe.impl.asset.cosmetic;
 
-import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.protocol.Cosmetic;
-import com.hypixel.hytale.server.core.asset.type.item.config.ItemArmor;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
-import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
-import com.hypixel.hytale.server.core.cosmetics.CosmeticsModule;
-import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.ItemStack;
-import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
+import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
+import dev.hardaway.wardrobe.api.cosmetic.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeVisibility;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.GradientTextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.CosmeticAppearance;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.TextureConfig;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.VariantTextureConfig;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-
-// HiddenCosmeticGroups[] - array of CosmeticGroups that will be hidden when this cosmetic is worn
-public class ModelAttachmentCosmetic extends CosmeticAsset {
+public class ModelAttachmentCosmetic extends CosmeticAsset implements AppearanceCosmetic {
 
     public static final BuilderCodec<ModelAttachmentCosmetic> CODEC = BuilderCodec.builder(ModelAttachmentCosmetic.class, ModelAttachmentCosmetic::new, CosmeticAsset.ABSTRACT_CODEC)
-            .append(new KeyedCodec<>("Model", Codec.STRING, true),
-                    (t, value) -> t.model = value,
-                    t -> t.model
-            ).add()
-            .append(new KeyedCodec<>("TextureConfig", TextureConfig.CODEC, true),
-                    (t, value) -> t.textureConfig = value,
-                    t -> t.textureConfig
+            .append(new KeyedCodec<>("Appearance", CosmeticAppearance.CODEC, true),
+                    (t, value) -> t.appearance = value,
+                    t -> t.appearance
             ).add()
             .build();
 
-    private String model;
-    private TextureConfig textureConfig;
+    private CosmeticAppearance appearance;
 
     protected ModelAttachmentCosmetic() {
     }
 
-    public ModelAttachmentCosmetic(String id, String nameKey, String group, String icon, @Nullable String permissionNode, String model, TextureConfig textureConfig) {
-        super(id, nameKey, group, icon, permissionNode);
-        this.model = model;
-        this.textureConfig = textureConfig;
-    }
-
-    @Nonnull
-    public String getModel() {
-        return model;
-    }
-
-    @Nonnull
-    public TextureConfig getTextureConfig() {
-        return textureConfig;
+    public ModelAttachmentCosmetic(String id, WardrobeTranslationProperties translationProperties, WardrobeVisibility wardrobeVisibility, String cosmeticSlotId, String iconPath, String permissionNode, CosmeticAppearance appearance) {
+        super(id, translationProperties, wardrobeVisibility, cosmeticSlotId, iconPath, permissionNode);
+        this.appearance = appearance;
     }
 
     @Override
-    public void applyCosmetic(WardrobeContext context, WardrobeGroup group, PlayerCosmetic playerCosmetic) {
-        TextureConfig textureConfig = this.getTextureConfig();
+    public CosmeticAppearance getAppearance() {
+        return appearance;
+    }
 
-        Player player = context.getPlayer();
-        if (group.getHytaleCosmeticType() != null) {
-            ItemContainer armorContainer = player.getInventory().getArmor();
-            for (short i = 0; i < armorContainer.getCapacity(); i++) {
-                ItemStack stack = armorContainer.getItemStack(i);
-                if (stack == null || stack.isEmpty()) continue;
-
-                ItemArmor armor = stack.getItem().getArmor();
-                if (armor == null)
-                    return;
-
-                com.hypixel.hytale.protocol.ItemArmor protocolArmor = armor.toPacket();
-                if (protocolArmor.cosmeticsToHide == null)
-                    return;
-
-                for (Cosmetic cosmetic : protocolArmor.cosmeticsToHide) {
-                    CosmeticType type = protocolCosmeticToCosmeticType(cosmetic);
-                    if (type == null)
-                        continue;
-
-                    if (group.getHytaleCosmeticType().equals(type))
-                        return; // Cosmetic is hidden
-                }
-            }
-        }
-
-        context.addAttachment(group, new ModelAttachment(
-                this.getModel(),
+    @Override
+    public void applyCosmetic(WardrobeContext context, WardrobeCosmeticSlot slot, PlayerCosmetic playerCosmetic) {
+        TextureConfig textureConfig = this.getAppearance().getTextureConfig(playerCosmetic.getVariantId());
+        context.addAttachment(slot, new ModelAttachment(
+                this.getAppearance().getModel(playerCosmetic.getVariantId()),
                 textureConfig.getTexture(playerCosmetic.getTextureId()),
                 textureConfig.getGradientSet(),
                 textureConfig.getGradientSet() != null ? playerCosmetic.getTextureId() : null,
@@ -97,36 +48,4 @@ public class ModelAttachmentCosmetic extends CosmeticAsset {
         ));
     }
 
-    @Override
-    public List<String> getVariants() {
-        if (textureConfig instanceof VariantTextureConfig variantTextureConfig) {
-            return variantTextureConfig.getVariants().keySet().stream().toList();
-        }
-
-        if (textureConfig instanceof GradientTextureConfig gradientTextureConfig) {
-            return CosmeticsModule.get().getRegistry().getGradientSets().get(gradientTextureConfig.getGradientSet()).getGradients().keySet().stream().toList();
-        }
-
-        return List.of();
-    }
-
-    @Nullable
-    private static CosmeticType protocolCosmeticToCosmeticType(Cosmetic cosmetic) {
-        return switch (cosmetic) {
-            case Haircut -> CosmeticType.HAIRCUTS;
-            case FacialHair -> CosmeticType.FACIAL_HAIR;
-            case Undertop -> CosmeticType.UNDERTOPS;
-            case Overtop -> CosmeticType.OVERTOPS;
-            case Pants -> CosmeticType.PANTS;
-            case Overpants -> CosmeticType.OVERPANTS;
-            case Shoes -> CosmeticType.SHOES;
-            case Gloves -> CosmeticType.GLOVES;
-            case Cape -> CosmeticType.CAPES;
-            case HeadAccessory -> CosmeticType.HEAD_ACCESSORY;
-            case FaceAccessory -> CosmeticType.FACE_ACCESSORY;
-            case EarAccessory -> CosmeticType.EAR_ACCESSORY;
-            case Ear -> CosmeticType.EARS;
-            case null -> null;
-        };
-    }
 }

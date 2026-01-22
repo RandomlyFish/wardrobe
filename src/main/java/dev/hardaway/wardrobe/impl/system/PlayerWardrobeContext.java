@@ -4,7 +4,7 @@ import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 
 import javax.annotation.Nullable;
@@ -18,10 +18,10 @@ public class PlayerWardrobeContext implements WardrobeContext {
     private final Player player;
     private final PlayerWardrobeComponent component;
     private Model playerModel;
-    private final Map<WardrobeGroup, ModelAttachment> attachments;
-    protected final Set<WardrobeGroup> groupsToHide;
+    private final Map<WardrobeCosmeticSlot, ModelAttachment> attachments;
+    protected final Set<String> groupsToHide;
 
-    public PlayerWardrobeContext(Player player, PlayerWardrobeComponent component, Model playerModel, Map<WardrobeGroup, ModelAttachment> attachments, Set<WardrobeGroup> groupsToHide) {
+    public PlayerWardrobeContext(Player player, PlayerWardrobeComponent component, Model playerModel, Map<WardrobeCosmeticSlot, ModelAttachment> attachments, Set<String> groupsToHide) {
         this.player = player;
         this.component = component;
         this.playerModel = playerModel;
@@ -38,21 +38,21 @@ public class PlayerWardrobeContext implements WardrobeContext {
     }
 
     @Nullable
-    public PlayerCosmetic getCosmetic(WardrobeGroup group) {
+    public PlayerCosmetic getCosmetic(WardrobeCosmeticSlot group) {
         return this.component.getCosmetic(group);
     }
 
 
-    public Map<WardrobeGroup, ModelAttachment> getModelAttachments() {
+    public Map<WardrobeCosmeticSlot, ModelAttachment> getModelAttachments() {
         return Collections.unmodifiableMap(this.attachments);
     }
 
-    public void addAttachment(WardrobeGroup group, ModelAttachment attachment) {
+    public void addAttachment(WardrobeCosmeticSlot group, ModelAttachment attachment) {
         this.attachments.put(group, attachment);
     }
 
     @Override
-    public void hideGroup(WardrobeGroup group) {
+    public void hideGroup(String group) {
         this.groupsToHide.add(group);
     }
 

@@ -7,9 +7,7 @@ import java.util.UUID;
 
 public interface WardrobePermissionHolder {
 
-    default String getPermissionNode() {
-        return "";
-    }
+    String getPermissionNode();
 
     default boolean hasPermission(@Nonnull UUID uuid) {
         String permissionNode = this.getPermissionNode();

@@ -8,36 +8,54 @@ import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.validation.Validators;
 import dev.hardaway.wardrobe.WardrobePlugin;
+import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
-import dev.hardaway.wardrobe.impl.asset.CosmeticGroupAsset;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeVisibility;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-// RequiredCosmetics[] - array of cosmetics that must be worn for this cosmetic to appear wearable
 public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticAsset>> {
 
     public static final BuilderCodec<CosmeticAsset> ABSTRACT_CODEC = BuilderCodec.abstractBuilder(CosmeticAsset.class)
-            .append(new KeyedCodec<>("NameKey", Codec.STRING),
-                    (t, value) -> t.nameKey = value,
-                    t -> t.nameKey
+            .append(new KeyedCodec<>("TranslationProperties", WardrobeTranslationProperties.CODEC, true),
+                    (t, value) -> t.translationProperties = value,
+                    t -> t.translationProperties
             ).add()
-            .append(new KeyedCodec<>("Group", Codec.STRING),
-                    (t, value) -> t.group = value,
-                    t -> t.group
-            ).addValidator(Validators.nonEmptyString()).add()
-            .append(new KeyedCodec<>("Icon", Codec.STRING),
-                    (t, value) -> t.icon = value,
-                    t -> t.icon
+            .append(new KeyedCodec<>("CosmeticSlot", Codec.STRING, true),
+                    (t, value) -> t.cosmeticSlotId = value,
+                    t -> t.cosmeticSlotId
             ).add()
-            .append(new KeyedCodec<>("PermissionNode", Codec.STRING),
+
+            .append(new KeyedCodec<>("WardrobeVisibility", new EnumCodec<>(WardrobeVisibility.class)),
+                    (t, value) -> t.wardrobeVisibility = value,
+                    t -> t.wardrobeVisibility
+            ).add()
+
+            .append(new KeyedCodec<>("IconPath", Codec.STRING),
+                    (t, value) -> t.iconPath = value,
+                    t -> t.iconPath
+            ).add()
+
+            .append(new KeyedCodec<>("RequiresPermission", Codec.STRING),
                     (t, value) -> t.permissionNode = value,
                     t -> t.permissionNode
             ).add()
+
+            .append(new KeyedCodec<>("RequiredCosmetics", Codec.STRING_ARRAY),
+                    (t, value) -> t.requiredCosmetics = value,
+                    t -> t.requiredCosmetics
+            ).add()
+
+            .append(new KeyedCodec<>("HiddenCosmeticSlots", Codec.STRING_ARRAY),
+                    (t, value) -> t.hiddenCosmeticSlots = value,
+                    t -> t.hiddenCosmeticSlots
+            ).add()
+
             .build();
 
     public static final AssetCodecMapCodec<String, CosmeticAsset> CODEC = new AssetCodecMapCodec<>(
@@ -50,22 +68,26 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
         return ASSET_STORE.get().getAssetMap();
     }
 
-    protected String id;
-    protected AssetExtraInfo.Data data;
+    private String id;
+    private AssetExtraInfo.Data data;
 
-    protected String nameKey;
-    protected String group;
-    protected String icon;
-    protected String permissionNode;
+    private WardrobeTranslationProperties translationProperties;
+    private WardrobeVisibility wardrobeVisibility = WardrobeVisibility.ALWAYS;
+    private String cosmeticSlotId;
+    private String iconPath;
+    private String permissionNode = "";
+    private String[] requiredCosmetics = new String[0];
+    private String[] hiddenCosmeticSlots = new String[0];
 
     protected CosmeticAsset() {
     }
 
-    public CosmeticAsset(String id, String nameKey, String group, String icon, String permissionNode) {
+    public CosmeticAsset(String id, WardrobeTranslationProperties translationProperties, WardrobeVisibility wardrobeVisibility, String cosmeticSlotId, String iconPath, String permissionNode) {
         this.id = id;
-        this.nameKey = nameKey;
-        this.group = group;
-        this.icon = icon;
+        this.translationProperties = translationProperties;
+        this.wardrobeVisibility = wardrobeVisibility;
+        this.cosmeticSlotId = cosmeticSlotId;
+        this.iconPath = iconPath;
         this.permissionNode = permissionNode;
     }
 
@@ -75,26 +97,33 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
     }
 
     @Override
-    public String getTranslationKey() {
-        if (this.nameKey != null) {
-            return nameKey;
-        }
+    public WardrobeTranslationProperties getTranslationProperties() {
+        return translationProperties;
+    }
 
-        return WardrobeCosmetic.super.getTranslationKey();
+    @Override
+    public WardrobeVisibility getWardrobeVisibility() {
+        return wardrobeVisibility;
     }
 
     @Nonnull
-    public WardrobeGroup getGroup() {
-        WardrobeGroup group = CosmeticGroupAsset.getAssetMap().getAsset(this.group);
-        if (group == null) {
-            throw new IllegalStateException("Group not found: " + this.group);
-        }
-        return group;
+    public String getCosmeticSlotId() {
+        return cosmeticSlotId;
+    }
+
+    @Override
+    public String[] getRequiredCosmeticIds() {
+        return requiredCosmetics;
+    }
+
+    @Override
+    public String[] getHiddenCosmeticSlotIds() {
+        return hiddenCosmeticSlots;
     }
 
     @Override
     public String getIconPath() {
-        return icon;
+        return iconPath;
     }
 
     @Nullable

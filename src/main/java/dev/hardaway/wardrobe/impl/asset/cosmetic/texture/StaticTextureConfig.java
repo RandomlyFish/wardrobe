@@ -7,6 +7,8 @@ import com.hypixel.hytale.server.core.asset.common.CommonAssetValidator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Set;
 
 public class StaticTextureConfig implements TextureConfig {
 
@@ -14,7 +16,7 @@ public class StaticTextureConfig implements TextureConfig {
             .append(new KeyedCodec<>("Texture", Codec.STRING),
                     (t, value) -> t.texture = value,
                     t -> t.texture
-            ).addValidator(CommonAssetValidator.TEXTURE_CHARACTER_ATTACHMENT).add()
+            ).add()
 
             .build();
 
@@ -23,5 +25,10 @@ public class StaticTextureConfig implements TextureConfig {
     @Nonnull
     public String getTexture(@Nullable String textureId) {
         return texture;
+    }
+
+    @Override
+    public String[] collectVariants() {
+        return new String[0];
     }
 }

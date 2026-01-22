@@ -5,7 +5,6 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 
@@ -14,14 +13,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PlayerWardrobeComponent implements PlayerWardrobe, Component<EntityStore> {
 
     public static final BuilderCodec<PlayerWardrobeComponent> CODEC = BuilderCodec.builder(PlayerWardrobeComponent.class, PlayerWardrobeComponent::new)
-            .append(new KeyedCodec<>("Cosmetics", new MapCodec<>(CosmeticSaveData.CODEC, HashMap::new, false), true), (t, value) -> t.cosmetics = value, t -> t.cosmetics).add()
+            .append(new KeyedCodec<>("Cosmetics", new MapCodec<>(CosmeticSaveData.CODEC, HashMap::new, false), true),
+                    PlayerWardrobeComponent::setCosmetics,
+                    t -> t.cosmetics
+            ).add()
             .build();
 
     private Map<String, CosmeticSaveData> cosmetics;
+    private Set<String> cosmeticIdSet;
     private boolean dirty;
 
     public PlayerWardrobeComponent() {
@@ -29,8 +34,8 @@ public class PlayerWardrobeComponent implements PlayerWardrobe, Component<Entity
     }
 
     protected PlayerWardrobeComponent(Map<String, CosmeticSaveData> cosmetics) {
-        this.cosmetics = cosmetics;
-        this.dirty = true;
+        this.setCosmetics(cosmetics);
+        this.rebuild();
     }
 
     @Override
@@ -49,15 +54,38 @@ public class PlayerWardrobeComponent implements PlayerWardrobe, Component<Entity
         return Collections.unmodifiableCollection(this.cosmetics.values());
     }
 
-    @Nullable
-    @Override
-    public PlayerCosmetic getCosmetic(WardrobeGroup group) {
-        return cosmetics.get(group.getId());
+    private void setCosmetics(Map<String, CosmeticSaveData> cosmeticMap) {
+        this.cosmetics = cosmeticMap;
+        this.cosmeticIdSet = this.cosmetics.values().stream().map(CosmeticSaveData::getCosmeticId).collect(Collectors.toSet());
     }
 
     @Override
-    public void setCosmetic(WardrobeGroup group, @Nullable PlayerCosmetic cosmetic) {
-        this.cosmetics.compute(group.getId(), (_, _) -> cosmetic == null ? null : new CosmeticSaveData(cosmetic.getCosmetic().getId(), cosmetic.getTextureId()));
+    public boolean hasCosmetic(String id) {
+        return cosmeticIdSet.contains(id);
+    }
+
+    @Override
+    public PlayerCosmetic getCosmetic(String slot) {
+        return cosmetics.get(slot);
+    }
+
+    @Override
+    public void setCosmetic(String slot, PlayerCosmetic cosmetic) {
+        if (cosmetic == null) {
+            PlayerCosmetic lastCosmetic = this.cosmetics.remove(slot);
+            if (lastCosmetic != null) {
+                this.cosmeticIdSet.remove(lastCosmetic.getCosmeticId());
+            }
+            return;
+        }
+
+        // TODO: fix api so i dont have to do this
+        CosmeticSaveData cosmeticSaveData = new CosmeticSaveData(cosmetic.getCosmeticId(), cosmetic.getVariantId());
+        PlayerCosmetic lastCosmetic = this.cosmetics.put(slot, cosmeticSaveData);
+        if (lastCosmetic != null) {
+            this.cosmeticIdSet.remove(lastCosmetic.getCosmeticId());
+        }
+        this.cosmeticIdSet.add(cosmetic.getCosmeticId());
     }
 
     @Override

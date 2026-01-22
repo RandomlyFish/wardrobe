@@ -14,7 +14,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.system.CosmeticSaveData;
 import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
@@ -45,20 +45,20 @@ public class WardrobeWearCommand extends AbstractPlayerCommand {
             return;
         }
 
-        String variant = null;
-        if (variantArg.provided(context)) {
-            String provided = variantArg.get(context);
-            if (!cosmetic.getVariants().contains(provided)) {
-                context.sendMessage(Message.raw("Failed to find a variant for this cosmetic with id \"{id}\"!").param("id", provided));
-                return;
-            } else variant = provided;
-        }
-
-        if (variant == null && !cosmetic.getVariants().isEmpty()) variant = cosmetic.getVariants().getFirst();
-
-        WardrobeGroup cosmeticGroup = cosmetic.getGroup();
-
-        wardrobeComponent.setCosmetic(cosmeticGroup, new CosmeticSaveData(id, variant));
-        context.sendMessage(Message.raw("Cosmetic worn"));
+//        String variant = null;
+//        if (variantArg.provided(context)) {
+//            String provided = variantArg.get(context);
+//            if (!cosmetic.getVariants().contains(provided)) {
+//                context.sendMessage(Message.raw("Failed to find a variant for this cosmetic with id \"{id}\"!").param("id", provided));
+//                return;
+//            } else variant = provided;
+//        }
+//
+//        if (variant == null && !cosmetic.getVariants().isEmpty()) variant = cosmetic.getVariants().getFirst();
+//
+//        WardrobeCosmeticSlot cosmeticGroup = cosmetic.getCosmeticSlotId();
+//
+//        wardrobeComponent.setCosmetic(cosmeticGroup, new CosmeticSaveData(id, variant));
+//        context.sendMessage(Message.raw("Cosmetic worn"));
     }
 }

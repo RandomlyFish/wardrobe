@@ -1,61 +1,47 @@
 package dev.hardaway.wardrobe.impl.asset.cosmetic;
 
-import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAsset;
-import com.hypixel.hytale.server.core.cosmetics.CosmeticsModule;
+import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
+import dev.hardaway.wardrobe.api.cosmetic.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeVisibility;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.GradientTextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.CosmeticAppearance;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.TextureConfig;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.VariantTextureConfig;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-
-public class PlayerModelCosmetic extends CosmeticAsset {
+public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosmetic {
 
     public static final BuilderCodec<PlayerModelCosmetic> CODEC = BuilderCodec.builder(PlayerModelCosmetic.class, PlayerModelCosmetic::new, CosmeticAsset.ABSTRACT_CODEC)
-            .append(new KeyedCodec<>("ModelAsset", Codec.STRING, true),
-                    (t, value) -> t.modelAsset = value,
-                    t -> t.modelAsset
-            ).add()
-            .append(new KeyedCodec<>("TextureConfig", TextureConfig.CODEC, true),
-                    (t, value) -> t.textureConfig = value,
-                    t -> t.textureConfig
+            .append(new KeyedCodec<>("Appearance", CosmeticAppearance.CODEC, true),
+                    (t, value) -> t.appearance = value,
+                    t -> t.appearance
             ).add()
             .build();
 
-    private String modelAsset;
-    private TextureConfig textureConfig;
+    private CosmeticAppearance appearance;
 
     private PlayerModelCosmetic() {
     }
 
-    // Required Groups (underwear, face, mouth, ears, eyes)
-    public PlayerModelCosmetic(String id, String nameKey, String group, String icon, @Nullable String permissionNode, String modelAsset, TextureConfig textureConfig) {
-        super(id, nameKey, group, icon, permissionNode);
-        this.modelAsset = modelAsset;
-        this.textureConfig = textureConfig;
-    }
-
-    @Nonnull
-    public String getModelAsset() {
-        return modelAsset;
-    }
-
-    @Nonnull
-    public TextureConfig getTextureConfig() {
-        return textureConfig;
+    public PlayerModelCosmetic(String id, WardrobeTranslationProperties translationProperties, WardrobeVisibility wardrobeVisibility, String cosmeticSlotId, String iconPath, String permissionNode, CosmeticAppearance appearance) {
+        super(id, translationProperties, wardrobeVisibility, cosmeticSlotId, iconPath, permissionNode);
+        this.appearance = appearance;
     }
 
     @Override
-    public void applyCosmetic(WardrobeContext context, WardrobeGroup group, PlayerCosmetic playerCosmetic) {
-        ModelAsset modelAsset = ModelAsset.getAssetMap().getAsset(this.getModelAsset());
+    public CosmeticAppearance getAppearance() {
+        return appearance;
+    }
+
+    @Override
+    public void applyCosmetic(WardrobeContext context, WardrobeCosmeticSlot slot, PlayerCosmetic playerCosmetic) {
+        ModelAsset modelAsset = ModelAsset.getAssetMap().getAsset(this.getAppearance().getModel(playerCosmetic.getVariantId()));
+        TextureConfig textureConfig = this.getAppearance().getTextureConfig(playerCosmetic.getVariantId());
+
         Model model = Model.createUnitScaleModel(modelAsset);
         context.setPlayerModel(new Model(
                 model.getModelAssetId(),
@@ -64,9 +50,9 @@ public class PlayerModelCosmetic extends CosmeticAsset {
                 model.getAttachments(),
                 model.getBoundingBox(),
                 model.getModel(),
-                this.getTextureConfig().getTexture(playerCosmetic.getTextureId()),
-                this.getTextureConfig().getGradientSet(),
-                this.getTextureConfig().getGradientSet() != null ? playerCosmetic.getTextureId() : null,
+                textureConfig.getTexture(playerCosmetic.getTextureId()),
+                textureConfig.getGradientSet(),
+                textureConfig.getGradientSet() != null ? playerCosmetic.getTextureId() : null,
                 model.getEyeHeight(),
                 model.getCrouchOffset(),
                 model.getAnimationSetMap(),
@@ -81,18 +67,4 @@ public class PlayerModelCosmetic extends CosmeticAsset {
         ));
         // TODO: warn if the model asset has attachments? they will be removed!
     }
-
-    @Override
-    public List<String> getVariants() {
-        if (textureConfig instanceof VariantTextureConfig variantTextureConfig) {
-            return variantTextureConfig.getVariants().keySet().stream().toList();
-        }
-
-        if (textureConfig instanceof GradientTextureConfig gradientTextureConfig) {
-            return CosmeticsModule.get().getRegistry().getGradientSets().get(gradientTextureConfig.getGradientSet()).getGradients().keySet().stream().toList();
-        }
-
-        return List.of();
-    }
-
 }

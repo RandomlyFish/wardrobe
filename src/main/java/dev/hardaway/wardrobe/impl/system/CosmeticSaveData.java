@@ -32,12 +32,14 @@ public final class CosmeticSaveData implements PlayerCosmetic {
         this.variantId = variantId;
     }
 
-    public WardrobeCosmetic getCosmetic() {
-        WardrobeCosmetic cosmetic = CosmeticAsset.getAssetMap().getAsset(this.id);
-        if (cosmetic == null) {
-            throw new IllegalStateException("Cosmetic not found: " + this.id);
-        }
-        return cosmetic;
+    @Override
+    public String getCosmeticId() {
+        return id;
+    }
+
+    @Override
+    public String getVariantId() {
+        return "";
     }
 
     @Nullable

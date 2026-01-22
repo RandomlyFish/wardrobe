@@ -9,8 +9,11 @@ import com.hypixel.hytale.server.core.asset.common.CommonAssetValidator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class VariantTextureConfig implements TextureConfig {
 
@@ -31,16 +34,21 @@ public class VariantTextureConfig implements TextureConfig {
         return entry.getTexture();
     }
 
+    @Override
+    public String[] collectVariants() {
+        return this.variants.keySet().toArray(String[]::new);
+    }
+
     public static class Entry {
 
         public static final BuilderCodec<Entry> CODEC = BuilderCodec.builder(Entry.class, Entry::new)
                 .append(new KeyedCodec<>("Texture", Codec.STRING, true),
                         (t, value) -> t.texture = value, t -> t.texture
-                ).addValidator(CommonAssetValidator.TEXTURE_CHARACTER_ATTACHMENT).add()
+                ).add()
 
-                .append(new KeyedCodec<>("BaseColor", Codec.STRING_ARRAY, true),
+                .append(new KeyedCodec<>("WardrobeColor", Codec.STRING_ARRAY, true),
                         (t, value) -> t.baseColor = value, t -> t.baseColor
-                ).addValidator(Validators.nonEmptyArray()).addValidator(Validators.nonNullArrayElements()).add()
+                ).addValidator(Validators.nonNullArrayElements()).add()
 
                 .build();
 

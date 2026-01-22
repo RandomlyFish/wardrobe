@@ -14,8 +14,8 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeGroup;
-import dev.hardaway.wardrobe.impl.asset.CosmeticGroupAsset;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
+import dev.hardaway.wardrobe.impl.asset.CosmeticSlotAsset;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 
@@ -40,13 +40,14 @@ public class WardrobeRemoveCommand extends AbstractPlayerCommand {
         PlayerWardrobeComponent wardrobeComponent = store.ensureAndGetComponent(ref, this.playerWardrobeComponentType);
         String id = cosmeticArg.get(context);
 
-        WardrobeGroup group;
+        String group;
         if (isGroup.provided(context)) {
-            group = CosmeticGroupAsset.getAssetMap().getAsset(id);
-            if (group == null) {
+            if (!CosmeticSlotAsset.getAssetMap().getAssetMap().containsKey(id)) {
                 context.sendMessage(Message.raw("Failed to find cosmetic group with id \"{id}\"!").param("id", id));
                 return;
             }
+
+            group = id;
         } else {
             WardrobeCosmetic cosmetic = CosmeticAsset.getAssetMap().getAsset(id);
             if (cosmetic == null) {
@@ -54,10 +55,10 @@ public class WardrobeRemoveCommand extends AbstractPlayerCommand {
                 return;
             }
 
-            group = cosmetic.getGroup();
+            group = cosmetic.getCosmeticSlotId();
         }
 
-        wardrobeComponent.setCosmetic(group, null);
+        wardrobeComponent.removeCosmetic(group);
         context.sendMessage(Message.raw("Cosmetic removed"));
     }
 }
