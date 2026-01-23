@@ -4,6 +4,7 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
+import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
 import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
 import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
 
@@ -32,11 +33,21 @@ public class VariantCosmeticAppearance implements CosmeticAppearance {
         return variants.get(cosmeticVariantId).getTextureConfig();
     }
 
+    @Override
+    public String[] collectVariants() {
+        return this.variants.keySet().toArray(String[]::new);
+    }
+
     public static class Entry {
 
         public static final BuilderCodec<VariantCosmeticAppearance.Entry> CODEC = BuilderCodec.builder(VariantCosmeticAppearance.Entry.class, VariantCosmeticAppearance.Entry::new)
 
-                .append(new KeyedCodec<>("IconPath", Codec.STRING, true),
+                .append(new KeyedCodec<>("TranslationProperties", WardrobeTranslationProperties.CODEC, true),
+                        (t, value) -> t.translationProperties = value,
+                        t -> t.translationProperties
+                ).add()
+
+                .append(new KeyedCodec<>("Icon", Codec.STRING),
                         (t, value) -> t.iconPath = value, t -> t.iconPath
                 ).add()
 
@@ -50,9 +61,14 @@ public class VariantCosmeticAppearance implements CosmeticAppearance {
 
                 .build();
 
+        private WardrobeTranslationProperties translationProperties;
         private String iconPath;
         private String model;
         private TextureConfig textureConfig;
+
+        public WardrobeTranslationProperties getTranslationProperties() {
+            return translationProperties;
+        }
 
         public String getIconPath() {
             return iconPath;

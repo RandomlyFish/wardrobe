@@ -4,7 +4,7 @@
   },
   "CosmeticType": "EarAccessory",
   "Category": "Head",
-  "Icon": "Icons/Wardrobe/Groups/EarAccessory@2x.png",
-  "SelectedIcon": "Icons/Wardrobe/Groups/EarAccessorySelected@2x.png",
+  "Icon": "Icons/Wardrobe/Slots/EarAccessory@2x.png",
+  "SelectedIcon": "Icons/Wardrobe/Slots/EarAccessorySelected@2x.png",
   "Order": 6
 }

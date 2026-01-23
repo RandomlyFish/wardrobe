@@ -6,6 +6,8 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
 import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
 
+import javax.annotation.Nullable;
+
 public class ModelCosmeticAppearance implements CosmeticAppearance {
 
     public static final BuilderCodec<ModelCosmeticAppearance> CODEC = BuilderCodec.builder(ModelCosmeticAppearance.class, ModelCosmeticAppearance::new)
@@ -25,12 +27,17 @@ public class ModelCosmeticAppearance implements CosmeticAppearance {
     private TextureConfig textureConfig;
 
     @Override
-    public String getModel(String cosmeticVariantId) {
+    public String getModel(@Nullable String cosmeticVariantId) {
         return model;
     }
 
     @Override
-    public TextureConfig getTextureConfig(String cosmeticVariantId) {
+    public TextureConfig getTextureConfig(@Nullable String cosmeticVariantId) {
         return textureConfig;
+    }
+
+    @Override
+    public String[] collectVariants() {
+        return new String[0];
     }
 }

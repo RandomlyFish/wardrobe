@@ -6,6 +6,8 @@ import dev.hardaway.wardrobe.api.WardrobeTranslatable;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 
+import javax.annotation.Nullable;
+
 public interface WardrobeCosmetic extends WardrobePermissionHolder, WardrobeTranslatable {
 
     static DefaultAssetMap<String, ? extends WardrobeCosmetic> getAssetMap() {
@@ -22,6 +24,7 @@ public interface WardrobeCosmetic extends WardrobePermissionHolder, WardrobeTran
 
     String[] getHiddenCosmeticSlotIds();
 
+    @Nullable
     String getIconPath();
 
     void applyCosmetic(WardrobeContext context, WardrobeCosmeticSlot slot, PlayerCosmetic playerCosmetic);

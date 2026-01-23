@@ -4,7 +4,7 @@
   },
   "CosmeticType": "Undertops",
   "Category": "Torso",
-  "Icon": "Icons/Wardrobe/Groups/Undertop@2x.png",
-  "SelectedIcon": "Icons/Wardrobe/Groups/UndertopSelected@2x.png",
+  "Icon": "Icons/Wardrobe/Slots/Undertop@2x.png",
+  "SelectedIcon": "Icons/Wardrobe/Slots/UndertopSelected@2x.png",
   "Order": 0
 }

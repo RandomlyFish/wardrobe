@@ -4,7 +4,7 @@
   },
   "CosmeticType": "Overtops",
   "Category": "Torso",
-  "Icon": "Icons/Wardrobe/Groups/Overtop@2x.png",
-  "SelectedIcon": "Icons/Wardrobe/Groups/OvertopSelected@2x.png",
+  "Icon": "Icons/Wardrobe/Slots/Overtop@2x.png",
+  "SelectedIcon": "Icons/Wardrobe/Slots/OvertopSelected@2x.png",
   "Order": 1
 }

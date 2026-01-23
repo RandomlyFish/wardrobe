@@ -35,7 +35,7 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
                     t -> t.wardrobeVisibility
             ).add()
 
-            .append(new KeyedCodec<>("IconPath", Codec.STRING),
+            .append(new KeyedCodec<>("Icon", Codec.STRING),
                     (t, value) -> t.iconPath = value,
                     t -> t.iconPath
             ).add()

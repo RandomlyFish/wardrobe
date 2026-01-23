@@ -44,13 +44,13 @@ public class VariantTextureConfig implements TextureConfig {
                 ).add()
 
                 .append(new KeyedCodec<>("WardrobeColor", Codec.STRING_ARRAY, true),
-                        (t, value) -> t.baseColor = value, t -> t.baseColor
+                        (t, value) -> t.colors = value, t -> t.colors
                 ).addValidator(Validators.nonNullArrayElements()).add()
 
                 .build();
 
         private String texture;
-        private String[] baseColor;
+        private String[] colors;
 
         @Nonnull
         public String getTexture() {
@@ -58,8 +58,8 @@ public class VariantTextureConfig implements TextureConfig {
         }
 
         @Nonnull
-        public String[] getBaseColor() {
-            return baseColor;
+        public String[] getColors() {
+            return colors;
         }
     }
 }

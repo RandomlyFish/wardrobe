@@ -9,4 +9,6 @@ public interface CosmeticAppearance {
     String getModel(String modelVariantId);
 
     TextureConfig getTextureConfig(String cosmeticVariantId);
+
+    String[] collectVariants();
 }

@@ -7,14 +7,7 @@ import com.hypixel.hytale.common.util.StringCompareUtil;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.protocol.ClientCameraView;
-import com.hypixel.hytale.protocol.Direction;
-import com.hypixel.hytale.protocol.MouseInputType;
-import com.hypixel.hytale.protocol.Position;
-import com.hypixel.hytale.protocol.PositionDistanceOffsetType;
-import com.hypixel.hytale.protocol.RotationType;
-import com.hypixel.hytale.protocol.ServerCameraSettings;
-import com.hypixel.hytale.protocol.Vector3f;
+import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.protocol.packets.camera.SetServerCamera;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
@@ -32,6 +25,7 @@ import dev.hardaway.wardrobe.api.cosmetic.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCategory;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
+import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
 import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.impl.asset.CosmeticCategoryAsset;
@@ -46,13 +40,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEventData> {
@@ -144,9 +132,11 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         if (data.group != null)
             selectGroup(commandBuilder, eventBuilder, ref, store, CosmeticSlotAsset.getAssetMap().getAsset(data.group));
         if (data.cosmetic != null)
-            selectCosmetic(commandBuilder, eventBuilder, ref, store, Objects.requireNonNull(CosmeticAsset.getAssetMap().getAsset(data.cosmetic)), null);
-        if (data.textureId != null)
-            selectCosmetic(commandBuilder, eventBuilder, ref, store, null, data.textureId);
+            selectCosmetic(commandBuilder, eventBuilder, ref, store, Objects.requireNonNull(CosmeticAsset.getAssetMap().getAsset(data.cosmetic)), null, null);
+        if (data.variant != null)
+            selectCosmetic(commandBuilder, eventBuilder, ref, store, null, data.variant, null);
+        if (data.texture != null)
+            selectCosmetic(commandBuilder, eventBuilder, ref, store, null, null, data.texture);
 
         sendUpdate(commandBuilder, eventBuilder, false);
     }
@@ -157,7 +147,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         playerRef.getPacketHandler().writeNoCache(new SetServerCamera(ClientCameraView.FirstPerson, false, null));
     }
 
-    public void selectCosmetic(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store, @Nullable WardrobeCosmetic cosmetic, @Nullable String textureId) {
+    public void selectCosmetic(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store, @Nullable WardrobeCosmetic cosmetic, @Nullable String variant, @Nullable String texture) {
         PlayerWardrobeComponent wardrobeComponent = store.ensureAndGetComponent(ref, playerWardrobeComponentType);
         PlayerCosmetic wornCosmetic = wardrobeComponent.getCosmetic(this.selectedGroup);
 
@@ -165,22 +155,29 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             wardrobeComponent.removeCosmetic(this.selectedGroup);
         } else {
             if (cosmetic == null) {
-                if (wornCosmetic == null)
-                    return;
+                if (wornCosmetic == null) return;
 
                 cosmetic = WardrobeCosmetic.getAssetMap().getAsset(wornCosmetic.getCosmeticId());
             }
 
-            if (cosmetic instanceof AppearanceCosmetic appearanceCosmetic) {
-                String[] variants = appearanceCosmetic.getAppearance().getTextureConfig(null).collectVariants(); // TODO: cosmetic variants
-                if (textureId == null && variants.length > 0) {
-                    textureId = variants[0];
+            if (cosmetic instanceof AppearanceCosmetic a) {
+                CosmeticAppearance appearance = a.getAppearance();
+                if (variant == null) {
+                    if (wornCosmetic == null) return;
+
+                    if (Arrays.asList(appearance.collectVariants()).contains(wornCosmetic.getVariantId()))
+                        variant = wornCosmetic.getVariantId();
+                }
+
+                if (texture == null) {
+                    if (wornCosmetic == null) return;
+
+                    if (Arrays.asList(appearance.getTextureConfig(variant).collectVariants()).contains(wornCosmetic.getTextureId()))
+                        texture = wornCosmetic.getTextureId();
                 }
             }
 
-
-            // TODO: cosmetic variants
-            wardrobeComponent.setCosmetic(selectedGroup, new CosmeticSaveData(cosmetic.getId(), "", textureId));
+            wardrobeComponent.setCosmetic(selectedGroup, new CosmeticSaveData(cosmetic.getId(), variant, texture));
         }
 
         wardrobeComponent.rebuild();
@@ -227,34 +224,34 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
                 // TODO: cosmetic variants
                 TextureConfig textureConfig = appearanceCosmetic.getAppearance().getTextureConfig(null);
-                String[] variants = textureConfig.collectVariants();
-                if (variants.length > 0) {
+                String[] textureVariants = textureConfig.collectVariants();
+                if (textureVariants.length > 0) {
                     anchor.setHeight(Value.of((int) (150 * 3.5 + 10 * (3.5 - 1) + 14)));
                     commandBuilder.setObject("#Cosmetics.Anchor", anchor);
                     commandBuilder.set("#ColorsContainer.Visible", true);
 
-                    for (int c = 0; c < variants.length; c++) {
-                        String variant = variants[c];
-                        String[] baseColor = null;
+                    for (int c = 0; c < textureVariants.length; c++) {
+                        String variant = textureVariants[c];
+                        String[] colors = null;
 
                         if (textureConfig instanceof VariantTextureConfig v) {
-                            baseColor = v.getVariants().get(variant).getBaseColor();
+                            colors = v.getVariants().get(variant).getColors();
                         }
 
                         if (textureConfig instanceof GradientTextureConfig g) {
-                            baseColor = CosmeticsModule.get().getRegistry().getGradientSets().get(g.getGradientSet()).getGradients().get(variant).getBaseColor();
+                            colors = CosmeticsModule.get().getRegistry().getGradientSets().get(g.getGradientSet()).getGradients().get(variant).getBaseColor();
                         }
 
-                        if (baseColor == null) break;
+                        if (colors == null) break;
 
                         String colorSelector = "#Colors[" + c + "]";
                         commandBuilder.append("#Colors", "Wardrobe/Pages/ColorOption.ui");
-                        commandBuilder.set(colorSelector + " #Button #Colors.Background", "#" + baseColor[0]);
-                        for (int n = 0; n < baseColor.length; n++) {
+                        commandBuilder.set(colorSelector + " #Button #Colors.Background", "#" + colors[0]);
+                        for (int n = 0; n < colors.length; n++) {
                             commandBuilder.append(colorSelector + " #Button #Colors", "Wardrobe/Pages/Color.ui");
-                            commandBuilder.set(colorSelector + " #Button #Colors[" + n + "].Background", baseColor[n]);
+                            commandBuilder.set(colorSelector + " #Button #Colors[" + n + "].Background", colors[n]);
                         }
-                        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, colorSelector + " #Button", EventData.of("TextureId", variant), false);
+                        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, colorSelector + " #Button", EventData.of("Texture", variant), false);
 
                         if (wornCosmetic.getTextureId().equals(variant)) {
                             commandBuilder.set(colorSelector + " #Button #SelectedHighlight.Visible", true);
@@ -316,13 +313,15 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                 .append(new KeyedCodec<>("Category", Codec.STRING), (entry, s) -> entry.category = s, (entry) -> entry.category).add()
                 .append(new KeyedCodec<>("Group", Codec.STRING), (entry, s) -> entry.group = s, (entry) -> entry.group).add()
                 .append(new KeyedCodec<>("Cosmetic", Codec.STRING), (entry, s) -> entry.cosmetic = s, (entry) -> entry.cosmetic).add()
-                .append(new KeyedCodec<>("TextureId", Codec.STRING), (entry, s) -> entry.textureId = s, (entry) -> entry.textureId).add()
+                .append(new KeyedCodec<>("Variant", Codec.STRING), (entry, s) -> entry.texture = s, (entry) -> entry.texture).add()
+                .append(new KeyedCodec<>("Texture", Codec.STRING), (entry, s) -> entry.texture = s, (entry) -> entry.texture).add()
                 .build();
 
         private String searchQuery;
         private String category;
         private String group;
         private String cosmetic;
-        private String textureId;
+        private String variant;
+        private String texture;
     }
 }

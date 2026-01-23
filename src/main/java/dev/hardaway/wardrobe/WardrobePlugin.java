@@ -71,7 +71,7 @@ public class WardrobePlugin extends JavaPlugin {
                 .build()
         );
         AssetRegistry.register(HytaleAssetStore.builder(CosmeticSlotAsset.class, new DefaultAssetMap<>())
-                .setPath("Wardrobe/Groups")
+                .setPath("Wardrobe/Slots")
                 .setCodec(CosmeticSlotAsset.CODEC)
                 .setKeyFunction(CosmeticSlotAsset::getId)
                 .loadsAfter(CosmeticCategoryAsset.class)

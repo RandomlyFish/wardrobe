@@ -4,7 +4,7 @@
   },
   "CosmeticType": "Ears",
   "Category": "General",
-  "Icon": "Icons/Wardrobe/Groups/Ears@2x.png",
-  "SelectedIcon": "Icons/Wardrobe/Groups/EarsSelected@2x.png",
+  "Icon": "Icons/Wardrobe/Slots/Ears@2x.png",
+  "SelectedIcon": "Icons/Wardrobe/Slots/EarsSelected@2x.png",
   "Order": 4
 }

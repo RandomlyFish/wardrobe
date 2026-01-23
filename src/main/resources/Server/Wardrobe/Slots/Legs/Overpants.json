@@ -4,7 +4,7 @@
   },
   "CosmeticType": "Overpants",
   "Category": "Legs",
-  "Icon": "Icons/Wardrobe/Groups/Overpants@2x.png",
-  "SelectedIcon": "Icons/Wardrobe/Groups/OverpantsSelected@2x.png",
+  "Icon": "Icons/Wardrobe/Slots/Overpants@2x.png",
+  "SelectedIcon": "Icons/Wardrobe/Slots/OverpantsSelected@2x.png",
   "Order": 1
 }
