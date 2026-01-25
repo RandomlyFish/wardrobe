@@ -8,16 +8,16 @@ import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
 import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
 import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class VariantCosmeticAppearance implements CosmeticAppearance {
 
     public static final BuilderCodec<VariantCosmeticAppearance> CODEC = BuilderCodec.builder(VariantCosmeticAppearance.class, VariantCosmeticAppearance::new)
-            .append(new KeyedCodec<>("Variants", new MapCodec<>(VariantCosmeticAppearance.Entry.CODEC, HashMap::new), true), (t, value) -> t.variants = value, t -> t.variants).add()
+            .append(new KeyedCodec<>("Variants", new MapCodec<>(VariantCosmeticAppearance.Entry.CODEC, LinkedHashMap::new), true), (t, value) -> t.variants = value, t -> t.variants).add()
             .build();
 
-    private Map<String, VariantCosmeticAppearance.Entry> variants;
+    private Map<String, Entry> variants;
 
     public Map<String, VariantCosmeticAppearance.Entry> getVariants() {
         return variants;

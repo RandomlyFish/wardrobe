@@ -56,7 +56,7 @@ Group {
     }
 
     AssetImage #Icon {
-      Anchor: (Width: 44, Height: 44);
+      Anchor: (Width: 77, Height: 77);
     }
   }
 }

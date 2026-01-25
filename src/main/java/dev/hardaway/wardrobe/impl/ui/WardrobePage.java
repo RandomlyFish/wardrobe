@@ -10,6 +10,7 @@ import com.hypixel.hytale.protocol.packets.camera.SetServerCamera;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticsModule;
+import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.ui.Anchor;
@@ -48,8 +49,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
     private WardrobeMenu menu;
     private PlayerWardrobe baseWardrobe;
-
-    private final ServerCameraSettings cameraSettings = new ServerCameraSettings();
+    private boolean shouldClose = true;
 
     public WardrobePage(@Nonnull PlayerRef playerRef, @Nonnull CustomPageLifetime lifetime) {
         super(playerRef, lifetime, PageEventData.CODEC);
@@ -108,28 +108,45 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                     data.variant,
                     data.texture)) {
                 buildCosmetics(commandBuilder, eventBuilder, ref, store);
+                shouldClose = false;
             }
         }
 
         if ("Reset".equals(data.action)) {
-            store.removeComponentIfExists(ref, PlayerWardrobe.getComponentType());
-            buildCosmetics(commandBuilder, eventBuilder, ref, store);
+            if (store.removeComponentIfExists(ref, PlayerWardrobe.getComponentType())) {
+                buildCosmetics(commandBuilder, eventBuilder, ref, store);
+                shouldClose = baseWardrobe == null;
+            }
         }
 
         if ("Discard".equals(data.action)) {
             if (baseWardrobe != null)
                 store.putComponent(ref, PlayerWardrobe.getComponentType(), (PlayerWardrobeComponent) baseWardrobe);
             else store.removeComponentIfExists(ref, PlayerWardrobe.getComponentType());
+
+            shouldClose = true;
             close();
         }
 
-        if ("Save".equals(data.action)) close();
+        if ("Save".equals(data.action)) {
+            shouldClose = true;
+            close();
+        }
 
         sendUpdate(commandBuilder, eventBuilder, false);
     }
 
     @Override
     public void onDismiss(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store) {
+        if (!shouldClose) {
+            shouldClose = true;
+            store.getExternalData().getWorld().execute(() -> {
+                Player player = store.getComponent(ref, Player.getComponentType());
+                player.getPageManager().openCustomPage(ref, store, new WardrobeDismissPage(playerRef, CustomPageLifetime.CantClose, baseWardrobe));
+            });
+            return;
+        }
+
         super.onDismiss(ref, store);
         playerRef.getPacketHandler().writeNoCache(new SetServerCamera(ClientCameraView.FirstPerson, false, null));
     }
@@ -138,6 +155,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         TransformComponent bodyRotation = store.getComponent(ref, TransformComponent.getComponentType());
         float yaw = bodyRotation.getRotation().y;
 
+        ServerCameraSettings cameraSettings = new ServerCameraSettings();
         cameraSettings.isFirstPerson = false;
         cameraSettings.eyeOffset = true;
         cameraSettings.displayCursor = true;
@@ -169,6 +187,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             if (category.getId().equals(menu.getSelectedCategory())) {
                 commandBuilder.set(selector + " #Selected #Icon.AssetPath", category.getSelectedIconPath());
                 commandBuilder.set(selector + " #Selected.Visible", true);
+                commandBuilder.set("#CategoryName.Text", category.getTranslationProperties().getName());
             }
 
             eventBuilder.addEventBinding(
@@ -194,6 +213,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             if (slot.getId().equals(menu.getSelectedSlot())) {
                 commandBuilder.set(selector + " #Selected #Icon.AssetPath", slot.getSelectedIconPath());
                 commandBuilder.set(selector + " #Selected.Visible", true);
+                commandBuilder.set("#SubCategoryName.Text", slot.getTranslationProperties().getName());
             }
 
             eventBuilder.addEventBinding(
@@ -208,7 +228,6 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     private void buildCosmetics(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store) {
         commandBuilder.clear("#Cosmetics");
         commandBuilder.clear("#Colors");
-        commandBuilder.clear("#VariantsButtons");
 
         commandBuilder.set("#ColorsContainer.Visible", false);
         commandBuilder.set("#VariantsContainer.Visible", false);
@@ -257,6 +276,11 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                     anchorHeight = (int) (150 * 3.5 + 10 * (3.5 - 1) + 14);
                 }
             }
+
+            if (cosmetic instanceof AppearanceCosmetic a && a.getAppearance() instanceof VariantCosmeticAppearance v && worn != null && worn.getVariantId() != null) {
+                VariantCosmeticAppearance.Entry entry = v.getVariants().get(worn.getVariantId());
+                if (entry != null && entry.getIconPath() != null) commandBuilder.set(selector + " #Button #Icon.AssetPath", entry.getIconPath());
+            }
         }
 
         anchor.setHeight(Value.of(anchorHeight));
@@ -273,51 +297,25 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         Map<String, VariantCosmeticAppearance.Entry> variantMap =
                 appearance instanceof VariantCosmeticAppearance v ? v.getVariants() : Map.of();
 
-        boolean useOptions = variantMap.values().stream().anyMatch(e -> e.getIconPath() != null);
-
-        if (useOptions) {
-            int row = -1;
-            for (int i = 0; i < variants.length; i++) {
-                if (i % OPTIONS_PER_ROW == 0) {
-                    commandBuilder.append("#VariantsButtons", "Wardrobe/Pages/ColorOptionRow.ui");
-                    row++;
-                }
-
-                commandBuilder.append("#VariantsButtons[" + row + "] #ColorOptionsInRow", "Wardrobe/Pages/ColorOption.ui");
-                String selector = "#VariantsButtons[" + row + "] #ColorOptionsInRow[" + (i % OPTIONS_PER_ROW) + "]";
-
-                commandBuilder.set(selector + " #Button #Icon.AssetPath", Optional.ofNullable(variantMap.get(variants[i]).getIconPath()).orElse(""));
-
-                commandBuilder.set(selector + " #Button #Selected.Visible", variants[i].equals(wornCosmetic.getVariantId()));
-
-                eventBuilder.addEventBinding(
-                        CustomUIEventBindingType.Activating,
-                        selector + " #Button",
-                        EventData.of("Variant", variants[i]),
-                        false
-                );
-            }
-        } else {
-            ObjectArrayList<DropdownEntryInfo> entries = new ObjectArrayList<>();
-            for (String variant : variants) {
-                entries.add(new DropdownEntryInfo(
-                        LocalizableString.fromMessageId(
-                                variantMap.get(variant).getTranslationProperties().getName().getMessageId()
-                        ),
-                        variant
-                ));
-            }
-
-            commandBuilder.set("#VariantsDropdown.Visible", true);
-            commandBuilder.set("#VariantsDropdown.Entries", entries);
-            commandBuilder.set("#VariantsDropdown.Value", wornCosmetic.getVariantId());
-
-            eventBuilder.addEventBinding(
-                    CustomUIEventBindingType.ValueChanged,
-                    "#VariantsDropdown",
-                    EventData.of("@Variant", "#VariantsDropdown.Value")
-            );
+        ObjectArrayList<DropdownEntryInfo> entries = new ObjectArrayList<>();
+        for (String variant : variants) {
+            entries.add(new DropdownEntryInfo(
+                    LocalizableString.fromMessageId(
+                            variantMap.get(variant).getTranslationProperties().getName().getMessageId()
+                    ),
+                    variant
+            ));
         }
+
+        commandBuilder.set("#VariantsDropdown.Visible", true);
+        commandBuilder.set("#VariantsDropdown.Entries", entries);
+        commandBuilder.set("#VariantsDropdown.Value", wornCosmetic.getVariantId());
+
+        eventBuilder.addEventBinding(
+                CustomUIEventBindingType.ValueChanged,
+                "#VariantsDropdown",
+                EventData.of("@Variant", "#VariantsDropdown.Value")
+        );
 
         return true;
     }

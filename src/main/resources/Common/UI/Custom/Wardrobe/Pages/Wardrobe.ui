@@ -82,7 +82,6 @@ Group {
             Group #CategoryLabelArrow {
               Anchor: (Width: 6, Height: 10, Top: 4, Horizontal: 8);
               Background: (TexturePath: "../../Common/ContainerTitleArrow.png");
-              Visible: true;
             }
 
             Label #SubCategoryName {
@@ -166,11 +165,6 @@ Group {
             }
 
             $Common.@ContentSeparator {}
-
-            Group #VariantsButtons {
-              Anchor: (Top: 10);
-              LayoutMode: Top;
-            }
 
             DropdownBox #VariantsDropdown {
               Anchor: (Width: 250, Top: 10, Height: 32, Left: 0);

@@ -31,6 +31,6 @@ public class WardrobeCommand extends AbstractPlayerCommand {
         Player player = store.getComponent(ref, Player.getComponentType());
 
         if (player != null)
-            player.getPageManager().openCustomPage(ref, store, new WardrobePage(playerRef, CustomPageLifetime.CantClose));
+            player.getPageManager().openCustomPage(ref, store, new WardrobePage(playerRef, CustomPageLifetime.CanDismiss));
     }
 }
