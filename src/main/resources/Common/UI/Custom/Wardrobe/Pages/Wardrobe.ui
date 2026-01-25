@@ -22,10 +22,10 @@ $Sounds = "../../Sounds.ui";
   Padding: 24
 );
 
-@DefaultTooltipBackground = (TexturePath: "InGame/Tooltips/ItemTooltipDefault.png", Border: 24);
+@DefaultTooltipBackground = (TexturePath: "../../Common/TooltipDefaultBackground.png", Border: 24);
 
 Group {
-  Anchor: (Top: 110, Left: 30, MaxWidth: 400, Height: 924);
+  Anchor: (Top: 110, Left: 30, MaxWidth: 1880, Height: 924);
   LayoutMode: Left;
   Padding: (Horizontal: 30);
 
@@ -67,7 +67,7 @@ Group {
           FlexWeight: 1;
           LayoutMode: Top;
           Padding: (Horizontal: 20, Top: 16);
-          Anchor: (Width: 553 + 10);
+          Anchor: (Width: 563);
 
           Group {
             LayoutMode: Left;
@@ -89,10 +89,6 @@ Group {
               Style: @HeadlineLabelStyle;
               Anchor: (Top: -3);
               Text: "";
-            }
-
-            Group {
-              FlexWeight: 1;
             }
           }
 
@@ -163,7 +159,7 @@ Group {
               Anchor: (Height: 25);
 
               Label #VariantsLabel {
-                Text: "Options";
+                Text: %client.myAvatar.baseProperties.options;
                 Style: @HeadlineLabelStyle;
                 Anchor: (Top: -3); // Since there seems to be some spacing at the top of the text we need to shift this a bit upwards
               }
@@ -193,14 +189,14 @@ Group {
       Anchor: (Bottom: 0, Height: 36);
       LayoutMode: Center;
 
-      $Common.@SecondaryButton #ResetClothing {
+      $Common.@SecondaryButton #ResetAvatar {
         @Sounds = $Sounds.@ButtonsLight;
         @Anchor = Anchor(Right: 8);
-        TooltipText: %client.myAvatar.button.resetClothing;
+        TooltipText: %client.myAvatar.button.resetOptions;
         TextTooltipStyle: @ButtonTextTooltipStyle;
 
          Group {
-          Background: "../Icons/ResetClothingIcon.png";
+          Background: "../Icons/ResetIcon.png";
           Anchor: (Width: 24, Height: 21);
         }
       }

@@ -3,6 +3,8 @@ $Sounds = "../../Sounds.ui";
 @ColorsPerRow = 13;
 
 Group {
+  Padding: (Horizontal: 3);
+
   Button #Button {
     @Sounds = (
       Activate: (

@@ -4,7 +4,6 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.common.util.StringCompareUtil;
-import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.*;
@@ -50,8 +49,6 @@ import java.util.stream.Collectors;
 
 public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEventData> {
 
-    private final ComponentType<EntityStore, PlayerWardrobeComponent> playerWardrobeComponentType;
-
     private final List<WardrobeCategory> categories = WardrobeCategory.getAssetMap().getAssetMap().values().stream().sorted(Comparator.comparing(WardrobeCategory::getTabOrder)).collect(Collectors.toUnmodifiableList());
     private final Map<String, List<WardrobeCosmeticSlot>> groupMap = new HashMap<>();
     private final Map<String, List<WardrobeCosmetic>> cosmeticMap = HashMap.newHashMap(WardrobeCosmetic.getAssetMap().getAssetCount());
@@ -60,11 +57,12 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     private String selectedGroup;
     private String searchQuery = "";
 
+    private PlayerWardrobeComponent baseWardrobe;
+
     private final ServerCameraSettings cameraSettings = new ServerCameraSettings();
 
-    public WardrobePage(@Nonnull PlayerRef playerRef, @Nonnull CustomPageLifetime lifetime, ComponentType<EntityStore, PlayerWardrobeComponent> wardrobeComponentType) {
+    public WardrobePage(@Nonnull PlayerRef playerRef, @Nonnull CustomPageLifetime lifetime) {
         super(playerRef, lifetime, PageEventData.CODEC);
-        this.playerWardrobeComponentType = wardrobeComponentType;
     }
 
     @Override
@@ -105,6 +103,12 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         selectCategory(commandBuilder, eventBuilder, ref, store, selectedCategory);
 
         eventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#SearchField", EventData.of("@SearchQuery", "#SearchField.Value"), false);
+        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#ResetAvatar", EventData.of("Action", "Reset"), false);
+        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#DiscardChanges", EventData.of("Action", "Discard"), false);
+        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#SaveChanges", EventData.of("Action", "Save"), false);
+
+        PlayerWardrobeComponent wardrobe = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
+        if (wardrobe != null) baseWardrobe = wardrobe.clone();
 
         TransformComponent bodyRotation = store.getComponent(ref, TransformComponent.getComponentType());
         float yaw = bodyRotation.getRotation().y;
@@ -142,6 +146,19 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             selectCosmetic(commandBuilder, eventBuilder, ref, store, null, data.variant, null);
         if (data.texture != null)
             selectCosmetic(commandBuilder, eventBuilder, ref, store, null, null, data.texture);
+        if (data.action != null) {
+            if (data.action.equals("Reset")) store.removeComponentIfExists(ref, PlayerWardrobeComponent.getComponentType());
+
+            if (data.action.equals("Discard")) {
+                if (baseWardrobe != null) store.putComponent(ref, PlayerWardrobeComponent.getComponentType(), baseWardrobe);
+
+                close();
+            }
+
+            if (data.action.equals("Save")) {
+                close();
+            }
+        }
 
         sendUpdate(commandBuilder, eventBuilder, false);
     }
@@ -153,7 +170,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     }
 
     public void selectCosmetic(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store, @Nullable WardrobeCosmetic cosmetic, @Nullable String variant, @Nullable String texture) {
-        PlayerWardrobeComponent wardrobeComponent = store.ensureAndGetComponent(ref, playerWardrobeComponentType);
+        PlayerWardrobeComponent wardrobeComponent = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
         PlayerCosmetic wornCosmetic = wardrobeComponent.getCosmetic(this.selectedGroup);
 
         if (wornCosmetic != null && (cosmetic != null && Objects.equals(wornCosmetic.getCosmeticId(), cosmetic.getId()))) {
@@ -216,7 +233,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             cosmetics = map.keySet().stream().sorted().sorted(Comparator.comparingInt(map::getInt).reversed()).toList();
         }
 
-        PlayerWardrobeComponent wardrobeComponent = store.getComponent(ref, playerWardrobeComponentType);
+        PlayerWardrobeComponent wardrobeComponent = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
         PlayerCosmetic wornCosmetic = wardrobeComponent == null ? null : wardrobeComponent.getCosmetic(this.selectedGroup);
 
         for (int i = 0; i < cosmetics.size(); i++) {
@@ -363,6 +380,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                 .append(new KeyedCodec<>("Cosmetic", Codec.STRING), (entry, s) -> entry.cosmetic = s, (entry) -> entry.cosmetic).add()
                 .append(new KeyedCodec<>("@Variant", Codec.STRING), (entry, s) -> entry.variant = s, (entry) -> entry.variant).add()
                 .append(new KeyedCodec<>("Texture", Codec.STRING), (entry, s) -> entry.texture = s, (entry) -> entry.texture).add()
+                .append(new KeyedCodec<>("Action", Codec.STRING), (entry, s) -> entry.action = s, (entry) -> entry.action).add()
                 .build();
 
         private String searchQuery;
@@ -371,5 +389,6 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         private String cosmetic;
         private String variant;
         private String texture;
+        private String action;
     }
 }

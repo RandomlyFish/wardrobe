@@ -11,7 +11,6 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 import dev.hardaway.wardrobe.impl.ui.WardrobePage;
 
 import javax.annotation.Nonnull;
@@ -32,6 +31,6 @@ public class WardrobeCommand extends AbstractPlayerCommand {
         Player player = store.getComponent(ref, Player.getComponentType());
 
         if (player != null)
-            player.getPageManager().openCustomPage(ref, store, new WardrobePage(playerRef, CustomPageLifetime.CanDismiss, PlayerWardrobeComponent.getComponentType()));
+            player.getPageManager().openCustomPage(ref, store, new WardrobePage(playerRef, CustomPageLifetime.CantClose));
     }
 }

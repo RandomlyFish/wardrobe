@@ -96,7 +96,7 @@ public class WardrobePlugin extends JavaPlugin {
         this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystem(this.playerWardrobeComponentType));
 
         OpenCustomUIInteraction.registerCustomPageSupplier(this, WardrobePage.class, "AvatarCustomisation", (_, _, playerRef, _) ->
-                new WardrobePage(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, this.playerWardrobeComponentType)
+                new WardrobePage(playerRef, CustomPageLifetime.CantClose)
         );
 
         this.getCommandRegistry().registerCommand(new TestCommand(this.playerWardrobeComponentType));

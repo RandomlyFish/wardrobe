@@ -93,8 +93,8 @@ public class PlayerWardrobeComponent implements PlayerWardrobe, Component<Entity
 
     @Nullable
     @Override
-    public Component<EntityStore> clone() {
-        return new PlayerWardrobeComponent(this.cosmetics);
+    public PlayerWardrobeComponent clone() {
+        return new PlayerWardrobeComponent(new HashMap<>(this.cosmetics));
     }
 
     public static ComponentType<EntityStore, PlayerWardrobeComponent> getComponentType() {
