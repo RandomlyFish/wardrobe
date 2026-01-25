@@ -13,39 +13,38 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
-import dev.hardaway.wardrobe.impl.asset.CosmeticSlotAsset;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
-import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
+import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 
 import javax.annotation.Nonnull;
 
 public class WardrobeRemoveCommand extends AbstractPlayerCommand {
 
     private final RequiredArg<String> cosmeticArg;
-    private final FlagArg isGroup;
+    private final FlagArg isSlot;
 
     public WardrobeRemoveCommand() {
         super("remove", "Take off cosmetics");
         this.setPermissionGroup(GameMode.Adventure);
-        this.cosmeticArg = this.withRequiredArg("cosmetic", "The cosmetic or cosmetic group to remove", ArgTypes.STRING);
-        this.isGroup = this.withFlagArg("group", "If the specified id is of a cosmetic group");
+        this.cosmeticArg = this.withRequiredArg("cosmetic", "The cosmetic or cosmetic slot to remove", ArgTypes.STRING);
+        this.isSlot = this.withFlagArg("slot", "If the specified id is of a cosmetic slot");
     }
 
     @Override
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-        PlayerWardrobeComponent wardrobeComponent = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
+        PlayerWardrobe wardrobeComponent = store.ensureAndGetComponent(ref, PlayerWardrobe.getComponentType());
         String id = cosmeticArg.get(context);
 
         String group;
-        if (isGroup.provided(context)) {
-            if (!CosmeticSlotAsset.getAssetMap().getAssetMap().containsKey(id)) {
-                context.sendMessage(Message.raw("Failed to find cosmetic group with id \"{id}\"!").param("id", id));
+        if (isSlot.provided(context)) {
+            if (!WardrobeCosmeticSlot.getAssetMap().getAssetMap().containsKey(id)) {
+                context.sendMessage(Message.raw("Failed to find cosmetic slot with id \"{id}\"!").param("id", id));
                 return;
             }
 
             group = id;
         } else {
-            WardrobeCosmetic cosmetic = CosmeticAsset.getAssetMap().getAsset(id);
+            WardrobeCosmetic cosmetic = WardrobeCosmetic.getAssetMap().getAsset(id);
             if (cosmetic == null) {
                 context.sendMessage(Message.raw("Failed to find cosmetic with id \"{id}\"!").param("id", id));
                 return;

@@ -1,12 +1,19 @@
 package dev.hardaway.wardrobe.api.player;
 
+import com.hypixel.hytale.component.ComponentType;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
+import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 
 public interface PlayerWardrobe {
+    static ComponentType<EntityStore, PlayerWardrobeComponent> getComponentType() {
+        return PlayerWardrobeComponent.getComponentType();
+    }
+
     Collection<PlayerCosmetic> getCosmetics();
 
     boolean hasCosmetic(String id);

@@ -55,7 +55,7 @@ Group {
       Group #PartListContainer {
         LayoutMode: Left;
 
-        Group #Groups {
+        Group #Slots {
           Anchor: (Width: 65, Left: 2);
           Padding: (Top: 10);
           LayoutMode: Top;
@@ -145,7 +145,7 @@ Group {
 
             Group #Colors {
               Anchor: (Top: 10);
-              LayoutMode: Left;
+              LayoutMode: Top;
             }
           }
 
@@ -169,7 +169,7 @@ Group {
 
             Group #VariantsButtons {
               Anchor: (Top: 10);
-              LayoutMode: Left;
+              LayoutMode: Top;
             }
 
             DropdownBox #VariantsDropdown {

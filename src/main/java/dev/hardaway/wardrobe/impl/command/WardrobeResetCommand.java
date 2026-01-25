@@ -9,7 +9,7 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 
 import javax.annotation.Nonnull;
 
@@ -22,7 +22,7 @@ public class WardrobeResetCommand extends AbstractPlayerCommand {
 
     @Override
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-        store.removeComponentIfExists(ref, PlayerWardrobeComponent.getComponentType());
+        store.removeComponentIfExists(ref, PlayerWardrobe.getComponentType());
         context.sendMessage(Message.raw("Wardrobe data reset"));
     }
 }

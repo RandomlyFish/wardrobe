@@ -1,0 +1,5 @@
+Group {
+  Group #ColorOptionsInRow {
+    LayoutMode: Left;
+  }
+}

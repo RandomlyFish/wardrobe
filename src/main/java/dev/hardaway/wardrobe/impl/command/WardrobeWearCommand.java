@@ -12,47 +12,93 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import dev.hardaway.wardrobe.api.cosmetic.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
-import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
+import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
+import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
+import dev.hardaway.wardrobe.impl.system.CosmeticSaveData;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class WardrobeWearCommand extends AbstractPlayerCommand {
 
     private final RequiredArg<String> cosmeticArg;
     private final OptionalArg<String> variantArg;
+    private final OptionalArg<String> colorArg;
 
     public WardrobeWearCommand() {
         super("wear", "Wear a cosmetic");
         this.setPermissionGroup(GameMode.Adventure);
+
         this.cosmeticArg = this.withRequiredArg("cosmetic", "The cosmetic to apply", ArgTypes.STRING);
         this.variantArg = this.withOptionalArg("variant", "The cosmetic's variant to use", ArgTypes.STRING);
+        this.colorArg = this.withOptionalArg("color", "The cosmetic color to use", ArgTypes.STRING);
     }
 
     @Override
-    protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-        PlayerWardrobeComponent wardrobeComponent = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
-        String id = cosmeticArg.get(context);
-        WardrobeCosmetic cosmetic = CosmeticAsset.getAssetMap().getAsset(id);
+    protected void execute(
+            @Nonnull CommandContext context,
+            @Nonnull Store<EntityStore> store,
+            @Nonnull Ref<EntityStore> ref,
+            @Nonnull PlayerRef playerRef,
+            @Nonnull World world
+    ) {
+        PlayerWardrobe wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobe.getComponentType());
+
+        String cosmeticId = cosmeticArg.get(context);
+        WardrobeCosmetic cosmetic = WardrobeCosmetic.getAssetMap().getAsset(cosmeticId);
+
         if (cosmetic == null) {
-            context.sendMessage(Message.raw("Failed to find cosmetic with id \"{id}\"!").param("id", id));
+            context.sendMessage(Message.raw("Failed to find cosmetic with id \"{id}\"!").param("id", cosmeticId));
+            return;
         }
 
-//        String variant = null;
-//        if (variantArg.provided(context)) {
-//            String provided = variantArg.get(context);
-//            if (!cosmetic.getVariants().contains(provided)) {
-//                context.sendMessage(Message.raw("Failed to find a variant for this cosmetic with id \"{id}\"!").param("id", provided));
-//                return;
-//            } else variant = provided;
-//        }
-//
-//        if (variant == null && !cosmetic.getVariants().isEmpty()) variant = cosmetic.getVariants().getFirst();
-//
-//        WardrobeCosmeticSlot cosmeticGroup = cosmetic.getCosmeticSlotId();
-//
-//        wardrobeComponent.setCosmetic(cosmeticGroup, new CosmeticSaveData(id, variant));
-//        context.sendMessage(Message.raw("Cosmetic worn"));
+        if (!cosmetic.hasPermission(playerRef.getUuid())) {
+            context.sendMessage(Message.raw("You do not have permission to use this cosmetic."));
+            return;
+        }
+
+        String variant = null;
+        String texture = null;
+
+        if (cosmetic instanceof AppearanceCosmetic appearanceCosmetic) {
+            CosmeticAppearance appearance = appearanceCosmetic.getAppearance();
+            List<String> variants = List.of(appearance.collectVariants());
+
+            if (variantArg.provided(context)) {
+                String provided = variantArg.get(context);
+                if (!variants.contains(provided)) {
+                    context.sendMessage(Message.raw("Failed to find variant \"{id}\" for this cosmetic!").param("id", provided));
+                    return;
+                }
+                variant = provided;
+            } else if (!variants.isEmpty()) {
+                variant = variants.getFirst();
+            }
+
+            if (variant != null) {
+                TextureConfig textureConfig = appearance.getTextureConfig(variant);
+                List<String> textures = List.of(textureConfig.collectVariants());
+
+                if (colorArg.provided(context)) {
+                    String provided = colorArg.get(context);
+                    if (!textures.contains(provided)) {
+                        context.sendMessage(Message.raw("Failed to find color \"{id}\" for this cosmetic!").param("id", provided));
+                        return;
+                    }
+                    texture = provided;
+                } else if (!textures.isEmpty()) {
+                    texture = textures.getFirst();
+                }
+            }
+        }
+
+        String slotId = cosmetic.getCosmeticSlotId();
+        wardrobe.setCosmetic(slotId, new CosmeticSaveData(cosmeticId, variant, texture));
+        wardrobe.rebuild();
+
+        context.sendMessage(Message.raw("Cosmetic worn."));
     }
 }

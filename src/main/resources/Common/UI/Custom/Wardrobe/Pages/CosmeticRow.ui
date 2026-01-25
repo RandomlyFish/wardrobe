@@ -36,28 +36,8 @@ $Sounds = "../../Sounds.ui";
 @PartPreviewSelectedFrameSize = Anchor(Width: 99, Height: 155, Left: -4, Top: -4);
 
 Group {
-  Padding: (Horizontal: 4, Vertical: 4);
-
-  Button #Button {
-    Anchor: (Width: 92, Height: 149);
-    Background: "../Icons/PartFrame.png";
-    Style: @LabelStyle;
-    TextTooltipStyle: $AC.@ButtonTextTooltipStyle;
-
-    Group #Selected {
-      Visible: false;
-      Background: "../Icons/PartFrameSelected.png";
-    }
-
-    Group #Locked {
-      Visible: false;
-      Anchor: (Top: 50);
-      Background: "../Icons/TileLocked.png";
-    }
-
-    AssetImage #Icon {
-      Anchor: (Width: 44, Height: 44);
-    }
+  Group #CosmeticsInRow {
+    LayoutMode: Left;
   }
 }
 

@@ -7,24 +7,24 @@ Group {
   Background: (TexturePath: "../Icons/CategoryIconBackground.png");
 
   Button #Button {
-  Anchor: Anchor(Width: 66, Height: 50);
-  Style: (
-  Sounds: $Sounds.@ButtonsLight
-  );
+    Anchor: Anchor(Width: 66, Height: 50);
+    Style: (
+    Sounds: $Sounds.@ButtonsLight
+    );
 
-  AssetImage #Icon {
+    AssetImage #Icon {
+    }
+
+    Group #Selected {
+      Visible: false;
+
+      AssetImage #Icon {
+      }
+
+      Group {
+        Anchor: Anchor(Width: 67, Height: 33, Left: -2);
+        Background: "../Icons/SelectedCategoryArrow.png";
+      }
+    }
   }
-
-  Group #Selected {
-  Visible: false;
-
-  AssetImage #Icon {
-  }
-
-  Group {
-    Anchor: Anchor(Width: 67, Height: 33, Left: -2);
-    Background: "../Icons/SelectedCategoryArrow.png";
-  }
-}
-}
 }
