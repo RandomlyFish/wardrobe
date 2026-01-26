@@ -9,6 +9,7 @@ import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.protocol.packets.camera.SetServerCamera;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticsModule;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
@@ -22,6 +23,7 @@ import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
 import dev.hardaway.wardrobe.api.cosmetic.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCategory;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
@@ -38,6 +40,7 @@ import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -255,9 +258,21 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             commandBuilder.append("#Cosmetics[" + row + "] #CosmeticsInRow", "Wardrobe/Pages/Cosmetic.ui");
             String selector = "#Cosmetics[" + row + "] #CosmeticsInRow[" + col + "]";
 
-            commandBuilder.set(selector + " #Button.TooltipText", cosmetic.getTranslationProperties().getName());
+            WardrobeTranslationProperties translationProperties = cosmetic.getTranslationProperties();
+            Message tooltip = Message.empty();
+
+            tooltip.insert(translationProperties.getName().bold(true));
+            tooltip.insert("\n");
+            Player player = store.ensureAndGetComponent(ref, Player.getComponentType());
+            if (player.getGameMode() == GameMode.Creative) tooltip.insert(Message.raw("ID: " + cosmetic.getId()).color(Color.LIGHT_GRAY).italic(true));
+
+            if (translationProperties.getDescriptionKey() != null) {
+                tooltip.insert("\n");
+                tooltip.insert(cosmetic.getTranslationProperties().getDescription().color(Color.LIGHT_GRAY));
+            }
+
             if (cosmetic.getIconPath() != null)
-                commandBuilder.set(selector + " #Button #Icon.AssetPath", cosmetic.getIconPath());
+                commandBuilder.set(selector + " #Icon.AssetPath", cosmetic.getIconPath());
 
             if (cosmetic.hasPermission(playerRef.getUuid())) {
                 eventBuilder.addEventBinding(
@@ -267,20 +282,45 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                         false
                 );
             } else {
-                commandBuilder.set(selector + " #Button #Locked.Visible", true);
+                commandBuilder.set(selector + " #Locked.Visible", true);
             }
 
             if (worn != null && cosmetic.getId().equals(worn.getCosmeticId())) {
-                commandBuilder.set(selector + " #Button #Selected.Visible", true);
-                if (cosmetic instanceof AppearanceCosmetic a && (buildOptions(commandBuilder, eventBuilder, worn, a) || buildColors(commandBuilder, eventBuilder, worn, a))) {
-                    anchorHeight = (int) (150 * 3.5 + 10 * (3.5 - 1) + 14);
+                commandBuilder.set(selector + " #Selected.Visible", true);
+                if (cosmetic instanceof AppearanceCosmetic a) {
+                    boolean options = buildOptions(commandBuilder, eventBuilder, worn, a);
+                    boolean colors = buildColors(commandBuilder, eventBuilder, worn, a);
+                    if (options || colors) anchorHeight = (int) (150 * 3.5 + 10 * (3.5 - 1) + 14);
                 }
             }
 
             if (cosmetic instanceof AppearanceCosmetic a && a.getAppearance() instanceof VariantCosmeticAppearance v && worn != null && worn.getVariantId() != null) {
                 VariantCosmeticAppearance.Entry entry = v.getVariants().get(worn.getVariantId());
-                if (entry != null && entry.getIconPath() != null) commandBuilder.set(selector + " #Button #Icon.AssetPath", entry.getIconPath());
+                if (entry != null && entry.getIconPath() != null) {
+                    commandBuilder.set(selector + " #Icon.AssetPath", entry.getIconPath());
+                    tooltip = Message.empty();
+
+                    tooltip.insert(translationProperties.getName().bold(true));
+                    tooltip.insert("\n");
+                    if (player.getGameMode() == GameMode.Creative) tooltip.insert(Message.raw("ID: " + cosmetic.getId()).color(Color.LIGHT_GRAY).italic(true));
+
+                    WardrobeTranslationProperties newTranslation = entry.getTranslationProperties();
+
+                    tooltip.insert("\n");
+                    tooltip.insert(Message.raw("Variant: ").color(Color.LIGHT_GRAY).italic(true));
+                    tooltip.insert(newTranslation.getName().color(Color.LIGHT_GRAY).italic(true));
+
+                    if (newTranslation.getDescriptionKey() != null) {
+                        tooltip.insert("\n");
+                        tooltip.insert(newTranslation.getDescription().color(Color.LIGHT_GRAY));
+                    } else if (translationProperties.getDescriptionKey() != null) {
+                        tooltip.insert("\n");
+                        tooltip.insert(translationProperties.getDescription().color(Color.LIGHT_GRAY));
+                    }
+                }
             }
+
+            commandBuilder.set(selector + " #Button.TooltipTextSpans", tooltip);
         }
 
         anchor.setHeight(Value.of(anchorHeight));
@@ -345,7 +385,11 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                     CosmeticsModule.get().getRegistry().getGradientSets().get(((GradientTextureConfig) textureConfig).getGradientSet()).getGradients().get(texture).getBaseColor();
 
             // TODO: color stripes
-            commandBuilder.set(selector + " #Button #Colors.Background", baseColor[0]);
+            for (int c = 0; c < baseColor.length; c++) {
+                String color = baseColor[c];
+                commandBuilder.append(selector + " #Button #Colors", "Wardrobe/Pages/Color.ui");
+                commandBuilder.set(selector + " #Button #Colors[" + c + "].Background", color);
+            }
 
             if (texture.equals(wornCosmetic.getTextureId())) commandBuilder.set(selector + " #Button #SelectedHighlight.Visible", true);
 

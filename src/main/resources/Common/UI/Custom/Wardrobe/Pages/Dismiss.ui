@@ -1,6 +1,7 @@
 $Common = "../../Common.ui";
 $Buttons = "../../Common/Buttons.ui";
 $Container = "../../Common/Container.ui";
+$Sounds = "../../Sounds.ui";
 
 Group {
   LayoutMode: Middle;
@@ -46,14 +47,15 @@ Group {
       Anchor: (Height: 83);
       Background: (TexturePath: "../Icons/ModalDecoration.png", Anchor: (Width: 448));
 
-      $Common.@TextButton #SaveChanges {
-        @Text = %client.general.button.save;
-        @Anchor = Anchor(Right: 5, Left: 5, MinWidth: 244);
-      }
-
       $Common.@SecondaryTextButton #DiscardChanges {
         @Text = %client.general.button.discardChanges;
-        @Anchor = Anchor(Right: 5, Left: 5, MinWidth: 244);
+        @Anchor = Anchor(Right: 5, Left: 5, MinWidth: 223);
+      }
+
+      $Common.@TextButton #SaveChanges {
+        @Text = %client.general.button.save;
+        @Anchor = Anchor(Right: 5, Left: 5, MinWidth: $Common.@DefaultButtonMinWidth);
+        @Sounds = $Sounds.@SaveSettings;
       }
     }
 

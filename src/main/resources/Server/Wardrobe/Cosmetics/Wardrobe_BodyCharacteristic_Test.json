@@ -1,8 +1,8 @@
 {
   "Type": "PlayerModel",
   "TranslationProperties": {
-    "Name": "wardrobe.cosmetics.Wardrobe_HeadAccessory_Kweebec_Mask.name",
-    "Description": "wardrobe.cosmetics.Wardrobe_HeadAccessory_Kweebec_Mask.description"
+    "Name": "wardrobe.cosmetics.Wardrobe_Race_Kweebec.name",
+    "Description": "wardrobe.cosmetics.Wardrobe_Race_Kweebec.description"
   },
   "CosmeticSlot": "BodyCharacteristic",
   "RequiresPermission": "wardrobe.cosmetic.headaccessory.kweebecmask",

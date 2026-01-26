@@ -3,8 +3,11 @@ $Common = "../../Common.ui";
 $Sounds = "../../Sounds.ui";
 
 @LabelStyle = (
+  Default: (
+    Background: #2f3a4f
+  ),
   Hovered: (
-    Background: #000000(0.2),
+    Background: #39455d
   ),
   Sounds: (
     Activate: (SoundPath: $Sounds.@ButtonsLightActivate, Volume: 6),
@@ -14,11 +17,10 @@ $Sounds = "../../Sounds.ui";
 
 @SelectedLabelStyle = (
   Default: (
-    LabelStyle: (RenderBold: true)
+    Background: #2f3a4f
   ),
   Hovered: (
-    LabelStyle: (RenderBold: true),
-    Background: #000000(0.2)
+    Background: #39455d
   )
 );
 
@@ -43,21 +45,21 @@ Group {
     Background: "../Icons/PartFrame.png";
     Style: @LabelStyle;
     TextTooltipStyle: $AC.@ButtonTextTooltipStyle;
+  }
 
-    Group #Selected {
-      Visible: false;
-      Background: "../Icons/PartFrameSelected.png";
-    }
+  Group #Locked {
+    Visible: false;
+    Anchor: (Top: 50);
+    Background: "../Icons/TileLocked.png";
+  }
 
-    Group #Locked {
-      Visible: false;
-      Anchor: (Top: 50);
-      Background: "../Icons/TileLocked.png";
-    }
+  Group #Selected {
+    Visible: false;
+    Background: "../Icons/PartFrameSelected.png";
+  }
 
-    AssetImage #Icon {
-      Anchor: (Width: 77, Height: 77);
-    }
+  AssetImage #Icon {
+    Anchor: (Width: 77, Height: 77);
   }
 }
 
