@@ -5,12 +5,12 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAsset;
 import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
-import dev.hardaway.wardrobe.api.cosmetic.AppearanceCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeVisibility;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 
 public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosmetic {
@@ -66,6 +66,5 @@ public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosm
                 model.getPhobia(),
                 model.getPhobiaModelAssetId()
         ));
-        // TODO: warn if the model asset has attachments? they will be removed!
     }
 }

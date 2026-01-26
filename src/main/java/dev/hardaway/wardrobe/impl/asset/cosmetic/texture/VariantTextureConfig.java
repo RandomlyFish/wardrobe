@@ -5,7 +5,7 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.codec.validation.Validators;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

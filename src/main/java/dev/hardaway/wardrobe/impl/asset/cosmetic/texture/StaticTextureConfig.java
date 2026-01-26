@@ -3,7 +3,7 @@ package dev.hardaway.wardrobe.impl.asset.cosmetic.texture;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

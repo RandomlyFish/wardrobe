@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.api.cosmetic.apperance;
+package dev.hardaway.wardrobe.api.cosmetic.appearance;
 
 import com.hypixel.hytale.codec.lookup.BuilderCodecMapCodec;
 

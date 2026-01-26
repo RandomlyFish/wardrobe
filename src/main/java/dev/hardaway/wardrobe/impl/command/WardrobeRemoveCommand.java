@@ -12,9 +12,10 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 
 import javax.annotation.Nonnull;
 
@@ -44,7 +45,7 @@ public class WardrobeRemoveCommand extends AbstractPlayerCommand {
 
             group = id;
         } else {
-            WardrobeCosmetic cosmetic = WardrobeCosmetic.getAssetMap().getAsset(id);
+            Cosmetic cosmetic = CosmeticAsset.getAssetMap().getAsset(id); // TODO: registry
             if (cosmetic == null) {
                 context.sendMessage(Message.raw("Failed to find cosmetic with id \"{id}\"!").param("id", id));
                 return;

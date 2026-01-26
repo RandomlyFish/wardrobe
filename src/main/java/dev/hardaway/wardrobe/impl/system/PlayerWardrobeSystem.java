@@ -7,7 +7,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
-import com.hypixel.hytale.protocol.Cosmetic;
+import com.hypixel.hytale.protocol.ItemArmorSlot;
 import com.hypixel.hytale.server.core.asset.type.item.config.ItemArmor;
 import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
@@ -20,14 +20,18 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
 import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
+import com.hypixel.hytale.server.core.modules.entity.player.PlayerSettings;
 import com.hypixel.hytale.server.core.modules.entity.player.PlayerSkinComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.ModelAttachmentCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.builtin.HytaleBodyCharacteristicCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.builtin.HytaleCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.builtin.HytaleHaircutCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.builtin.HytalePlayerCosmetic;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,6 +63,7 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
 
         Model model = buildWardrobeModel(
                 chunk.getComponent(i, Player.getComponentType()),
+                chunk.getComponent(i, PlayerSettings.getComponentType()),
                 chunk.getComponent(i, PlayerSkinComponent.getComponentType()).getPlayerSkin(),
                 wardrobeComponent
         );
@@ -68,14 +73,15 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
     @Nullable
     @Override
     public Query<EntityStore> getQuery() {
-        return this.wardrobeComponentType;
+        return Query.and(PlayerWardrobe.getComponentType(), PlayerSettings.getComponentType(), PlayerSkinComponent.getComponentType());
     }
 
-    public static Model buildWardrobeModel(Player player, com.hypixel.hytale.protocol.PlayerSkin skin, PlayerWardrobe wardrobeComponent) {
+    public static Model buildWardrobeModel(Player player, PlayerSettings playerSettings, com.hypixel.hytale.protocol.PlayerSkin skin, PlayerWardrobe wardrobeComponent) {
         // Build context
         Model playerModel = CosmeticsModule.get().createModel(skin); // TODO: apply body characteristics
         PlayerWardrobeContext context = new PlayerWardrobeContext(
                 player,
+                playerSettings,
                 wardrobeComponent,
                 new HashMap<>(),
                 new HashMap<>(),
@@ -83,26 +89,38 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
                 playerModel
         );
 
-        // Populate the appliedCosmetics map with Id -> WardrobeCosmetic for quick lookup
-        for (PlayerCosmetic wornCosmetic : wardrobeComponent.getCosmetics()) {
-            WardrobeCosmetic cosmetic = WardrobeCosmetic.getAssetMap().getAsset(wornCosmetic.getCosmeticId()); // TODO: replace with registry
-            if (cosmetic != null) {
-                context.getCosmeticMap().put(wornCosmetic.getCosmeticId(), cosmetic);
-            }
-        }
-
-        // Go through each slot and apply the cosmetic if there is one, or attach the hytale cosmetic associated with the slot.
+        // Populate the applied cosmetics map
+        PlayerSkin cosmeticSkin = skinFromProtocol(skin);
         Map<String, ? extends WardrobeCosmeticSlot> slots = WardrobeCosmeticSlot.getAssetMap().getAssetMap();
         for (WardrobeCosmeticSlot group : slots.values()) {
             PlayerCosmetic playerCosmetic = wardrobeComponent.getCosmetic(group);
             if (playerCosmetic != null) {
-                WardrobeCosmetic cosmetic = context.getCosmeticMap().get(playerCosmetic.getCosmeticId());
-                cosmetic.applyCosmetic(context, group, playerCosmetic);
+                Cosmetic cosmetic = CosmeticAsset.getAssetMap().getAsset(playerCosmetic.getCosmeticId()); // TODO: replace with registry
+                if (cosmetic != null) {
+                    context.getCosmeticMap().put(playerCosmetic.getCosmeticId(), cosmetic);
+                }
             } else if (group.getHytaleCosmeticType() != null) {
-                PlayerWardrobeSystem.applyHytaleCosmetic(context, group, skinFromProtocol(skin));
+                HytaleCosmetic hytaleCosmetic = PlayerWardrobeSystem.createHytaleCosmetic(group, cosmeticSkin);
+                if (hytaleCosmetic != null) {
+                    context.getCosmeticMap().put(hytaleCosmetic.getId(), hytaleCosmetic);
+                }
             }
         }
 
+        context.getCosmeticMap().forEach((_, cosmetic) -> {
+            WardrobeCosmeticSlot slot = slots.get(cosmetic.getCosmeticSlotId()); // TODO: replace with registry
+            if (slot != null) {
+                PlayerCosmetic playerCosmetic = wardrobeComponent.getCosmetic(slot);
+                if (playerCosmetic == null && cosmetic instanceof HytaleCosmetic) {
+                    playerCosmetic = new HytalePlayerCosmetic(getSkinPartForType(slot.getHytaleCosmeticType(), cosmeticSkin));
+                }
+
+                // TODO: validate & warn
+                if (playerCosmetic != null) {
+                    cosmetic.applyCosmetic(context, slot, playerCosmetic);
+                }
+            }
+        });
 
         // Handle armor hiding
         Set<CosmeticType> hiddenHytaleSlots = new HashSet<>();
@@ -115,11 +133,22 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
             if (armor == null)
                 break;
 
+            ItemArmorSlot slot = armor.getArmorSlot();
+            boolean shouldHide = switch (slot) {
+                case Head -> playerSettings.hideHelmet();
+                case Chest -> playerSettings.hideCuirass();
+                case Hands -> playerSettings.hideGauntlets();
+                case Legs -> playerSettings.hidePants();
+            };
+
+            if (shouldHide)
+                continue;
+
             com.hypixel.hytale.protocol.ItemArmor protocolArmor = armor.toPacket();
             if (protocolArmor.cosmeticsToHide == null)
                 break;
 
-            for (Cosmetic cosmetic : protocolArmor.cosmeticsToHide) {
+            for (com.hypixel.hytale.protocol.Cosmetic cosmetic : protocolArmor.cosmeticsToHide) {
                 CosmeticType type = protocolCosmeticToCosmeticType(cosmetic);
                 if (type == null)
                     continue;
@@ -173,13 +202,26 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
         return new PlayerSkin(protocolPlayerSkin.bodyCharacteristic, protocolPlayerSkin.underwear, protocolPlayerSkin.face, protocolPlayerSkin.ears, protocolPlayerSkin.mouth, protocolPlayerSkin.eyes, protocolPlayerSkin.facialHair, protocolPlayerSkin.haircut, protocolPlayerSkin.eyebrows, protocolPlayerSkin.pants, protocolPlayerSkin.overpants, protocolPlayerSkin.undertop, protocolPlayerSkin.overtop, protocolPlayerSkin.shoes, protocolPlayerSkin.headAccessory, protocolPlayerSkin.faceAccessory, protocolPlayerSkin.earAccessory, protocolPlayerSkin.skinFeature, protocolPlayerSkin.gloves, protocolPlayerSkin.cape);
     }
 
-    // TODO: support hytale RequiresGenericHair
-    // TODO: support hytale HeadAccessoryType
-    // TODO: support Overlap property
-    // TODO: support HiddenCosmeticSlots
-    public static void applyHytaleCosmetic(WardrobeContext context, WardrobeCosmeticSlot slot, PlayerSkin skin) {
-        PlayerSkin.PlayerSkinPartId skinPartId = switch (slot.getHytaleCosmeticType()) {
-            case EMOTES, GRADIENT_SETS, EYE_COLORS, SKIN_TONES, BODY_CHARACTERISTICS -> null;
+    public static HytaleCosmetic createHytaleCosmetic(WardrobeCosmeticSlot slot, PlayerSkin skin) {
+        PlayerSkin.PlayerSkinPartId skinPartId = getSkinPartForType(slot.getHytaleCosmeticType(), skin);
+        if (skinPartId == null)
+            return null;
+
+        CosmeticRegistry cosmeticRegistry = CosmeticsModule.get().getRegistry();
+        PlayerSkinPart skinPart = (PlayerSkinPart) cosmeticRegistry.getByType(slot.getHytaleCosmeticType()).get(skinPartId.assetId);
+
+        return switch (slot.getHytaleCosmeticType()) {
+            case HAIRCUTS -> new HytaleHaircutCosmetic(slot.getId(), skinPart);
+            case BODY_CHARACTERISTICS -> new HytaleBodyCharacteristicCosmetic(slot.getId(), skinPart);
+            default -> new HytaleCosmetic(slot.getId(), skinPart);
+        };
+    }
+
+    @Nullable
+    private static PlayerSkin.PlayerSkinPartId getSkinPartForType(CosmeticType type, PlayerSkin skin) {
+        return switch (type) {
+            case EMOTES, GRADIENT_SETS, EYE_COLORS, SKIN_TONES -> null;
+            case BODY_CHARACTERISTICS -> skin.getBodyCharacteristic();
             case UNDERWEAR -> skin.getUnderwear();
             case EYEBROWS -> skin.getEyebrows();
             case EYES -> skin.getEyes();
@@ -202,78 +244,10 @@ public class PlayerWardrobeSystem extends EntityTickingSystem<EntityStore> {
                     new PlayerSkin.PlayerSkinPartId(skin.getMouth(), skin.getBodyCharacteristic().textureId, null);
             case null -> null;
         };
-
-        if (skinPartId == null)
-            return;
-
-        CosmeticRegistry cosmeticRegistry = CosmeticsModule.get().getRegistry();
-        PlayerSkinPart skinPart = (PlayerSkinPart) cosmeticRegistry.getByType(slot.getHytaleCosmeticType()).get(skinPartId.assetId);
-
-        if (skinPart.getHeadAccessoryType() == PlayerSkinPart.HeadAccessoryType.FullyCovering) {
-            context.hideSlots("Haircut");
-        } else if (skinPart.getHeadAccessoryType() == PlayerSkinPart.HeadAccessoryType.HalfCovering) {
-            // TODO: tell other cosmetics that this is covering
-        }
-
-        String model;
-        String texture;
-        @Nullable String gradientSet = null;
-        @Nullable String gradientId = null;
-
-        if (skinPart.getVariants() != null && skinPartId.variantId != null) {
-            PlayerSkinPart.Variant variant = skinPart.getVariants().get(skinPartId.variantId);
-            model = variant.getModel();
-
-            if (variant.getTextures() != null) {
-                texture = variant.getTextures().get(skinPartId.textureId).getTexture();
-            } else {
-                texture = variant.getGreyscaleTexture();
-                gradientSet = skinPart.getGradientSet();
-                gradientId = skinPartId.getTextureId();
-            }
-        } else {
-            model = skinPart.getModel();
-            if (skinPart.getTextures() != null) {
-                texture = skinPart.getTextures().get(skinPartId.textureId).getTexture();
-            } else {
-                texture = skinPart.getGreyscaleTexture();
-                gradientSet = skinPart.getGradientSet();
-                gradientId = skinPartId.getTextureId();
-            }
-        }
-
-        // TODO: support builtin hytale cosmetics that cover up the hair
-        if (skinPart.doesRequireGenericHaircut() && skinPart.getHairType() != null) {
-            for (WardrobeCosmetic cosmetic : context.getCosmeticMap().values()) {
-                if (cosmetic instanceof ModelAttachmentCosmetic modelAttachmentCosmetic) {
-                    for (String overlapSlot : modelAttachmentCosmetic.getOverlapCosmeticSlotIds()) {
-                        if (slot.getId().equals(overlapSlot)) {
-                            // TODO: add proper fallbacks with registry
-                            PlayerSkinPart genericHaricut = cosmeticRegistry.getHaircuts().get(String.valueOf(skinPart.getHairType()));
-
-                            if (genericHaricut != null) {
-                                model = genericHaricut.getModel();
-                                texture = genericHaricut.getGreyscaleTexture();
-                            }
-
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        context.addAttachment(slot.getId(), new ModelAttachment(
-                model,
-                texture,
-                gradientSet,
-                gradientId,
-                1.0
-        ));
     }
 
     @Nullable
-    private static CosmeticType protocolCosmeticToCosmeticType(Cosmetic cosmetic) {
+    private static CosmeticType protocolCosmeticToCosmeticType(com.hypixel.hytale.protocol.Cosmetic cosmetic) {
         return switch (cosmetic) {
             case Haircut -> CosmeticType.HAIRCUTS;
             case FacialHair -> CosmeticType.FACIAL_HAIR;

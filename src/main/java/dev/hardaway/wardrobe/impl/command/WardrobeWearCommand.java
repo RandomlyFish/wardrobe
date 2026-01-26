@@ -12,11 +12,12 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.cosmetic.AppearanceCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.system.CosmeticSaveData;
 
 import javax.annotation.Nonnull;
@@ -48,7 +49,7 @@ public class WardrobeWearCommand extends AbstractPlayerCommand {
         PlayerWardrobe wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobe.getComponentType());
 
         String cosmeticId = cosmeticArg.get(context);
-        WardrobeCosmetic cosmetic = WardrobeCosmetic.getAssetMap().getAsset(cosmeticId);
+        Cosmetic cosmetic = CosmeticAsset.getAssetMap().getAsset(cosmeticId); // TODO: registry
 
         if (cosmetic == null) {
             context.sendMessage(Message.raw("Failed to find cosmetic with id \"{id}\"!").param("id", cosmeticId));

@@ -34,9 +34,6 @@ public class ResetPlayerModelSystem extends RefChangeSystem<EntityStore, PlayerW
 
     @Override
     public void onComponentAdded(@Nonnull Ref<EntityStore> ref, @Nonnull PlayerWardrobeComponent playerWardrobeComponent, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
-        Player player = store.getComponent(ref, Player.getComponentType());
-        player.getInventory().getArmor().registerChangeEvent(_ -> playerWardrobeComponent.rebuild());
-        // TODO: unregister events
     }
 
     @Override

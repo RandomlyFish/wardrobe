@@ -3,8 +3,9 @@ package dev.hardaway.wardrobe.impl.asset.cosmetic.appearance;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
+import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 
 import javax.annotation.Nullable;
 
@@ -27,7 +28,7 @@ public class ModelCosmeticAppearance implements CosmeticAppearance {
     private TextureConfig textureConfig;
 
     @Override
-    public String getModel(@Nullable String cosmeticVariantId) {
+    public String getModel(String cosmetic) {
         return model;
     }
 

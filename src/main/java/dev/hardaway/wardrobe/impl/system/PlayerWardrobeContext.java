@@ -3,8 +3,9 @@ package dev.hardaway.wardrobe.impl.system;
 import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.modules.entity.player.PlayerSettings;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
@@ -18,14 +19,16 @@ import java.util.Set;
 public class PlayerWardrobeContext implements WardrobeContext {
 
     private final Player player;
+    private final PlayerSettings playerSettings;
     private final PlayerWardrobe component;
-    private final Map<String, WardrobeCosmetic> appliedCosmetics;
+    private final Map<String, Cosmetic> appliedCosmetics;
     private final Map<String, ModelAttachment> attachments;
     protected final Set<String> slotsToHide;
     private Model playerModel;
 
-    public PlayerWardrobeContext(Player player, PlayerWardrobe component, Map<String, WardrobeCosmetic> appliedCosmetics, Map<String, ModelAttachment> attachments, Set<String> slotsToHide, Model playerModel) {
+    public PlayerWardrobeContext(Player player, PlayerSettings playerSettings, PlayerWardrobe component, Map<String, Cosmetic> appliedCosmetics, Map<String, ModelAttachment> attachments, Set<String> slotsToHide, Model playerModel) {
         this.player = player;
+        this.playerSettings = playerSettings;
         this.component = component;
         this.appliedCosmetics = appliedCosmetics;
         this.playerModel = playerModel;
@@ -35,6 +38,11 @@ public class PlayerWardrobeContext implements WardrobeContext {
 
     public Player getPlayer() {
         return player;
+    }
+
+    @Override
+    public PlayerSettings getPlayerSettings() {
+        return playerSettings;
     }
 
     public Collection<PlayerCosmetic> getCosmetics() {
@@ -48,7 +56,7 @@ public class PlayerWardrobeContext implements WardrobeContext {
     }
 
     @Override
-    public Map<String, WardrobeCosmetic> getCosmeticMap() {
+    public Map<String, Cosmetic> getCosmeticMap() {
         return appliedCosmetics;
     }
 

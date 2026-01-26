@@ -5,8 +5,8 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

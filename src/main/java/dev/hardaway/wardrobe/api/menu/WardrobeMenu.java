@@ -2,9 +2,11 @@ package dev.hardaway.wardrobe.api.menu;
 
 import com.hypixel.hytale.common.util.StringCompareUtil;
 import dev.hardaway.wardrobe.api.cosmetic.*;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.system.CosmeticSaveData;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -55,10 +57,10 @@ public class WardrobeMenu {
     }
 
     private void buildCosmetics() {
-        WardrobeCosmetic.getAssetMap().getAssetMap().values().stream()
+        CosmeticAsset.getAssetMap().getAssetMap().values().stream()
                 .filter(c -> c.getWardrobeVisibility() != WardrobeVisibility.NEVER)
                 .filter(c -> c.getWardrobeVisibility() != WardrobeVisibility.PERMISSION || c.hasPermission(playerId))
-                .sorted(Comparator.comparing(WardrobeCosmetic::getId))
+                .sorted(Comparator.comparing(Cosmetic::getId))
                 .forEach(c -> cosmeticMap.computeIfAbsent(c.getCosmeticSlotId(), k -> new ArrayList<>()).add(c));
     }
 
@@ -108,7 +110,7 @@ public class WardrobeMenu {
         selectedSlot = slotId;
     }
 
-    public boolean selectCosmetic(PlayerWardrobe wardrobe, @Nullable WardrobeCosmetic cosmetic, @Nullable String variant, @Nullable String texture) {
+    public boolean selectCosmetic(PlayerWardrobe wardrobe, @Nullable Cosmetic cosmetic, @Nullable String variant, @Nullable String texture) {
         PlayerCosmetic worn = wardrobe.getCosmetic(selectedSlot);
 
         if (cosmetic != null && worn != null && cosmetic.getId().equals(worn.getCosmeticId())) {
@@ -119,7 +121,7 @@ public class WardrobeMenu {
 
         if (cosmetic == null) {
             if (worn == null) return false;
-            cosmetic = Objects.requireNonNull(WardrobeCosmetic.getAssetMap().getAsset(worn.getCosmeticId()));
+            cosmetic = Objects.requireNonNull(CosmeticAsset.getAssetMap().getAsset(worn.getCosmeticId())); // TODO: registry
         }
 
         if (cosmetic instanceof AppearanceCosmetic a) {

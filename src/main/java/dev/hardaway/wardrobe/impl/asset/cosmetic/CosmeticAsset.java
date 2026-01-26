@@ -118,7 +118,6 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
         return requiredCosmetics;
     }
 
-    @Override
     public String[] getHiddenCosmeticSlotIds() {
         return hiddenCosmeticSlots;
     }

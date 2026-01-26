@@ -33,7 +33,6 @@ public class PlayerWardrobeComponent implements PlayerWardrobe, Component<Entity
 
     protected PlayerWardrobeComponent(Map<String, CosmeticSaveData> cosmetics) {
         this.setCosmetics(cosmetics);
-        this.rebuild();
     }
 
     @Override

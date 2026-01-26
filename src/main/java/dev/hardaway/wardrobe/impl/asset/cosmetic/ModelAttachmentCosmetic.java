@@ -3,17 +3,20 @@ package dev.hardaway.wardrobe.impl.asset.cosmetic;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.protocol.ItemArmorSlot;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
+import com.hypixel.hytale.server.core.cosmetics.PlayerSkinPart;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
-import dev.hardaway.wardrobe.api.cosmetic.AppearanceCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
-import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeVisibility;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
+import dev.hardaway.wardrobe.impl.asset.cosmetic.builtin.HytaleCosmetic;
 
 import javax.annotation.Nullable;
 
@@ -83,23 +86,41 @@ public class ModelAttachmentCosmetic extends CosmeticAsset implements Appearance
         CosmeticAppearance appearance = this.getAppearance();
 
         if (slot.getArmorSlot() != null && this.getArmorAppearance() != null) {
-            ItemStack armor = context.getPlayer().getInventory().getArmor().getItemStack((short) slot.getArmorSlot().getValue());
-            if (armor != null) appearance = this.getArmorAppearance();
+//            boolean shouldHide = switch (slot.getArmorSlot()) {
+//                case Head -> context.getPlayerSettings().hideHelmet();
+//                case Chest -> context.getPlayerSettings().hideCuirass();
+//                case Hands -> context.getPlayerSettings().hideGauntlets();
+//                case Legs -> context.getPlayerSettings().hidePants();
+//            };
+//
+//            if (!shouldHide) {
+//                ItemStack armor = context.getPlayer().getInventory().getArmor().getItemStack((short) slot.getArmorSlot().getValue());
+//                if (armor != null) appearance = this.getArmorAppearance();
+//            }
         } else if (this.getOverlapAppearance() != null) {
             boolean overlapFound = false;
-            for (WardrobeCosmetic cosmetic : context.getCosmeticMap().values()) {
+            for (Cosmetic cosmetic : context.getCosmeticMap().values()) {
                 if (overlapFound)
                     break;
 
+                if (cosmetic instanceof HytaleCosmetic hytaleCosmetic) {
+                    if (hytaleCosmetic.getPart().getHeadAccessoryType() == PlayerSkinPart.HeadAccessoryType.HalfCovering) {
+                        overlapFound = true;
+                        break;
+                    }
+                }
                 if (cosmetic instanceof ModelAttachmentCosmetic modelAttachmentCosmetic) {
                     for (String overlapSlot : modelAttachmentCosmetic.overlapCosmeticSlotIds) {
                         if (slot.getId().equals(overlapSlot)) {
-                            appearance = this.getOverlapAppearance();
                             overlapFound = true;
                             break;
                         }
                     }
                 }
+            }
+
+            if (overlapFound) {
+                appearance = this.getOverlapAppearance();
             }
         }
 

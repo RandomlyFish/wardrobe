@@ -1,4 +1,4 @@
-package dev.hardaway.wardrobe.api.cosmetic.apperance;
+package dev.hardaway.wardrobe.api.cosmetic.appearance;
 
 import com.hypixel.hytale.codec.lookup.BuilderCodecMapCodec;
 
@@ -6,7 +6,7 @@ public interface CosmeticAppearance {
 
     BuilderCodecMapCodec<CosmeticAppearance> CODEC = new BuilderCodecMapCodec<>("Type", true);
 
-    String getModel(String modelVariantId);
+    String getModel(String cosmeticVariantId);
 
     TextureConfig getTextureConfig(String cosmeticVariantId);
 

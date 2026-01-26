@@ -13,8 +13,8 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.ser
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.CosmeticAppearance;
-import dev.hardaway.wardrobe.api.cosmetic.apperance.TextureConfig;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.impl.asset.CosmeticCategoryAsset;
 import dev.hardaway.wardrobe.impl.asset.CosmeticSlotAsset;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
@@ -30,6 +30,8 @@ import dev.hardaway.wardrobe.impl.command.WardrobeCommand;
 import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 import dev.hardaway.wardrobe.impl.system.PlayerWardrobeSystem;
 import dev.hardaway.wardrobe.impl.system.ResetPlayerModelSystem;
+import dev.hardaway.wardrobe.impl.system.PlayerSettingsRebuildSystem;
+import dev.hardaway.wardrobe.impl.system.UpdateWardrobeSystem;
 import dev.hardaway.wardrobe.impl.ui.WardrobePage;
 
 import javax.annotation.Nonnull;
@@ -92,8 +94,11 @@ public class WardrobePlugin extends JavaPlugin {
                 PlayerWardrobeComponent.CODEC
         );
 
+        // TODO: groups
         this.getEntityStoreRegistry().registerSystem(new ResetPlayerModelSystem(this.playerWardrobeComponentType));
         this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystem(this.playerWardrobeComponentType));
+        this.getEntityStoreRegistry().registerSystem(new PlayerSettingsRebuildSystem());
+        this.getEntityStoreRegistry().registerSystem(new UpdateWardrobeSystem());
 
         OpenCustomUIInteraction.registerCustomPageSupplier(this, WardrobePage.class, "AvatarCustomisation", (_, _, playerRef, _) ->
                 new WardrobePage(playerRef, CustomPageLifetime.CanDismiss)
