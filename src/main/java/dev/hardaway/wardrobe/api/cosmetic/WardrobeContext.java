@@ -13,16 +13,23 @@ public interface WardrobeContext {
 
     Player getPlayer();
 
+    Map<String, WardrobeCosmetic> getCosmeticMap();
+
     Collection<PlayerCosmetic> getCosmetics();
 
     @Nullable
-    PlayerCosmetic getCosmetic(WardrobeCosmeticSlot group);
+    PlayerCosmetic getCosmetic(String slot);
 
-    Map<WardrobeCosmeticSlot, ModelAttachment> getModelAttachments();
+    @Nullable
+    default PlayerCosmetic getCosmetic(WardrobeCosmeticSlot slot) {
+        return this.getCosmetic(slot.getId());
+    }
 
-    void addAttachment(WardrobeCosmeticSlot group, ModelAttachment attachment);
+    Map<String, ModelAttachment> getModelAttachments();
 
-    void hideGroup(String group);
+    void addAttachment(String slot, ModelAttachment attachment);
+
+    void hideSlots(String... slots);
 
     Model getPlayerModel();
 

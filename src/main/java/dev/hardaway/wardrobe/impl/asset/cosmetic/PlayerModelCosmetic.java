@@ -39,6 +39,7 @@ public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosm
 
     @Override
     public void applyCosmetic(WardrobeContext context, WardrobeCosmeticSlot slot, PlayerCosmetic playerCosmetic) {
+        super.applyCosmetic(context, slot, playerCosmetic);
         ModelAsset modelAsset = ModelAsset.getAssetMap().getAsset(this.getAppearance().getModel(playerCosmetic.getVariantId()));
         TextureConfig textureConfig = this.getAppearance().getTextureConfig(playerCosmetic.getVariantId());
 

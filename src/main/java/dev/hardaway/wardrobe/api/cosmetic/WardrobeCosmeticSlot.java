@@ -1,6 +1,7 @@
 package dev.hardaway.wardrobe.api.cosmetic;
 
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
+import com.hypixel.hytale.protocol.ItemArmorSlot;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import dev.hardaway.wardrobe.impl.asset.CosmeticSlotAsset;
 
@@ -13,6 +14,9 @@ public interface WardrobeCosmeticSlot extends WardrobeTab {
     }
 
     WardrobeCategory getCategory();
+
+    @Nullable
+    ItemArmorSlot getArmorSlot();
 
     @Nullable
     CosmeticType getHytaleCosmeticType();

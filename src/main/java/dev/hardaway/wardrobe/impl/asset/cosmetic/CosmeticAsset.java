@@ -11,8 +11,11 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeVisibility;
+import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -128,5 +131,10 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
     @Nullable
     public String getPermissionNode() {
         return permissionNode;
+    }
+
+    @Override
+    public void applyCosmetic(WardrobeContext context, WardrobeCosmeticSlot slot, PlayerCosmetic playerCosmetic) {
+        context.hideSlots(this.hiddenCosmeticSlots);
     }
 }

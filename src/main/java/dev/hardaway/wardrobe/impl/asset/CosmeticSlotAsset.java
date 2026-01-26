@@ -10,6 +10,7 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.validation.Validators;
+import com.hypixel.hytale.protocol.ItemArmorSlot;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.WardrobeTranslationProperties;
@@ -40,6 +41,10 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
                     t -> t.cosmeticType
             ).add()
 
+            .append(new KeyedCodec<>("ArmorSlot", new EnumCodec<>(ItemArmorSlot.class)),
+                    (t, value) -> t.armorSlot = value,
+                    t -> t.armorSlot
+            ).add()
 
             .append(new KeyedCodec<>("Category", Codec.STRING, true),
                     (t, value) -> t.category = value,
@@ -75,6 +80,7 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
     private WardrobeTranslationProperties translationProperties;
 
     private CosmeticType cosmeticType;
+    private ItemArmorSlot armorSlot;
 
     private String category;
     private String icon;
@@ -103,6 +109,12 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
             throw new IllegalStateException("Category not found: " + this.category);
         }
         return category;
+    }
+
+    @Nullable
+    @Override
+    public ItemArmorSlot getArmorSlot() {
+        return armorSlot;
     }
 
     @Override
