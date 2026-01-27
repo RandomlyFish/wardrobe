@@ -32,19 +32,20 @@ public class WardrobeDismissPage extends InteractiveCustomUIPage<WardrobeDismiss
         commandBuilder.append("Wardrobe/Pages/UnsavedChanges.ui");
 
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Save", WardrobePage.MenuAction.Save.getEvent());
-        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Discard", WardrobePage.MenuAction.Save.getEvent());
+        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Discard", WardrobePage.MenuAction.Discard.getEvent());
     }
 
     @Override
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull PageEventData data) {
         super.handleDataEvent(ref, store, data);
 
+        PlayerWardrobe currentWardrobe = store.getComponent(ref, PlayerWardrobe.getComponentType());
+
         if (WardrobePage.MenuAction.Discard.equals(data.action)) {
             if (wardrobe != null) {
                 store.putComponent(ref, PlayerWardrobe.getComponentType(), (PlayerWardrobeComponent) wardrobe);
                 wardrobe.rebuild();
-            } else store.removeComponentIfExists(ref, PlayerWardrobe.getComponentType());
-
+            } else if (currentWardrobe != null) currentWardrobe.clearCosmetics();
         }
 
         close();

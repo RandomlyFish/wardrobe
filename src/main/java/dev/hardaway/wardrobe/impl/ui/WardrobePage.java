@@ -111,11 +111,14 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             }
         }
 
+        PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobe.getComponentType());
+
         switch (data.action) {
             case null -> {
             } // Do nothing
             case Reset -> {
-                if (store.removeComponentIfExists(ref, PlayerWardrobe.getComponentType())) {
+                if (wardrobe != null) {
+                    wardrobe.clearCosmetics();
                     buildCosmetics(commandBuilder, eventBuilder, ref, store);
                     shouldClose = baseWardrobe == null;
                 }
@@ -125,7 +128,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                     store.putComponent(ref, PlayerWardrobe.getComponentType(), (PlayerWardrobeComponent) baseWardrobe);
                     baseWardrobe.rebuild();
                 }
-                else store.removeComponentIfExists(ref, PlayerWardrobe.getComponentType());
+                else if (wardrobe != null) wardrobe.clearCosmetics();
 
                 shouldClose = true;
                 close();
