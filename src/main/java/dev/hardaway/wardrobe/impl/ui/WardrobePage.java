@@ -6,15 +6,7 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.protocol.ClientCameraView;
-import com.hypixel.hytale.protocol.Direction;
-import com.hypixel.hytale.protocol.GameMode;
-import com.hypixel.hytale.protocol.MouseInputType;
-import com.hypixel.hytale.protocol.Position;
-import com.hypixel.hytale.protocol.PositionDistanceOffsetType;
-import com.hypixel.hytale.protocol.RotationType;
-import com.hypixel.hytale.protocol.ServerCameraSettings;
-import com.hypixel.hytale.protocol.Vector3f;
+import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.protocol.packets.camera.SetServerCamera;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
@@ -44,7 +36,7 @@ import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,8 +66,8 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
         eventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#SearchField", EventData.of("@SearchQuery", "#SearchField.Value"), false);
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#ResetAvatar", MenuAction.Reset.getEvent(), false);
-        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#DiscardChanges", MenuAction.Discard.getEvent(), false);
-        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#SaveChanges", MenuAction.Save.getEvent(), false);
+        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Discard", MenuAction.Discard.getEvent(), false);
+        eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Save", MenuAction.Save.getEvent(), false);
 
         PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobe.getComponentType());
         if (wardrobe != null) baseWardrobe = wardrobe.clone();
@@ -129,8 +121,10 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                 }
             }
             case Discard -> {
-                if (baseWardrobe != null)
+                if (baseWardrobe != null) {
                     store.putComponent(ref, PlayerWardrobe.getComponentType(), (PlayerWardrobeComponent) baseWardrobe);
+                    baseWardrobe.rebuild();
+                }
                 else store.removeComponentIfExists(ref, PlayerWardrobe.getComponentType());
 
                 shouldClose = true;
@@ -232,24 +226,25 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         int row = -1;
         for (int i = 0; i < cosmetics.size(); i++) {
             if (i % COSMETICS_PER_ROW == 0) {
-                commandBuilder.append("#Cosmetics", "Wardrobe/Pages/CosmeticRow.ui");
+                commandBuilder.append("#Cosmetics", "Wardrobe/Pages/Row.ui");
                 row++;
             }
 
             WardrobeCosmetic cosmetic = cosmetics.get(i);
             int col = i % COSMETICS_PER_ROW;
 
-            commandBuilder.append("#Cosmetics[" + row + "] #CosmeticsInRow", "Wardrobe/Pages/Cosmetic.ui");
-            String selector = "#Cosmetics[" + row + "] #CosmeticsInRow[" + col + "]";
+            commandBuilder.append("#Cosmetics[" + row + "] #Row", "Wardrobe/Pages/Cosmetic.ui");
+            String selector = "#Cosmetics[" + row + "] #Row[" + col + "]";
 
             WardrobeTranslationProperties translationProperties = cosmetic.getTranslationProperties();
             Message tooltip = Message.empty();
-
             tooltip.insert(translationProperties.getName().bold(true));
-            tooltip.insert("\n");
+
             Player player = store.ensureAndGetComponent(ref, Player.getComponentType());
-            if (player.getGameMode() == GameMode.Creative)
+            if (player.getGameMode() == GameMode.Creative) {
+                tooltip.insert("\n");
                 tooltip.insert(Message.raw("ID: " + cosmetic.getId()).color(Color.LIGHT_GRAY).italic(true));
+            }
 
             if (translationProperties.getDescriptionKey() != null) {
                 tooltip.insert("\n");
@@ -284,11 +279,12 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                     if (variantIconPath != null) {
                         commandBuilder.set(selector + " #Icon.AssetPath", variantIconPath);
                         tooltip = Message.empty();
-
                         tooltip.insert(translationProperties.getName().bold(true));
-                        tooltip.insert("\n");
-                        if (player.getGameMode() == GameMode.Creative)
+
+                        if (player.getGameMode() == GameMode.Creative) {
+                            tooltip.insert("\n");
                             tooltip.insert(Message.raw("ID: " + cosmetic.getId()).color(Color.LIGHT_GRAY).italic(true));
+                        }
 
                         WardrobeTranslationProperties newTranslation = entry.translationProperties();
 
@@ -309,7 +305,8 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                 }
             }
 
-            commandBuilder.set(selector + " #Button.TooltipTextSpans", tooltip);
+            if (tooltip.getChildren().size() > 1) commandBuilder.set(selector + " #Button.TooltipTextSpans", tooltip);
+            else commandBuilder.set(selector + " #Button.TooltipText", tooltip.getChildren().getFirst());
         }
 
         anchor.setHeight(Value.of(anchorHeight));
@@ -355,16 +352,15 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         for (int i = 0; i < colorEntries.size(); i++) {
             CosmeticColorEntry colorEntry = colorEntries.get(i);
             if (i % OPTIONS_PER_ROW == 0) {
-                commandBuilder.append("#Colors", "Wardrobe/Pages/ColorOptionRow.ui");
+                commandBuilder.append("#Colors", "Wardrobe/Pages/Row.ui");
                 row++;
             }
 
-            commandBuilder.append("#Colors[" + row + "] #ColorOptionsInRow", "Wardrobe/Pages/ColorOption.ui");
-            String selector = "#Colors[" + row + "] #ColorOptionsInRow[" + (i % OPTIONS_PER_ROW) + "]";
+            commandBuilder.append("#Colors[" + row + "] #Row", "Wardrobe/Pages/ColorOption.ui");
+            String selector = "#Colors[" + row + "] #Row[" + (i % OPTIONS_PER_ROW) + "]";
 
             String[] baseColor = colorEntry.colors();
 
-            // TODO: color stripes
             for (int c = 0; c < baseColor.length; c++) {
                 String color = baseColor[c];
                 commandBuilder.append(selector + " #Button #Colors", "Wardrobe/Pages/Color.ui");
@@ -405,7 +401,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         private MenuAction action;
     }
 
-    enum MenuAction {
+    public enum MenuAction {
         Reset, Discard, Save;
 
         private final EventData eventData;

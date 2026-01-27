@@ -1,10 +1,6 @@
 $Common = "../../Common.ui";
 $Sounds = "../../Sounds.ui";
 
-@PartPreviewHeight = 149;
-@PartPreviewMargin = 10;
-@PartPreviewRows = 4.75;
-
 @HeadlineLabelStyle = (
   LabelStyle(
     RenderBold: true,
@@ -79,7 +75,7 @@ Group {
               Text: "";
             }
 
-            Group #CategoryLabelArrow {
+            Group {
               Anchor: (Width: 6, Height: 10, Top: 4, Horizontal: 8);
               Background: (TexturePath: "../../Common/ContainerTitleArrow.png");
             }
@@ -93,7 +89,7 @@ Group {
 
           $Common.@ContentSeparator {}
 
-          Group #Filters {
+          Group {
             LayoutMode: Left;
             Anchor: (Top: 10);
 
@@ -200,12 +196,12 @@ Group {
         Background: (Color: #a6afba(0.20));
       }
 
-      $Common.@SecondaryTextButton #DiscardChanges {
+      $Common.@SecondaryTextButton #Discard {
         @Text = %client.general.button.discardChanges;
         @Anchor = Anchor(Right: 8, MinWidth: 223);
       }
 
-      $Common.@TextButton #SaveChanges {
+      $Common.@TextButton #Save {
         @Sounds = $Sounds.@SaveSettings;
         @Text = %client.general.button.save;
         @Anchor = Anchor(MinWidth: $Common.@DefaultButtonMinWidth);
