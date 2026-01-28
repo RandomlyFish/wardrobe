@@ -147,10 +147,12 @@ public class WardrobePlugin extends JavaPlugin {
 
     private static void onInventoryChange(LivingEntityInventoryChangeEvent event) {
         Ref<EntityStore> ref = event.getEntity().getReference();
-        Store<EntityStore> store = event.getEntity().getWorld().getEntityStore().getStore();
-
-        PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
-        if (wardrobe != null) wardrobe.rebuild();
+        World world = event.getEntity().getWorld();
+        if (ref != null && world != null) {
+            Store<EntityStore> store = world.getEntityStore().getStore();
+            PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
+            if (wardrobe != null) wardrobe.rebuild();
+        }
     }
 
     private static void onCosmeticsUpdated(LoadedAssetsEvent<String, CosmeticAsset, DefaultAssetMap<String, CosmeticAsset>> event) {
@@ -165,7 +167,7 @@ public class WardrobePlugin extends JavaPlugin {
         rebuildAllWardrobes();
     }
 
-    private static void rebuildAllWardrobes() {
+    public static void rebuildAllWardrobes() {
         Universe universe = Universe.get();
         universe.getPlayers().forEach(playerRef -> {
             World world = universe.getWorld(playerRef.getWorldUuid());

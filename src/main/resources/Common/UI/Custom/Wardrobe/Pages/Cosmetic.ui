@@ -42,6 +42,7 @@ Group {
 
   Button #Button {
     Anchor: (Width: 92, Height: 149);
+    MaskTexturePath: "../Icons/PartMask.png";
     Background: "../Icons/PartFrame.png";
     Style: @LabelStyle;
     TextTooltipStyle: $AC.@ButtonTextTooltipStyle;

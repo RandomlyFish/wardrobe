@@ -172,10 +172,10 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         cameraSettings.positionOffset = new Position(0, 0, 0);
         cameraSettings.positionLerpSpeed = 0.2F;
         cameraSettings.rotationType = RotationType.Custom;
-        cameraSettings.rotation = new Direction((float) (yaw + Math.PI), 0, 0);
+        cameraSettings.rotation = new Direction(yaw, 0, 0);
         cameraSettings.rotationLerpSpeed = 0.2F;
         cameraSettings.mouseInputType = MouseInputType.LookAtPlane;
-        cameraSettings.planeNormal = new Vector3f((float) Math.sin(yaw), 2, (float) Math.cos(yaw));
+        cameraSettings.planeNormal = new Vector3f((float) Math.sin(yaw), -2, (float) Math.cos(yaw));
 
         playerRef.getPacketHandler().writeNoCache(new SetServerCamera(ClientCameraView.Custom, false, cameraSettings));
     }
