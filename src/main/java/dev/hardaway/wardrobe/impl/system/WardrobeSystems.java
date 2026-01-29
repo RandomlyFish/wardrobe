@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class WardrobeSystems {
@@ -322,6 +323,44 @@ public class WardrobeSystems {
                     commandBuffer.putComponent(ref, ModelComponent.getComponentType(), new ModelComponent(newModel));
                 }
             }
+        }
+
+        @Nonnull
+        @Override
+        public Query<EntityStore> getQuery() {
+            return QUERY;
+        }
+    }
+
+    public static class ArmorVisibilityChanged extends RefChangeSystem<EntityStore, PlayerSettings> {
+
+        private static final Query<EntityStore> QUERY = Query.and(Player.getComponentType(), PlayerWardrobe.getComponentType());
+
+        @Nonnull
+        @Override
+        public ComponentType<EntityStore, PlayerSettings> componentType() {
+            return PlayerSettings.getComponentType();
+        }
+
+        @Override
+        public void onComponentAdded(@Nonnull Ref<EntityStore> ref, @Nonnull PlayerSettings settings, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
+        }
+
+        @Override
+        public void onComponentSet(@Nonnull Ref<EntityStore> ref, @Nullable PlayerSettings oldSettings, @Nonnull PlayerSettings newSettings, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
+            // If there are no armor visibility changes, then don't rebuild the wardrobe
+            if (oldSettings != null && (
+                    Objects.equals(oldSettings.hideHelmet(), newSettings.hideHelmet())
+                            && Objects.equals(oldSettings.hideCuirass(), newSettings.hideCuirass())
+                            && Objects.equals(oldSettings.hidePants(), newSettings.hidePants())
+                            && Objects.equals(oldSettings.hideGauntlets(), newSettings.hideGauntlets())
+            )) return;
+
+            store.getComponent(ref, PlayerWardrobe.getComponentType()).rebuild();
+        }
+
+        @Override
+        public void onComponentRemoved(@Nonnull Ref<EntityStore> ref, @Nonnull PlayerSettings settings, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
         }
 
         @Nonnull
