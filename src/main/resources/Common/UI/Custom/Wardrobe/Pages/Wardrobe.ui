@@ -21,7 +21,7 @@ $Sounds = "../../Sounds.ui";
 @DefaultTooltipBackground = (TexturePath: "../../Common/TooltipDefaultBackground.png", Border: 24);
 
 Group {
-  Anchor: (Top: 110, Left: -20, MaxWidth: 1880, Height: 924);
+  Anchor: (Top: 110, Left: -10, MaxWidth: 1880, Height: 924);
   LayoutMode: Left;
   Padding: (Horizontal: 30);
 
@@ -38,12 +38,24 @@ Group {
 
     #Content {
       LayoutMode: Left;
-      Padding: (Horizontal: 10, Top: 2, Bottom: 5);
+      Padding: (Horizontal: 10, Left: 2, Top: 2, Bottom: 5);
 
-      Group #Categories {
-        Anchor: (Width: 65, Left: 2);
-        Padding: (Top: 10);
+      Group {
         LayoutMode: Top;
+
+        Group #Categories {
+          Anchor: (Width: 65);
+          Padding: (Top: 10);
+          LayoutMode: Top;
+        }
+
+        Group {
+          FlexWeight: 1;
+          Anchor: (Width: 47, Height: 47, Bottom: 5);
+          Background: "../Icons/Logo.png";
+          TooltipText: "Wardrobe";
+          TextTooltipStyle: @ButtonTextTooltipStyle;
+        }
       }
 
       $Common.@VerticalSeparator {}
@@ -69,7 +81,7 @@ Group {
             LayoutMode: Left;
             Anchor: (Height: 25);
 
-            Label #CategoryName {
+            Label #CategoriesName {
               Style: @HeadlineLabelStyle;
               Anchor: (Top: -3);
               Text: "";
@@ -80,7 +92,7 @@ Group {
               Background: (TexturePath: "../../Common/ContainerTitleArrow.png");
             }
 
-            Label #SubCategoryName {
+            Label #SlotsName {
               Style: @HeadlineLabelStyle;
               Anchor: (Top: -3);
               Text: "";
@@ -114,6 +126,31 @@ Group {
                   )
                 )
               );
+            }
+
+
+
+            Group #HideType {
+              LayoutMode: Left;
+              Anchor: (Left: 10);
+              Visible: false;
+
+              CheckBox #Checkbox {
+                Anchor: (Width: 44, Height: 44);
+                Padding: (Full: 4);
+                Style: CheckBoxStyle(
+                         Unchecked: (
+                           DefaultBackground: (TexturePath: "../Icons/VisibilityOn.png"),
+                           ChangedSound: (SoundPath: $Sounds.@Untick, Volume: 6)
+                         ),
+                         Checked: (
+                           DefaultBackground: (TexturePath: "../Icons/VisibilityOff.png"),
+                           ChangedSound: (SoundPath: $Sounds.@Tick, Volume: 6)
+                         )
+                       );
+                TooltipText: "Hide Default Cosmetic";
+                TextTooltipStyle: @ButtonTextTooltipStyle;
+              }
             }
           }
 

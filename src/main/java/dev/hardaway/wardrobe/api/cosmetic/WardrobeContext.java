@@ -2,6 +2,7 @@ package dev.hardaway.wardrobe.api.cosmetic;
 
 import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
+import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.player.PlayerSettings;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
@@ -17,6 +18,8 @@ public interface WardrobeContext {
     PlayerSettings getPlayerSettings();
 
     Map<String, Cosmetic> getCosmeticMap();
+
+    Collection<CosmeticType> getHiddenTypes();
 
     Collection<PlayerCosmetic> getCosmetics();
 

@@ -12,7 +12,6 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
@@ -20,6 +19,7 @@ import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.system.CosmeticSaveData;
+import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -46,7 +46,7 @@ public class WardrobeWearCommand extends AbstractPlayerCommand {
             @Nonnull PlayerRef playerRef,
             @Nonnull World world
     ) {
-        PlayerWardrobe wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobe.getComponentType());
+        PlayerWardrobe wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
 
         String cosmeticId = cosmeticArg.get(context);
         WardrobeCosmetic cosmetic = CosmeticAsset.getAssetMap().getAsset(cosmeticId); // TODO: registry

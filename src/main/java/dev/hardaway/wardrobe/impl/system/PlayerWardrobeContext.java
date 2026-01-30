@@ -2,6 +2,7 @@ package dev.hardaway.wardrobe.impl.system;
 
 import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
+import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.player.PlayerSettings;
 import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
@@ -11,10 +12,7 @@ import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class PlayerWardrobeContext implements WardrobeContext {
 
@@ -24,6 +22,7 @@ public class PlayerWardrobeContext implements WardrobeContext {
     private final Map<String, Cosmetic> appliedCosmetics;
     private final Map<String, ModelAttachment> attachments;
     protected final Set<String> slotsToHide;
+    protected final Set<CosmeticType> hiddenTypes;
     private Model playerModel;
 
     public PlayerWardrobeContext(Player player, PlayerSettings playerSettings, PlayerWardrobe component, Map<String, Cosmetic> appliedCosmetics, Map<String, ModelAttachment> attachments, Set<String> slotsToHide, Model playerModel) {
@@ -34,6 +33,7 @@ public class PlayerWardrobeContext implements WardrobeContext {
         this.playerModel = playerModel;
         this.attachments = attachments;
         this.slotsToHide = slotsToHide;
+        this.hiddenTypes = new HashSet<>(component.getHiddenCosmeticTypes());
     }
 
     public Player getPlayer() {
@@ -58,6 +58,11 @@ public class PlayerWardrobeContext implements WardrobeContext {
     @Override
     public Map<String, Cosmetic> getCosmeticMap() {
         return appliedCosmetics;
+    }
+
+    @Override
+    public Collection<CosmeticType> getHiddenTypes() {
+        return hiddenTypes;
     }
 
     @Nullable

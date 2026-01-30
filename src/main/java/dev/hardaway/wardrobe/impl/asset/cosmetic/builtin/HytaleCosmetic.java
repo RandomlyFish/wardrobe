@@ -34,6 +34,10 @@ public class HytaleCosmetic implements Cosmetic {
         return "Hytale:" + this.type.name() + "." + part.getId();
     }
 
+    public CosmeticType getType() {
+        return type;
+    }
+
     public PlayerSkinPart getPart() {
         return part;
     }
@@ -67,7 +71,7 @@ public class HytaleCosmetic implements Cosmetic {
             }
         }
 
-        if (this.part.getHeadAccessoryType() == PlayerSkinPart.HeadAccessoryType.FullyCovering) {
+        if (!context.getHiddenTypes().contains(this.type) && this.part.getHeadAccessoryType() == PlayerSkinPart.HeadAccessoryType.FullyCovering) {
             context.hideSlots("Haircut");
         }
 

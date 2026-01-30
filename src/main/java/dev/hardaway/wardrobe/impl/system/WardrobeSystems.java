@@ -1,12 +1,6 @@
 package dev.hardaway.wardrobe.impl.system;
 
-import com.hypixel.hytale.component.AddReason;
-import com.hypixel.hytale.component.ArchetypeChunk;
-import com.hypixel.hytale.component.CommandBuffer;
-import com.hypixel.hytale.component.ComponentType;
-import com.hypixel.hytale.component.Ref;
-import com.hypixel.hytale.component.RemoveReason;
-import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefChangeSystem;
 import com.hypixel.hytale.component.system.RefSystem;
@@ -15,11 +9,9 @@ import com.hypixel.hytale.protocol.ItemArmorSlot;
 import com.hypixel.hytale.server.core.asset.type.item.config.ItemArmor;
 import com.hypixel.hytale.server.core.asset.type.model.config.Model;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAttachment;
-import com.hypixel.hytale.server.core.cosmetics.CosmeticRegistry;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticsModule;
 import com.hypixel.hytale.server.core.cosmetics.PlayerSkin;
-import com.hypixel.hytale.server.core.cosmetics.PlayerSkinPart;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
@@ -33,18 +25,12 @@ import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.builtin.HytaleBodyCharacteristicCosmetic;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.builtin.HytaleCosmetic;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.builtin.HytaleHaircutCosmetic;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.builtin.HytalePlayerCosmetic;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class WardrobeSystems {
     public static class Tick extends EntityTickingSystem<EntityStore> {
@@ -52,12 +38,12 @@ public class WardrobeSystems {
         // TODO: rebuild on asset reload and equipment update
         @Override
         public void tick(float v, int i, @Nonnull ArchetypeChunk<EntityStore> chunk, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
-            PlayerWardrobeComponent wardrobeComponent = chunk.getComponent(i, PlayerWardrobeComponent.getComponentType());
-            if (wardrobeComponent == null || !wardrobeComponent.consumeDirty()) // TODO: use events instead of ticking
+            PlayerWardrobeComponent wardrobe = chunk.getComponent(i, PlayerWardrobeComponent.getComponentType());
+            if (wardrobe == null || !wardrobe.consumeDirty()) // TODO: use events instead of ticking
                 return;
 
             // If we don't have any cosmetics, stop wardrobe from handling the player
-            if (wardrobeComponent.getCosmetics().isEmpty()) {
+            if (wardrobe.getCosmetics().isEmpty() && wardrobe.getHiddenCosmeticTypes().isEmpty()) {
                 Ref<EntityStore> ref = chunk.getReferenceTo(i);
                 commandBuffer.tryRemoveComponent(ref, PlayerWardrobeComponent.getComponentType());
                 return;
@@ -67,7 +53,7 @@ public class WardrobeSystems {
                     chunk.getComponent(i, Player.getComponentType()),
                     chunk.getComponent(i, PlayerSettings.getComponentType()),
                     chunk.getComponent(i, PlayerSkinComponent.getComponentType()).getPlayerSkin(),
-                    wardrobeComponent,
+                    wardrobe,
                     chunk.getComponent(i, PlayerRef.getComponentType())
             );
             chunk.setComponent(i, ModelComponent.getComponentType(), new ModelComponent(model));
@@ -76,7 +62,7 @@ public class WardrobeSystems {
         @Nullable
         @Override
         public Query<EntityStore> getQuery() {
-            return Query.and(PlayerWardrobe.getComponentType(), PlayerSettings.getComponentType(), PlayerSkinComponent.getComponentType());
+            return Query.and(PlayerWardrobeComponent.getComponentType(), PlayerSettings.getComponentType(), PlayerSkinComponent.getComponentType());
         }
 
         public static Model buildWardrobeModel(Player player, PlayerSettings playerSettings, com.hypixel.hytale.protocol.PlayerSkin skin, PlayerWardrobe wardrobeComponent, PlayerRef playerRef) {
@@ -93,7 +79,7 @@ public class WardrobeSystems {
             );
 
             // Populate the applied cosmetics map
-            PlayerSkin cosmeticSkin = skinFromProtocol(skin);
+            PlayerSkin cosmeticSkin = WardrobeUtil.skinFromProtocol(skin);
             Map<String, ? extends WardrobeCosmeticSlot> slots = WardrobeCosmeticSlot.getAssetMap().getAssetMap();
             for (WardrobeCosmeticSlot group : slots.values()) {
                 PlayerCosmetic playerCosmetic = wardrobeComponent.getCosmetic(group);
@@ -103,8 +89,8 @@ public class WardrobeSystems {
                         context.getCosmeticMap().put(group.getId(), cosmetic);
                     }
                 } else if (group.getHytaleCosmeticType() != null) {
-                    HytaleCosmetic hytaleCosmetic = Tick.createHytaleCosmetic(group.getHytaleCosmeticType(), cosmeticSkin);
-                    if (hytaleCosmetic != null) {
+                    HytaleCosmetic hytaleCosmetic = WardrobeUtil.createHytaleCosmetic(group.getHytaleCosmeticType(), cosmeticSkin);
+                    if (hytaleCosmetic != null && !context.getHiddenTypes().contains(hytaleCosmetic.getType())) {
                         context.getCosmeticMap().put(group.getId(), hytaleCosmetic);
                     }
                 }
@@ -117,7 +103,7 @@ public class WardrobeSystems {
                     // TODO: validate & warn
                     PlayerCosmetic cosmeticData = wardrobeComponent.getCosmetic(slotId);
                     if (cosmeticData == null && cosmetic instanceof HytaleCosmetic) {
-                        PlayerSkin.PlayerSkinPartId part = getSkinPartForType(slot.getHytaleCosmeticType(), cosmeticSkin);
+                        PlayerSkin.PlayerSkinPartId part = WardrobeUtil.getSkinPartForType(slot.getHytaleCosmeticType(), cosmeticSkin);
                         if (part == null)
                             return;
 
@@ -155,7 +141,7 @@ public class WardrobeSystems {
                     break;
 
                 for (com.hypixel.hytale.protocol.Cosmetic cosmetic : protocolArmor.cosmeticsToHide) {
-                    CosmeticType type = protocolCosmeticToCosmeticType(cosmetic);
+                    CosmeticType type = WardrobeUtil.protocolCosmeticToCosmeticType(cosmetic);
                     if (type == null)
                         continue;
 
@@ -203,88 +189,18 @@ public class WardrobeSystems {
                     contextModel.getPhobiaModelAssetId()
             );
         }
-
-        public static PlayerSkin skinFromProtocol(com.hypixel.hytale.protocol.PlayerSkin protocolPlayerSkin) {
-            return new PlayerSkin(protocolPlayerSkin.bodyCharacteristic, protocolPlayerSkin.underwear, protocolPlayerSkin.face, protocolPlayerSkin.ears, protocolPlayerSkin.mouth, protocolPlayerSkin.eyes, protocolPlayerSkin.facialHair, protocolPlayerSkin.haircut, protocolPlayerSkin.eyebrows, protocolPlayerSkin.pants, protocolPlayerSkin.overpants, protocolPlayerSkin.undertop, protocolPlayerSkin.overtop, protocolPlayerSkin.shoes, protocolPlayerSkin.headAccessory, protocolPlayerSkin.faceAccessory, protocolPlayerSkin.earAccessory, protocolPlayerSkin.skinFeature, protocolPlayerSkin.gloves, protocolPlayerSkin.cape);
-        }
-
-        public static HytaleCosmetic createHytaleCosmetic(CosmeticType type, PlayerSkin skin) {
-            PlayerSkin.PlayerSkinPartId skinPartId = getSkinPartForType(type, skin);
-            if (skinPartId == null)
-                return null;
-
-            CosmeticRegistry cosmeticRegistry = CosmeticsModule.get().getRegistry();
-            PlayerSkinPart skinPart = (PlayerSkinPart) cosmeticRegistry.getByType(type).get(skinPartId.assetId);
-
-            return switch (type) {
-                case HAIRCUTS -> new HytaleHaircutCosmetic(type, skinPart);
-                case BODY_CHARACTERISTICS -> new HytaleBodyCharacteristicCosmetic(type, skinPart);
-                default -> new HytaleCosmetic(type, skinPart);
-            };
-        }
-
-        @Nullable
-        private static PlayerSkin.PlayerSkinPartId getSkinPartForType(CosmeticType type, PlayerSkin skin) {
-            return switch (type) {
-                case EMOTES, GRADIENT_SETS, EYE_COLORS, SKIN_TONES -> null;
-                case BODY_CHARACTERISTICS -> skin.getBodyCharacteristic();
-                case UNDERWEAR -> skin.getUnderwear();
-                case EYEBROWS -> skin.getEyebrows();
-                case EYES -> skin.getEyes();
-                case FACIAL_HAIR -> skin.getFacialHair();
-                case PANTS -> skin.getPants();
-                case OVERPANTS -> skin.getOverpants();
-                case UNDERTOPS -> skin.getUndertop();
-                case OVERTOPS -> skin.getOvertop();
-                case HAIRCUTS -> skin.getHaircut();
-                case SHOES -> skin.getShoes();
-                case HEAD_ACCESSORY -> skin.getHeadAccessory();
-                case FACE_ACCESSORY -> skin.getFaceAccessory();
-                case EAR_ACCESSORY -> skin.getEarAccessory();
-                case GLOVES -> skin.getGloves();
-                case CAPES -> skin.getCape();
-                case SKIN_FEATURES -> skin.getSkinFeature();
-                case EARS ->
-                        new PlayerSkin.PlayerSkinPartId(skin.getEars(), skin.getBodyCharacteristic().textureId, null);
-                case FACE ->
-                        new PlayerSkin.PlayerSkinPartId(skin.getFace(), skin.getBodyCharacteristic().textureId, null);
-                case MOUTHS ->
-                        new PlayerSkin.PlayerSkinPartId(skin.getMouth(), skin.getBodyCharacteristic().textureId, null);
-                case null -> null;
-            };
-        }
-
-        @Nullable
-        private static CosmeticType protocolCosmeticToCosmeticType(com.hypixel.hytale.protocol.Cosmetic cosmetic) {
-            return switch (cosmetic) {
-                case Haircut -> CosmeticType.HAIRCUTS;
-                case FacialHair -> CosmeticType.FACIAL_HAIR;
-                case Undertop -> CosmeticType.UNDERTOPS;
-                case Overtop -> CosmeticType.OVERTOPS;
-                case Pants -> CosmeticType.PANTS;
-                case Overpants -> CosmeticType.OVERPANTS;
-                case Shoes -> CosmeticType.SHOES;
-                case Gloves -> CosmeticType.GLOVES;
-                case Cape -> CosmeticType.CAPES;
-                case HeadAccessory -> CosmeticType.HEAD_ACCESSORY;
-                case FaceAccessory -> CosmeticType.FACE_ACCESSORY;
-                case EarAccessory -> CosmeticType.EAR_ACCESSORY;
-                case Ear -> CosmeticType.EARS;
-                case null -> null;
-            };
-        }
     }
 
     public static class EntityAdded extends RefSystem<EntityStore> {
 
         @Override
         public Query<EntityStore> getQuery() {
-            return PlayerWardrobe.getComponentType();
+            return PlayerWardrobeComponent.getComponentType();
         }
 
         @Override
         public void onEntityAdded(@Nonnull Ref<EntityStore> ref, @Nonnull AddReason reason, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
-            PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobe.getComponentType());
+            PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
             wardrobe.rebuild();
         }
 
@@ -334,7 +250,7 @@ public class WardrobeSystems {
 
     public static class ArmorVisibilityChanged extends RefChangeSystem<EntityStore, PlayerSettings> {
 
-        private static final Query<EntityStore> QUERY = Query.and(Player.getComponentType(), PlayerWardrobe.getComponentType());
+        private static final Query<EntityStore> QUERY = Query.and(Player.getComponentType(), PlayerWardrobeComponent.getComponentType());
 
         @Nonnull
         @Override
@@ -356,7 +272,7 @@ public class WardrobeSystems {
                             && Objects.equals(oldSettings.hideGauntlets(), newSettings.hideGauntlets())
             )) return;
 
-            store.getComponent(ref, PlayerWardrobe.getComponentType()).rebuild();
+            store.getComponent(ref, PlayerWardrobeComponent.getComponentType()).rebuild();
         }
 
         @Override

@@ -5,6 +5,7 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.component.ComponentType;
+import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
@@ -25,25 +26,16 @@ public class PlayerWardrobeComponent implements PlayerWardrobe, Component<Entity
 
     private Map<String, CosmeticSaveData> cosmetics;
     private Set<String> cosmeticIdSet;
+    private final Set<CosmeticType> hiddenCosmeticTypes;
     private boolean dirty;
 
     public PlayerWardrobeComponent() {
-        this(new HashMap<>());
+        this(new HashMap<>(), new HashSet<>());
     }
 
-    protected PlayerWardrobeComponent(Map<String, CosmeticSaveData> cosmetics) {
+    protected PlayerWardrobeComponent(Map<String, CosmeticSaveData> cosmetics, Set<CosmeticType> hiddenCosmeticTypes) {
         this.setCosmetics(cosmetics);
-    }
-
-    @Override
-    public void rebuild() {
-        this.dirty = true;
-    }
-
-    protected boolean consumeDirty() {
-        boolean dirty = this.dirty;
-        this.dirty = false;
-        return dirty;
+        this.hiddenCosmeticTypes = hiddenCosmeticTypes;
     }
 
     @Override
@@ -95,10 +87,32 @@ public class PlayerWardrobeComponent implements PlayerWardrobe, Component<Entity
         this.cosmetics.clear();
     }
 
+    @Override
+    public void toggleCosmeticType(CosmeticType type) {
+        if (hiddenCosmeticTypes.contains(type)) hiddenCosmeticTypes.remove(type);
+        else hiddenCosmeticTypes.add(type);
+    }
+
+    @Override
+    public Collection<CosmeticType> getHiddenCosmeticTypes() {
+        return hiddenCosmeticTypes;
+    }
+
+    @Override
+    public void rebuild() {
+        this.dirty = true;
+    }
+
+    protected boolean consumeDirty() {
+        boolean dirty = this.dirty;
+        this.dirty = false;
+        return dirty;
+    }
+
     @Nullable
     @Override
     public PlayerWardrobeComponent clone() {
-        return new PlayerWardrobeComponent(new HashMap<>(this.cosmetics));
+        return new PlayerWardrobeComponent(new HashMap<>(this.cosmetics), new HashSet<>(this.hiddenCosmeticTypes));
     }
 
     public static ComponentType<EntityStore, PlayerWardrobeComponent> getComponentType() {

@@ -39,11 +39,11 @@ public class WardrobeDismissPage extends InteractiveCustomUIPage<WardrobeDismiss
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull PageEventData data) {
         super.handleDataEvent(ref, store, data);
 
-        PlayerWardrobe currentWardrobe = store.getComponent(ref, PlayerWardrobe.getComponentType());
+        PlayerWardrobe currentWardrobe = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
 
         if (WardrobePage.MenuAction.Discard.equals(data.action)) {
             if (wardrobe != null) {
-                store.putComponent(ref, PlayerWardrobe.getComponentType(), (PlayerWardrobeComponent) wardrobe);
+                store.putComponent(ref, PlayerWardrobeComponent.getComponentType(), (PlayerWardrobeComponent) wardrobe);
             } else if (currentWardrobe != null) {
                 currentWardrobe.clearCosmetics();
                 currentWardrobe.rebuild();

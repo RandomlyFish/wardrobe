@@ -1,20 +1,14 @@
 package dev.hardaway.wardrobe.api.player;
 
-import com.hypixel.hytale.component.ComponentType;
-import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
-import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
 public interface PlayerWardrobe {
-    static ComponentType<EntityStore, PlayerWardrobeComponent> getComponentType() {
-        return PlayerWardrobeComponent.getComponentType();
-    }
-
     Map<String, PlayerCosmetic> getCosmeticMap();
 
     Collection<PlayerCosmetic> getCosmetics();
@@ -47,6 +41,10 @@ public interface PlayerWardrobe {
     }
 
     void clearCosmetics();
+
+    void toggleCosmeticType(CosmeticType type);
+
+    Collection<CosmeticType> getHiddenCosmeticTypes();
 
     void rebuild();
 

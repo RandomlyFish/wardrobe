@@ -31,8 +31,10 @@ import dev.hardaway.wardrobe.api.cosmetic.variant.CosmeticVariantEntry;
 import dev.hardaway.wardrobe.api.menu.WardrobeMenu;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
+import dev.hardaway.wardrobe.impl.asset.CosmeticSlotAsset;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.impl.system.WardrobeUtil;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import javax.annotation.Nonnull;
@@ -48,8 +50,8 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     private static final int OPTIONS_PER_ROW = 13;
 
     private WardrobeMenu menu;
-    private PlayerWardrobe baseWardrobe;
-    private boolean shouldClose = true;
+    private PlayerWardrobeComponent baseWardrobe;
+    private boolean shouldClose = false;
 
     public WardrobePage(@Nonnull PlayerRef playerRef) {
         super(playerRef, CustomPageLifetime.CanDismiss, PageEventData.CODEC);
@@ -61,16 +63,15 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
         menu = new WardrobeMenu(playerRef.getUuid());
 
-        buildCosmetics(commandBuilder, eventBuilder, ref, store);
-        this.buildWardrobeTabs(commandBuilder, eventBuilder);
+        buildWardrobeTabs(commandBuilder, eventBuilder, ref, store);
 
         eventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#SearchField", EventData.of("@SearchQuery", "#SearchField.Value"), false);
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#ResetAvatar", MenuAction.Reset.getEvent(), false);
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Discard", MenuAction.Discard.getEvent(), false);
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Save", MenuAction.Save.getEvent(), false);
 
-        PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobe.getComponentType());
-        if (wardrobe != null) baseWardrobe = wardrobe.clone();
+        PlayerWardrobeComponent wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
+        baseWardrobe = wardrobe.clone();
 
         setupCamera(ref, store);
     }
@@ -89,48 +90,43 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
         if (data.category != null) {
             menu.selectCategory(data.category);
-            this.buildWardrobeTabs(commandBuilder, eventBuilder);
-
-            buildCosmetics(commandBuilder, eventBuilder, ref, store);
+            buildWardrobeTabs(commandBuilder, eventBuilder, ref, store);
         }
 
         if (data.slot != null) {
             menu.selectSlot(data.slot);
-            this.buildTabs(commandBuilder, eventBuilder, "Slots", s -> s.equals(this.menu.getSelectedSlot()), this.menu.getSlots().toArray(WardrobeTab[]::new));
+            buildTabs(commandBuilder, eventBuilder, "Slots", s -> s.equals(menu.getSelectedSlot()), menu.getSlots().toArray(WardrobeTab[]::new));
+            buildCheckbox(commandBuilder, eventBuilder, ref, store, false);
             buildCosmetics(commandBuilder, eventBuilder, ref, store);
         }
 
+        PlayerWardrobe wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
         if (data.cosmetic != null || data.variant != null || data.texture != null) {
-            PlayerWardrobe wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobe.getComponentType());
             if (menu.selectCosmetic(wardrobe,
                     data.cosmetic != null ? CosmeticAsset.getAssetMap().getAsset(data.cosmetic) : null,
                     data.variant,
                     data.texture)) {
                 buildCosmetics(commandBuilder, eventBuilder, ref, store);
-                shouldClose = false;
             }
         }
 
-        PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobe.getComponentType());
+
+        if (data.hideType != null) {
+            buildCheckbox(commandBuilder, eventBuilder, ref, store, true);
+            wardrobe.rebuild();
+        }
 
         switch (data.action) {
             case null -> {
             } // Do nothing
             case Reset -> {
-                if (wardrobe != null) {
-                    wardrobe.clearCosmetics();
-                    wardrobe.rebuild();
-                    buildCosmetics(commandBuilder, eventBuilder, ref, store);
-                    shouldClose = baseWardrobe == null;
-                }
+                wardrobe.clearCosmetics();
+                wardrobe.rebuild();
+                buildCosmetics(commandBuilder, eventBuilder, ref, store);
+                shouldClose = baseWardrobe == null;
             }
             case Discard -> {
-                if (baseWardrobe != null) {
-                    store.putComponent(ref, PlayerWardrobe.getComponentType(), (PlayerWardrobeComponent) baseWardrobe);
-                } else if (wardrobe != null) {
-                    wardrobe.clearCosmetics();
-                    wardrobe.rebuild();
-                }
+                store.putComponent(ref, PlayerWardrobeComponent.getComponentType(), baseWardrobe);
 
                 shouldClose = true;
                 close();
@@ -180,9 +176,11 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         playerRef.getPacketHandler().writeNoCache(new SetServerCamera(ClientCameraView.Custom, false, cameraSettings));
     }
 
-    private void buildWardrobeTabs(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder) {
-        this.buildTabs(commandBuilder, eventBuilder, "Categories", s -> s.equals(this.menu.getSelectedCategory()), this.menu.getCategories().toArray(WardrobeTab[]::new));
-        this.buildTabs(commandBuilder, eventBuilder, "Slots", s -> s.equals(this.menu.getSelectedSlot()), this.menu.getSlots().toArray(WardrobeTab[]::new));
+    private void buildWardrobeTabs(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store) {
+        buildTabs(commandBuilder, eventBuilder, "Categories", s -> s.equals(menu.getSelectedCategory()), menu.getCategories().toArray(WardrobeTab[]::new));
+        buildTabs(commandBuilder, eventBuilder, "Slots", s -> s.equals(menu.getSelectedSlot()), menu.getSlots().toArray(WardrobeTab[]::new));
+        buildCheckbox(commandBuilder, eventBuilder, ref, store, false);
+        buildCosmetics(commandBuilder, eventBuilder, ref, store);
     }
 
     private void buildTabs(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, String tabGroup, Predicate<String> selected, WardrobeTab... tabs) {
@@ -199,7 +197,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             if (selected.test(tab.getId())) {
                 commandBuilder.set(selector + " #Selected #Icon.AssetPath", tab.getSelectedIconPath());
                 commandBuilder.set(selector + " #Selected.Visible", true);
-                commandBuilder.set("#SubCategoryName.Text", tab.getTranslationProperties().getName());
+                commandBuilder.set(tabSelector + "Name.Text", tab.getTranslationProperties().getName());
             }
 
             eventBuilder.addEventBinding(
@@ -208,6 +206,19 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                     EventData.of(tabGroup, tab.getId()),
                     false
             );
+        }
+    }
+
+    private void buildCheckbox(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store, boolean toggle) {
+        CosmeticSlotAsset slot = CosmeticSlotAsset.getAssetMap().getAsset(menu.getSelectedSlot());
+        if (slot != null && slot.getHytaleCosmeticType() != null && WardrobeUtil.canBeHidden(slot.getHytaleCosmeticType())) {
+            PlayerWardrobe wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
+            if (toggle) wardrobe.toggleCosmeticType(slot.getHytaleCosmeticType());
+            commandBuilder.set("#HideType.Visible", true);
+            commandBuilder.set("#HideType #Checkbox.Value", wardrobe.getHiddenCosmeticTypes().contains(slot.getHytaleCosmeticType()));
+            eventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#HideType #Checkbox", EventData.of("@HideType", "#HideType #Checkbox.Value"));
+        } else {
+            commandBuilder.set("#HideType.Visible", false);
         }
     }
 
@@ -224,7 +235,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         int anchorHeight = (int) (150 * 4.8 + 10 * (4.8 - 1) + 14);
 
         List<WardrobeCosmetic> cosmetics = menu.getCosmetics();
-        PlayerCosmetic worn = Optional.ofNullable(store.getComponent(ref, PlayerWardrobe.getComponentType()))
+        PlayerCosmetic worn = Optional.ofNullable(store.getComponent(ref, PlayerWardrobeComponent.getComponentType()))
                 .map(w -> w.getCosmetic(menu.getSelectedSlot()))
                 .orElse(null);
 
@@ -394,6 +405,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                 .append(new KeyedCodec<>("Cosmetic", Codec.STRING), (e, v) -> e.cosmetic = v, e -> e.cosmetic).add()
                 .append(new KeyedCodec<>("@Variant", Codec.STRING), (e, v) -> e.variant = v, e -> e.variant).add()
                 .append(new KeyedCodec<>("Texture", Codec.STRING), (e, v) -> e.texture = v, e -> e.texture).add()
+                .append(new KeyedCodec<>("@HideType", Codec.BOOLEAN), (e, v) -> e.hideType = v, e -> e.hideType).add()
                 .append(new KeyedCodec<>("Action", new EnumCodec<>(MenuAction.class)), (e, v) -> e.action = v, e -> e.action).add()
                 .build();
 
@@ -403,6 +415,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         private String cosmetic;
         private String variant;
         private String texture;
+        private Boolean hideType;
         private MenuAction action;
     }
 
@@ -412,7 +425,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         private final EventData eventData;
 
         MenuAction() {
-            this.eventData = EventData.of("Action", this.name());
+            this.eventData = EventData.of("Action", name());
         }
 
         public EventData getEvent() {

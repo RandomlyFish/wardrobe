@@ -10,11 +10,11 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class WardrobeRemoveCommand extends AbstractPlayerCommand {
 
     @Override
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
-        PlayerWardrobe wardrobeComponent = store.getComponent(ref, PlayerWardrobe.getComponentType());
+        PlayerWardrobe wardrobeComponent = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
         if (wardrobeComponent == null) {
             context.sendMessage(Message.raw("No Wardrobe data found"));
             return;

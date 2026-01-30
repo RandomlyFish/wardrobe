@@ -29,7 +29,7 @@ public class HytaleHaircutCosmetic extends HytaleCosmetic {
             boolean needsGeneric = false;
             for (Cosmetic cosmetic : context.getCosmeticMap().values()) {
                 if (cosmetic instanceof HytaleCosmetic hytaleCosmetic) {
-                    if (hytaleCosmetic.getPart().getHeadAccessoryType() == PlayerSkinPart.HeadAccessoryType.HalfCovering) {
+                    if (!context.getHiddenTypes().contains(hytaleCosmetic.getType()) && hytaleCosmetic.getPart().getHeadAccessoryType() == PlayerSkinPart.HeadAccessoryType.HalfCovering) {
                         needsGeneric = true;
                         break;
                     }
