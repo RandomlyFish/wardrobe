@@ -13,13 +13,13 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.Appearance;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
-import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
-import dev.hardaway.wardrobe.impl.system.CosmeticSaveData;
-import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.player.CosmeticSaveData;
+import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -65,7 +65,7 @@ public class WardrobeWearCommand extends AbstractPlayerCommand {
         String texture = null;
 
         if (cosmetic instanceof AppearanceCosmetic appearanceCosmetic) {
-            CosmeticAppearance appearance = appearanceCosmetic.getAppearance();
+            Appearance appearance = appearanceCosmetic.getAppearance();
             List<String> variants = List.of(appearance.collectVariants());
 
             if (variantArg.provided(context)) {

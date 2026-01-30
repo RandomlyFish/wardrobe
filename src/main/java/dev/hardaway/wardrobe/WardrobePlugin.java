@@ -16,23 +16,22 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.cosmetic.appearance.CosmeticAppearance;
+import dev.hardaway.wardrobe.api.cosmetic.appearance.Appearance;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
-import dev.hardaway.wardrobe.impl.asset.CosmeticCategoryAsset;
-import dev.hardaway.wardrobe.impl.asset.CosmeticSlotAsset;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.CosmeticAsset;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.ModelAttachmentCosmetic;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.PlayerModelCosmetic;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.appearance.ModelCosmeticAppearance;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.appearance.VariantCosmeticAppearance;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.GradientTextureConfig;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.StaticTextureConfig;
-import dev.hardaway.wardrobe.impl.asset.cosmetic.texture.VariantTextureConfig;
 import dev.hardaway.wardrobe.impl.command.WardrobeCommand;
-import dev.hardaway.wardrobe.impl.system.PlayerWardrobeComponent;
-import dev.hardaway.wardrobe.impl.system.WardrobeEvents;
-import dev.hardaway.wardrobe.impl.system.WardrobeSystems;
-import dev.hardaway.wardrobe.impl.ui.WardrobePage;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticCategoryAsset;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlotAsset;
+import dev.hardaway.wardrobe.impl.cosmetic.ModelAttachmentCosmetic;
+import dev.hardaway.wardrobe.impl.cosmetic.PlayerModelCosmetic;
+import dev.hardaway.wardrobe.impl.cosmetic.appearance.ModelAppearance;
+import dev.hardaway.wardrobe.impl.cosmetic.appearance.VariantAppearance;
+import dev.hardaway.wardrobe.impl.cosmetic.texture.GradientTextureConfig;
+import dev.hardaway.wardrobe.impl.cosmetic.texture.StaticTextureConfig;
+import dev.hardaway.wardrobe.impl.cosmetic.texture.VariantTextureConfig;
+import dev.hardaway.wardrobe.impl.menu.WardrobePage;
+import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
+import dev.hardaway.wardrobe.impl.player.PlayerWardrobeSystems;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -64,9 +63,9 @@ public class WardrobePlugin extends JavaPlugin {
                 .register(Priority.DEFAULT, "ModelAttachment", ModelAttachmentCosmetic.class, ModelAttachmentCosmetic.CODEC)
                 .register(Priority.NORMAL, "PlayerModel", PlayerModelCosmetic.class, PlayerModelCosmetic.CODEC);
 
-        this.getCodecRegistry(CosmeticAppearance.CODEC)
-                .register(Priority.DEFAULT, "Model", ModelCosmeticAppearance.class, ModelCosmeticAppearance.CODEC)
-                .register(Priority.NORMAL, "Variant", VariantCosmeticAppearance.class, VariantCosmeticAppearance.CODEC);
+        this.getCodecRegistry(Appearance.CODEC)
+                .register(Priority.DEFAULT, "Model", ModelAppearance.class, ModelAppearance.CODEC)
+                .register(Priority.NORMAL, "Variant", VariantAppearance.class, VariantAppearance.CODEC);
 
         AssetRegistry.register(HytaleAssetStore.builder(CosmeticCategoryAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Categories")
@@ -97,10 +96,10 @@ public class WardrobePlugin extends JavaPlugin {
         );
 
         // TODO: groups
-        this.getEntityStoreRegistry().registerSystem(new WardrobeSystems.Tick());
-        this.getEntityStoreRegistry().registerSystem(new WardrobeSystems.EntityAdded());
-        this.getEntityStoreRegistry().registerSystem(new WardrobeSystems.WardrobeChanged());
-        this.getEntityStoreRegistry().registerSystem(new WardrobeSystems.ArmorVisibilityChanged());
+        this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystems.Tick());
+        this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystems.EntityAdded());
+        this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystems.WardrobeChanged());
+        this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystems.ArmorVisibilityChanged());
 
         WardrobeEvents.registerEvents(this);
 

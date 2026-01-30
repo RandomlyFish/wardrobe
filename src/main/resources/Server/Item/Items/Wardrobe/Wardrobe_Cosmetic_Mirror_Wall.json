@@ -47,7 +47,6 @@
     "BlockSoundSetId": "Glass",
     "InteractionHitboxType": "Painting_1x2",
     "InteractionHint": "server.items.Wardrobe_Cosmetic_Mirror.interaction",
-
     "Support": {
       "BlockSides": [
         {

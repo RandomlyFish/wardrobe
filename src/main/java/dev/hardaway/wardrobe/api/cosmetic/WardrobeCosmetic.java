@@ -1,8 +1,9 @@
 package dev.hardaway.wardrobe.api.cosmetic;
 
-import dev.hardaway.wardrobe.api.WardrobeTranslatable;
-import dev.hardaway.wardrobe.api.cosmetic.variant.CosmeticColorEntry;
-import dev.hardaway.wardrobe.api.cosmetic.variant.CosmeticVariantEntry;
+import dev.hardaway.wardrobe.api.menu.WardrobeVisibility;
+import dev.hardaway.wardrobe.api.menu.variant.CosmeticColorEntry;
+import dev.hardaway.wardrobe.api.menu.variant.CosmeticVariantEntry;
+import dev.hardaway.wardrobe.api.property.WardrobeTranslatable;
 
 import javax.annotation.Nullable;
 import java.util.List;

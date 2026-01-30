@@ -1,27 +1,28 @@
 {
-    "Group": "Hardaway",
-    "Name": "Wardrobe",
-    "Version": "0.0.1",
-    "Description": "An example plugin for HyTale!",
-    "Authors": [
-        {
-            "Name": "Jackson",
-            "Email": "jackson@hardaway.dev",
-            "Url": "https://hardawy.dev"
-        }
-    ],
-    "Website": "https://hardaway.dev",
-    "ServerVersion": "*",
-    "Dependencies": {
-        "Hytale:AssetModule": "*",
-        "Hytale:EntityModule": "*",
-        "Hytale:CosmeticsModule": "*",
-        "Hytale:CommonAssetModule": "*"
+  "Main": "dev.hardaway.wardrobe.WardrobePlugin",
+  "Group": "${mod_group}",
+  "Name": "${mod_name}",
+  "Version": "${mod_version}",
+  "Description": "${mod_description}",
+  "Website": "https://github.com/jacksonhardaway/wardrobe",
+  "Authors": [
+    {
+      "Name": "jackson",
+      "Email": "jackson@hardaway.dev",
+      "Url": "https://hardaway.dev"
     },
-    "OptionalDependencies": {
-        
-    },
-    "DisabledByDefault": false,
-    "Main": "dev.hardaway.wardrobe.WardrobePlugin",
-    "IncludesAssetPack": true
+    {
+      "Name": "tazer"
+    }
+  ],
+  "ServerVersion": "*",
+  "Dependencies": {
+    "Hytale:AssetModule": "*",
+    "Hytale:EntityModule": "*",
+    "Hytale:CosmeticsModule": "*",
+    "Hytale:CommonAssetModule": "*"
+  },
+  "OptionalDependencies": {},
+  "IncludesAssetPack": true,
+  "DisabledByDefault": false
 }

@@ -4,5 +4,5 @@ import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
 
 public interface AppearanceCosmetic extends Cosmetic {
 
-    CosmeticAppearance getAppearance();
+    Appearance getAppearance();
 }

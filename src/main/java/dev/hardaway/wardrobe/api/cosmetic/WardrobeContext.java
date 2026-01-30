@@ -10,6 +10,7 @@ import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 public interface WardrobeContext {
 
@@ -34,6 +35,8 @@ public interface WardrobeContext {
     Map<String, ModelAttachment> getModelAttachments();
 
     void addAttachment(String slot, ModelAttachment attachment);
+
+    Set<String> getHiddenSlots();
 
     void hideSlots(String... slots);
 
