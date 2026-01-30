@@ -14,15 +14,14 @@ import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;
 
 public class WardrobeDismissPage extends InteractiveCustomUIPage<WardrobeDismissPage.PageEventData> {
-    private final PlayerWardrobe wardrobe;
+    private final PlayerWardrobeComponent wardrobe;
 
-    public WardrobeDismissPage(@Nonnull PlayerRef playerRef, @Nonnull CustomPageLifetime lifetime, PlayerWardrobe wardrobe) {
+    public WardrobeDismissPage(@Nonnull PlayerRef playerRef, @Nonnull CustomPageLifetime lifetime, PlayerWardrobeComponent wardrobe) {
         super(playerRef, lifetime, PageEventData.CODEC);
         this.wardrobe = wardrobe;
     }
@@ -39,15 +38,8 @@ public class WardrobeDismissPage extends InteractiveCustomUIPage<WardrobeDismiss
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull PageEventData data) {
         super.handleDataEvent(ref, store, data);
 
-        PlayerWardrobe currentWardrobe = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
-
         if (WardrobePage.MenuAction.Discard.equals(data.action)) {
-            if (wardrobe != null) {
-                store.putComponent(ref, PlayerWardrobeComponent.getComponentType(), (PlayerWardrobeComponent) wardrobe);
-            } else if (currentWardrobe != null) {
-                currentWardrobe.clearCosmetics();
-                currentWardrobe.rebuild();
-            }
+            store.putComponent(ref, PlayerWardrobeComponent.getComponentType(), wardrobe);
         }
 
         close();

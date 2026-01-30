@@ -6,15 +6,7 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.protocol.ClientCameraView;
-import com.hypixel.hytale.protocol.Direction;
-import com.hypixel.hytale.protocol.GameMode;
-import com.hypixel.hytale.protocol.MouseInputType;
-import com.hypixel.hytale.protocol.Position;
-import com.hypixel.hytale.protocol.PositionDistanceOffsetType;
-import com.hypixel.hytale.protocol.RotationType;
-import com.hypixel.hytale.protocol.ServerCameraSettings;
-import com.hypixel.hytale.protocol.Vector3f;
+import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.protocol.packets.camera.SetServerCamera;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
@@ -37,7 +29,6 @@ import dev.hardaway.wardrobe.api.menu.WardrobeTab;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticColorEntry;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticVariantEntry;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 import dev.hardaway.wardrobe.api.property.WardrobeTranslationProperties;
 import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlotAsset;
@@ -45,10 +36,10 @@ import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import javax.annotation.Nullable;
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEventData> {
@@ -56,20 +47,21 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     private static final int COSMETICS_PER_ROW = 5;
     private static final int OPTIONS_PER_ROW = 13;
 
-    private WardrobeMenu menu;
-    private final PlayerWardrobeComponent baseWardrobe;
-    private boolean shouldClose = false;
+    private final WardrobeMenu menu;
+    private final Position position;
+    private final int rotationIndex;
+    private boolean shouldClose = true;
 
-    public WardrobePage(@Nonnull PlayerRef playerRef, PlayerWardrobeComponent wardrobe) {
+    public WardrobePage(@Nonnull PlayerRef playerRef, PlayerWardrobeComponent wardrobe, @Nullable Position position, int rotationIndex) {
         super(playerRef, CustomPageLifetime.CanDismiss, PageEventData.CODEC);
-        this.baseWardrobe = wardrobe.clone();
+        this.menu = new WardrobeMenu(playerRef.getUuid(), wardrobe);
+        this.position = position;
+        this.rotationIndex = rotationIndex;
     }
 
     @Override
     public void build(@Nonnull Ref<EntityStore> ref, @Nonnull UICommandBuilder commandBuilder, @Nonnull UIEventBuilder eventBuilder, @Nonnull Store<EntityStore> store) {
         commandBuilder.append("Wardrobe/Pages/Wardrobe.ui");
-
-        menu = new WardrobeMenu(playerRef.getUuid());
 
         buildWardrobeTabs(commandBuilder, eventBuilder, ref, store);
 
@@ -102,38 +94,35 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         if (data.slot != null) {
             menu.selectSlot(data.slot);
             buildTabs(commandBuilder, eventBuilder, "Slots", s -> s.equals(menu.getSelectedSlot()), menu.getSlots().toArray(WardrobeTab[]::new));
-            buildCheckbox(commandBuilder, eventBuilder, ref, store, false);
+            buildCheckbox(commandBuilder, eventBuilder);
             buildCosmetics(commandBuilder, eventBuilder, ref, store);
         }
 
-        PlayerWardrobe wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
         if (data.cosmetic != null || data.variant != null || data.texture != null) {
-            if (menu.selectCosmetic(wardrobe,
+            menu.selectCosmetic(
                     data.cosmetic != null ? CosmeticAsset.getAssetMap().getAsset(data.cosmetic) : null,
-                    data.variant,
-                    data.texture)) {
-                buildCosmetics(commandBuilder, eventBuilder, ref, store);
-            }
+                    data.variant, data.texture
+            );
+            buildCosmetics(commandBuilder, eventBuilder, ref, store);
         }
 
 
         if (data.hideType != null) {
-            buildCheckbox(commandBuilder, eventBuilder, ref, store, true);
-            wardrobe.rebuild();
+            menu.toggleCosmeticType();
+            buildCheckbox(commandBuilder, eventBuilder);
         }
 
         switch (data.action) {
             case null -> {
             } // Do nothing
             case Reset -> {
-                wardrobe.clearCosmetics();
-                wardrobe.getHiddenCosmeticTypes().clear(); // TODO: replace this with proper api method
-                wardrobe.rebuild();
+                menu.getWardrobe().clearCosmetics();
+                menu.getWardrobe().getHiddenCosmeticTypes().clear(); // TODO: replace this with proper api method
+                menu.getWardrobe().rebuild();
                 buildCosmetics(commandBuilder, eventBuilder, ref, store);
-                shouldClose = baseWardrobe == null;
             }
             case Discard -> {
-                store.putComponent(ref, PlayerWardrobeComponent.getComponentType(), baseWardrobe);
+                store.putComponent(ref, PlayerWardrobeComponent.getComponentType(), menu.getBaseWardrobe());
 
                 shouldClose = true;
                 close();
@@ -144,6 +133,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             }
         }
 
+        shouldClose = menu.getWardrobe().equals(menu.getBaseWardrobe());
         sendUpdate(commandBuilder, eventBuilder, false);
     }
 
@@ -152,8 +142,8 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         if (!shouldClose) {
             shouldClose = true;
             store.getExternalData().getWorld().execute(() -> {
-                Player player = store.getComponent(ref, Player.getComponentType());
-                player.getPageManager().openCustomPage(ref, store, new WardrobeDismissPage(playerRef, CustomPageLifetime.CantClose, baseWardrobe));
+                Player player = store.ensureAndGetComponent(ref, Player.getComponentType());
+                player.getPageManager().openCustomPage(ref, store, new WardrobeDismissPage(playerRef, CustomPageLifetime.CantClose, menu.getBaseWardrobe()));
             });
             return;
         }
@@ -168,17 +158,27 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
         ServerCameraSettings cameraSettings = new ServerCameraSettings();
         cameraSettings.isFirstPerson = false;
-        cameraSettings.eyeOffset = true;
         cameraSettings.displayCursor = true;
-        cameraSettings.positionDistanceOffsetType = PositionDistanceOffsetType.DistanceOffsetRaycast;
-        cameraSettings.distance = 2.5F;
-        cameraSettings.positionOffset = new Position(0, 0, 0);
+        if (position != null) {
+            position.x += 0.5;
+            position.y += 1.5;
+            position.z += 0.5;
+            cameraSettings.position = position;
+            cameraSettings.positionType = PositionType.Custom;
+            yaw = (float) (Math.PI/2 * (rotationIndex+2));
+            cameraSettings.displayCursor = false;
+        } else {
+            cameraSettings.positionDistanceOffsetType = PositionDistanceOffsetType.DistanceOffsetRaycast;
+            cameraSettings.eyeOffset = true;
+            cameraSettings.distance = 2.5F;
+            cameraSettings.planeNormal = new Vector3f((float) Math.sin(yaw), -2, (float) Math.cos(yaw));
+            cameraSettings.mouseInputType = MouseInputType.LookAtPlane;
+        }
+
         cameraSettings.positionLerpSpeed = 0.2F;
         cameraSettings.rotationType = RotationType.Custom;
         cameraSettings.rotation = new Direction(yaw, 0, 0);
         cameraSettings.rotationLerpSpeed = 0.2F;
-        cameraSettings.mouseInputType = MouseInputType.LookAtPlane;
-        cameraSettings.planeNormal = new Vector3f((float) Math.sin(yaw), -2, (float) Math.cos(yaw));
 
         playerRef.getPacketHandler().writeNoCache(new SetServerCamera(ClientCameraView.Custom, false, cameraSettings));
     }
@@ -186,7 +186,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     private void buildWardrobeTabs(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store) {
         buildTabs(commandBuilder, eventBuilder, "Categories", s -> s.equals(menu.getSelectedCategory()), menu.getCategories().toArray(WardrobeTab[]::new));
         buildTabs(commandBuilder, eventBuilder, "Slots", s -> s.equals(menu.getSelectedSlot()), menu.getSlots().toArray(WardrobeTab[]::new));
-        buildCheckbox(commandBuilder, eventBuilder, ref, store, false);
+        buildCheckbox(commandBuilder, eventBuilder);
         buildCosmetics(commandBuilder, eventBuilder, ref, store);
     }
 
@@ -216,14 +216,12 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         }
     }
 
-    private void buildCheckbox(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store, boolean toggle) {
+    private void buildCheckbox(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder) {
         CosmeticSlotAsset slot = CosmeticSlotAsset.getAssetMap().getAsset(menu.getSelectedSlot());
         if (slot != null && slot.getHytaleCosmeticType() != null && WardrobeUtil.canBeHidden(slot.getHytaleCosmeticType())) {
-            PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
-            if (toggle) wardrobe.toggleCosmeticType(slot.getHytaleCosmeticType());
             commandBuilder.set("#HideType.Visible", true);
-            commandBuilder.set("#HideType #Checkbox.Value", wardrobe.getHiddenCosmeticTypes().contains(slot.getHytaleCosmeticType()));
-            eventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#HideType #Checkbox", EventData.of("@HideType", "#HideType #Checkbox.Value"));
+            commandBuilder.set("#HideType.Value", menu.getWardrobe().getHiddenCosmeticTypes().contains(slot.getHytaleCosmeticType()));
+            eventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#HideType", EventData.of("@HideType", "#HideType.Value"));
         } else {
             commandBuilder.set("#HideType.Visible", false);
         }
@@ -242,9 +240,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         int anchorHeight = (int) (150 * 4.8 + 10 * (4.8 - 1) + 14);
 
         List<WardrobeCosmetic> cosmetics = menu.getCosmetics();
-        PlayerCosmetic worn = Optional.ofNullable(store.getComponent(ref, PlayerWardrobeComponent.getComponentType()))
-                .map(w -> w.getCosmetic(menu.getSelectedSlot()))
-                .orElse(null);
+        PlayerCosmetic worn = menu.getWardrobe().getCosmetic(menu.getSelectedSlot());
 
         int row = -1;
         for (int i = 0; i < cosmetics.size(); i++) {

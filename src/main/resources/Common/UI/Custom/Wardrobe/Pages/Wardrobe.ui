@@ -103,10 +103,9 @@ Group {
 
           Group {
             LayoutMode: Left;
-            Anchor: (Top: 10);
+            Anchor: (Height: 32, Top: 10);
 
             TextField #SearchField {
-              Anchor: (Height: 32);
               FlexWeight: 1;
               PlaceholderText: %client.general.searchField.placeholder;
               Style: (FontSize: 15);
@@ -128,29 +127,22 @@ Group {
               );
             }
 
-
-
-            Group #HideType {
-              LayoutMode: Left;
-              Anchor: (Left: 10);
+            CheckBox #HideType {
               Visible: false;
-
-              CheckBox #Checkbox {
-                Anchor: (Width: 44, Height: 44);
-                Padding: (Full: 4);
-                Style: CheckBoxStyle(
-                         Unchecked: (
-                           DefaultBackground: (TexturePath: "../Icons/VisibilityOn.png"),
-                           ChangedSound: (SoundPath: $Sounds.@Untick, Volume: 6)
-                         ),
-                         Checked: (
-                           DefaultBackground: (TexturePath: "../Icons/VisibilityOff.png"),
-                           ChangedSound: (SoundPath: $Sounds.@Tick, Volume: 6)
-                         )
-                       );
-                TooltipText: %server.ui.wardrobe.hide.description;
-                TextTooltipStyle: @ButtonTextTooltipStyle;
-              }
+              Anchor: (Left: 10, Width: 32);
+              Padding: (Full: 4);
+              Style: CheckBoxStyle(
+                       Unchecked: (
+                         DefaultBackground: (TexturePath: "../Icons/VisibilityOn.png"),
+                         ChangedSound: (SoundPath: $Sounds.@Untick, Volume: 6)
+                       ),
+                       Checked: (
+                         DefaultBackground: (TexturePath: "../Icons/VisibilityOff.png"),
+                         ChangedSound: (SoundPath: $Sounds.@Tick, Volume: 6)
+                       )
+                     );
+              TooltipText: %server.ui.wardrobe.hide.description;
+              TextTooltipStyle: @ButtonTextTooltipStyle;
             }
           }
 

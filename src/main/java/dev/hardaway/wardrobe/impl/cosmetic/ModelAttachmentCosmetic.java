@@ -129,7 +129,7 @@ public class ModelAttachmentCosmetic extends CosmeticAsset implements Appearance
     }
 
     @Override
-    public String[] getHiddenCosmeticSlotIds() {
+    public String[] getHiddenCosmeticSlotIds() { // TODO: what??
         return new String[0];
     }
 

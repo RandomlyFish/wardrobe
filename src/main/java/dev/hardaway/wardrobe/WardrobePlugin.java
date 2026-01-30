@@ -6,6 +6,8 @@ import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.lookup.Priority;
 import com.hypixel.hytale.component.ComponentType;
+import com.hypixel.hytale.protocol.BlockPosition;
+import com.hypixel.hytale.protocol.Position;
 import com.hypixel.hytale.protocol.packets.interface_.Notification;
 import com.hypixel.hytale.protocol.packets.interface_.NotificationStyle;
 import com.hypixel.hytale.server.core.Message;
@@ -19,11 +21,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.Appearance;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.impl.command.WardrobeCommand;
-import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
-import dev.hardaway.wardrobe.impl.cosmetic.CosmeticCategoryAsset;
-import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlotAsset;
-import dev.hardaway.wardrobe.impl.cosmetic.ModelAttachmentCosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.PlayerModelCosmetic;
+import dev.hardaway.wardrobe.impl.cosmetic.*;
 import dev.hardaway.wardrobe.impl.cosmetic.appearance.ModelAppearance;
 import dev.hardaway.wardrobe.impl.cosmetic.appearance.VariantAppearance;
 import dev.hardaway.wardrobe.impl.cosmetic.texture.GradientTextureConfig;
@@ -54,7 +52,9 @@ public class WardrobePlugin extends JavaPlugin {
     protected void setup() {
         OpenCustomUIInteraction.registerCustomPageSupplier(this, WardrobePage.class, "Wardrobe", (ref, componentAccessor, playerRef, context) -> {
             PlayerWardrobeComponent wardrobe = context.getCommandBuffer().ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
-            return new WardrobePage(playerRef, wardrobe);
+            BlockPosition position = context.getTargetBlock();
+            int rotationIndex = position == null ? 0 : context.getCommandBuffer().getExternalData().getWorld().getBlockRotationIndex(position.x, position.y, position.z);
+            return new WardrobePage(playerRef, wardrobe, position == null ? null : new Position(position.x, position.y, position.z), rotationIndex);
         });
 
         this.getCodecRegistry(TextureConfig.CODEC)

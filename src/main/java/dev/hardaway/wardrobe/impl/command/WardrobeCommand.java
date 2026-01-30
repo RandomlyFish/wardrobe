@@ -40,7 +40,7 @@ public class WardrobeCommand extends AbstractPlayerCommand {
 
         if (player != null) {
             PlayerWardrobeComponent wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
-            player.getPageManager().openCustomPage(ref, store, new WardrobePage(playerRef, wardrobe));
+            player.getPageManager().openCustomPage(ref, store, new WardrobePage(playerRef, wardrobe, null, 0));
         }
     }
 }

@@ -14,12 +14,7 @@ import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PlayerWardrobeComponent implements PlayerWardrobe, Component<EntityStore> {
@@ -124,6 +119,17 @@ public class PlayerWardrobeComponent implements PlayerWardrobe, Component<Entity
     @Override
     public PlayerWardrobeComponent clone() {
         return new PlayerWardrobeComponent(new HashMap<>(this.cosmetics), new HashSet<>(this.hiddenCosmeticTypes));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof PlayerWardrobeComponent that)) return false;
+        return cosmetics.equals(that.cosmetics) && this.hiddenCosmeticTypes.equals(that.hiddenCosmeticTypes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cosmetics, hiddenCosmeticTypes);
     }
 
     public static ComponentType<EntityStore, PlayerWardrobeComponent> getComponentType() {

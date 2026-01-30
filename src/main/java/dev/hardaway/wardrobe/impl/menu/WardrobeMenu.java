@@ -1,6 +1,7 @@
 package dev.hardaway.wardrobe.impl.menu;
 
 import com.hypixel.hytale.common.util.StringCompareUtil;
+import dev.hardaway.wardrobe.WardrobeUtil;
 import dev.hardaway.wardrobe.api.cosmetic.Cosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
@@ -9,27 +10,22 @@ import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.menu.WardrobeCategory;
 import dev.hardaway.wardrobe.api.menu.WardrobeVisibility;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.cosmetic.CosmeticCategoryAsset;
 import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlotAsset;
 import dev.hardaway.wardrobe.impl.player.CosmeticSaveData;
+import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class WardrobeMenu {
 
     private final UUID playerId;
+    private final PlayerWardrobeComponent wardrobe;
+    private  final PlayerWardrobeComponent baseWardrobe;
 
     private final List<? extends WardrobeCategory> categories;
     private final Map<String, List<WardrobeCosmeticSlot>> slotMap = new HashMap<>();
@@ -39,8 +35,10 @@ public class WardrobeMenu {
     private String selectedSlot;
     private String searchQuery = "";
 
-    public WardrobeMenu(UUID playerId) {
+    public WardrobeMenu(UUID playerId, PlayerWardrobeComponent wardrobe) {
         this.playerId = playerId;
+        this.wardrobe = wardrobe;
+        this.baseWardrobe = wardrobe.clone();
 
         this.categories = CosmeticCategoryAsset.getAssetMap().getAssetMap().values().stream()
                 .filter(c -> c.hasPermission(playerId))
@@ -113,6 +111,14 @@ public class WardrobeMenu {
         return selectedSlot;
     }
 
+    public PlayerWardrobeComponent getWardrobe() {
+        return wardrobe;
+    }
+
+    public PlayerWardrobeComponent getBaseWardrobe() {
+        return baseWardrobe;
+    }
+
     public void selectCategory(String categoryId) {
         selectedCategory = categoryId;
         List<WardrobeCosmeticSlot> slots = slotMap.get(categoryId);
@@ -123,17 +129,17 @@ public class WardrobeMenu {
         selectedSlot = slotId;
     }
 
-    public boolean selectCosmetic(PlayerWardrobe wardrobe, @Nullable Cosmetic cosmetic, @Nullable String variant, @Nullable String texture) {
+    public void selectCosmetic(@Nullable Cosmetic cosmetic, @Nullable String variant, @Nullable String texture) {
         PlayerCosmetic worn = wardrobe.getCosmetic(selectedSlot);
 
         if (cosmetic != null && worn != null && cosmetic.getId().equals(worn.getCosmeticId())) {
             wardrobe.removeCosmetic(selectedSlot);
             wardrobe.rebuild();
-            return true;
+            return;
         }
 
         if (cosmetic == null) {
-            if (worn == null) return false;
+            if (worn == null) return;
             cosmetic = Objects.requireNonNull(CosmeticAsset.getAssetMap().getAsset(worn.getCosmeticId())); // TODO: registry
         }
 
@@ -158,6 +164,14 @@ public class WardrobeMenu {
 
         wardrobe.setCosmetic(selectedSlot, new CosmeticSaveData(cosmetic.getId(), variant, texture));
         wardrobe.rebuild();
-        return true;
+    }
+
+    public void toggleCosmeticType() {
+        CosmeticSlotAsset slot = CosmeticSlotAsset.getAssetMap().getAsset(getSelectedSlot());
+        if (slot != null && slot.getHytaleCosmeticType() != null && WardrobeUtil.canBeHidden(slot.getHytaleCosmeticType())) {
+            wardrobe.toggleCosmeticType(slot.getHytaleCosmeticType());
+            wardrobe.rebuild();
+        }
+
     }
 }
