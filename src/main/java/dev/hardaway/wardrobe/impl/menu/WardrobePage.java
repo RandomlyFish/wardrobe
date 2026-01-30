@@ -127,6 +127,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             } // Do nothing
             case Reset -> {
                 wardrobe.clearCosmetics();
+                wardrobe.getHiddenCosmeticTypes().clear(); // TODO: replace this with proper api method
                 wardrobe.rebuild();
                 buildCosmetics(commandBuilder, eventBuilder, ref, store);
                 shouldClose = baseWardrobe == null;
