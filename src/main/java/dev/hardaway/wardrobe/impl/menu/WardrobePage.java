@@ -57,11 +57,12 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     private static final int OPTIONS_PER_ROW = 13;
 
     private WardrobeMenu menu;
-    private PlayerWardrobeComponent baseWardrobe;
+    private final PlayerWardrobeComponent baseWardrobe;
     private boolean shouldClose = false;
 
-    public WardrobePage(@Nonnull PlayerRef playerRef) {
+    public WardrobePage(@Nonnull PlayerRef playerRef, PlayerWardrobeComponent wardrobe) {
         super(playerRef, CustomPageLifetime.CanDismiss, PageEventData.CODEC);
+        this.baseWardrobe = wardrobe.clone();
     }
 
     @Override
@@ -77,8 +78,6 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Discard", MenuAction.Discard.getEvent(), false);
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Save", MenuAction.Save.getEvent(), false);
 
-        PlayerWardrobeComponent wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
-        baseWardrobe = wardrobe.clone();
 
         setupCamera(ref, store);
     }
@@ -219,7 +218,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     private void buildCheckbox(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store, boolean toggle) {
         CosmeticSlotAsset slot = CosmeticSlotAsset.getAssetMap().getAsset(menu.getSelectedSlot());
         if (slot != null && slot.getHytaleCosmeticType() != null && WardrobeUtil.canBeHidden(slot.getHytaleCosmeticType())) {
-            PlayerWardrobe wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
+            PlayerWardrobe wardrobe = store.getComponent(ref, PlayerWardrobeComponent.getComponentType());
             if (toggle) wardrobe.toggleCosmeticType(slot.getHytaleCosmeticType());
             commandBuilder.set("#HideType.Visible", true);
             commandBuilder.set("#HideType #Checkbox.Value", wardrobe.getHiddenCosmeticTypes().contains(slot.getHytaleCosmeticType()));

@@ -54,17 +54,22 @@ public class PlayerWardrobeSystems {
             if (wardrobe == null || !wardrobe.consumeDirty()) // TODO: use events instead of ticking
                 return;
 
-            // If we don't have any cosmetics, stop wardrobe from handling the player
+            PlayerSkinComponent playerSkinComponent = chunk.getComponent(i, PlayerSkinComponent.getComponentType());
             if (wardrobe.getCosmetics().isEmpty() && wardrobe.getHiddenCosmeticTypes().isEmpty()) {
-                Ref<EntityStore> ref = chunk.getReferenceTo(i);
-                commandBuffer.tryRemoveComponent(ref, PlayerWardrobeComponent.getComponentType());
+                if (playerSkinComponent != null) {
+                    playerSkinComponent.setNetworkOutdated();
+                    Model newModel = CosmeticsModule.get().createModel(playerSkinComponent.getPlayerSkin());
+                    if (newModel != null) {
+                        chunk.setComponent(i, ModelComponent.getComponentType(), new ModelComponent(newModel));
+                    }
+                }
                 return;
             }
 
             Model model = buildWardrobeModel(
                     chunk.getComponent(i, Player.getComponentType()),
                     chunk.getComponent(i, PlayerSettings.getComponentType()),
-                    chunk.getComponent(i, PlayerSkinComponent.getComponentType()).getPlayerSkin(),
+                    playerSkinComponent.getPlayerSkin(),
                     wardrobe,
                     chunk.getComponent(i, PlayerRef.getComponentType())
             );

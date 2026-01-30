@@ -52,7 +52,10 @@ public class WardrobePlugin extends JavaPlugin {
 
     @Override
     protected void setup() {
-        OpenCustomUIInteraction.registerSimple(this, WardrobePage.class, "Wardrobe", WardrobePage::new);
+        OpenCustomUIInteraction.registerCustomPageSupplier(this, WardrobePage.class, "Wardrobe", (ref, componentAccessor, playerRef, context) -> {
+            PlayerWardrobeComponent wardrobe = context.getCommandBuffer().ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
+            return new WardrobePage(playerRef, wardrobe);
+        });
 
         this.getCodecRegistry(TextureConfig.CODEC)
                 .register(Priority.DEFAULT, "Static", StaticTextureConfig.class, StaticTextureConfig.CODEC)
