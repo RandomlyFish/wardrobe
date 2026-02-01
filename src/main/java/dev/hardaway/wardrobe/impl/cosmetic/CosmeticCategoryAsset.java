@@ -12,7 +12,6 @@ import com.hypixel.hytale.codec.validation.Validators;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.menu.WardrobeCategory;
 import dev.hardaway.wardrobe.api.property.WardrobeProperties;
-import dev.hardaway.wardrobe.api.property.WardrobeTranslationProperties;
 
 import java.util.function.Supplier;
 

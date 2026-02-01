@@ -11,11 +11,11 @@ import dev.hardaway.wardrobe.api.cosmetic.appearance.Appearance;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticOptionEntry;
-import dev.hardaway.wardrobe.api.property.WardrobeProperties;
-import dev.hardaway.wardrobe.api.property.WardrobeVisibility;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticVariantEntry;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
+import dev.hardaway.wardrobe.api.property.WardrobeProperties;
 import dev.hardaway.wardrobe.api.property.WardrobeTranslationProperties;
+import dev.hardaway.wardrobe.api.property.WardrobeVisibility;
 import dev.hardaway.wardrobe.impl.cosmetic.appearance.VariantAppearance;
 import dev.hardaway.wardrobe.impl.cosmetic.texture.GradientTextureConfig;
 import dev.hardaway.wardrobe.impl.cosmetic.texture.VariantTextureConfig;
@@ -122,7 +122,7 @@ public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosm
             } else {
                 continue;
             }
-            entries.add(new CosmeticColorEntry(textureId, colors));
+            entries.add(new CosmeticVariantEntry(textureId, properties, colors));
         }
         return entries;
     }

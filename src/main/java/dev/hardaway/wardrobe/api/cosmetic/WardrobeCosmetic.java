@@ -14,11 +14,6 @@ public interface WardrobeCosmetic extends Cosmetic {
 
     String getCosmeticSlotId();
 
-    String[] getRequiredCosmeticIds();
-
-    @Nullable
-    String getIconPath();
-
     Map<String, CosmeticOptionEntry> getOptionEntries();
 
     List<CosmeticVariantEntry> getVariantEntries(@Nullable String variantId);

@@ -16,7 +16,6 @@ import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.menu.WardrobeCategory;
 import dev.hardaway.wardrobe.api.property.WardrobeProperties;
-import dev.hardaway.wardrobe.api.property.WardrobeTranslationProperties;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;

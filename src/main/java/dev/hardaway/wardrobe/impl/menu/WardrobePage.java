@@ -402,7 +402,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             commandBuilder.append("#Variants[" + row + "] #Row", "Wardrobe/Pages/Variant.ui");
             String selector = "#Variants[" + row + "] #Row[" + (i % VARIANTS_PER_ROW) + "]";
 
-            commandBuilder.set(selector + " #Button.TooltipText", variant.id()); // TODO: actual translatable name
+            commandBuilder.set(selector + " #Button.TooltipText", variant.properties().getTranslationProperties().getName());
 
             String[] colors = variant.colors();
 

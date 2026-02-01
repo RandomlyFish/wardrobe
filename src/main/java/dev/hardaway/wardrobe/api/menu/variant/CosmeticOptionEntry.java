@@ -1,12 +1,9 @@
 package dev.hardaway.wardrobe.api.menu.variant;
 
-import dev.hardaway.wardrobe.api.property.WardrobeTranslationProperties;
-
-import javax.annotation.Nullable;
+import dev.hardaway.wardrobe.api.property.WardrobeProperties;
 
 public record CosmeticOptionEntry(
         String id,
-        WardrobeTranslationProperties translationProperties,
-        @Nullable String iconPath
+        WardrobeProperties properties
 ) {
 }

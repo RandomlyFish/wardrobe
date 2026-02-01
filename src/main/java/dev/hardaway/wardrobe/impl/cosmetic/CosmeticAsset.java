@@ -8,18 +8,14 @@ import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.codec.codecs.EnumCodec;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
-import dev.hardaway.wardrobe.api.property.WardrobeProperties;
-import dev.hardaway.wardrobe.api.property.WardrobeVisibility;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
-import dev.hardaway.wardrobe.api.property.WardrobeTranslationProperties;
+import dev.hardaway.wardrobe.api.property.WardrobeProperties;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticAsset>> {
