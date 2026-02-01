@@ -3,6 +3,7 @@ package dev.hardaway.wardrobe.api.property;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.server.core.Message;
 
 public class WardrobeTranslationProperties {
@@ -11,17 +12,17 @@ public class WardrobeTranslationProperties {
                     new KeyedCodec<>("Name", Codec.STRING),
                     (data, s) -> data.nameKey = s,
                     data -> data.nameKey
-            ).add()
+            ).addValidator(Validators.nonNull()).add()
 
             .append(
                     new KeyedCodec<>("Description", Codec.STRING),
                     (data, s) -> data.descriptionKey = s,
                     data -> data.descriptionKey
-            ).add()
+            ).addValidator(Validators.nonNull()).add()
             .build();
 
-    private String nameKey;
-    private String descriptionKey;
+    private String nameKey = "";
+    private String descriptionKey = "";
 
     WardrobeTranslationProperties() {
     }

@@ -3,6 +3,7 @@ package dev.hardaway.wardrobe.api.property;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 
 import javax.annotation.Nonnull;
@@ -13,10 +14,10 @@ public class WardrobeProperties {
 
     public static final BuilderCodec<WardrobeProperties> CODEC = BuilderCodec.builder(WardrobeProperties.class, WardrobeProperties::new)
             .append(
-                    new KeyedCodec<>("Translation", WardrobeTranslationProperties.CODEC),
+                    new KeyedCodec<>("Translation", WardrobeTranslationProperties.CODEC, true),
                     (data, s) -> data.translationProperties = s,
                     data -> data.translationProperties
-            ).add()
+            ).addValidator(Validators.nonNull()).add()
 
             .append(
                     new KeyedCodec<>("Visibility", WardrobeVisibility.CODEC),
