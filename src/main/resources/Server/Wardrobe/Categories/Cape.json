@@ -1,0 +1,10 @@
+{
+  "Properties": {
+    "Translation": {
+      "Name": "server.wardrobe.category.Cape.name"
+    },
+    "Icon": "Icons/Wardrobe/Categories/Cape@2x.png"
+  },
+  "SelectedIcon": "Icons/Wardrobe/Categories/CapeSelected@2x.png",
+  "Order": 4
+}

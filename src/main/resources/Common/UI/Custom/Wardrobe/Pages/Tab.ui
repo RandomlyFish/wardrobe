@@ -3,7 +3,7 @@ $Common = "../../Common.ui";
 $Sounds = "../../Sounds.ui";
 
 Group {
-  Anchor: (Width: 47, Height: 47, Top: 2, Bottom: 2);
+  Anchor: (Width: 48, Height: 48, Top: 3, Bottom: 3);
   Background: (TexturePath: "../Icons/CategoryIconBackground.png");
 
   Button #Button {
@@ -20,7 +20,7 @@ Group {
       }
 
       Group {
-        Anchor: Anchor(Height: 33, Left: -11);
+        Anchor: Anchor(Height: 33, Left: -12);
         Background: "../Icons/SelectedCategoryArrow.png";
       }
     }

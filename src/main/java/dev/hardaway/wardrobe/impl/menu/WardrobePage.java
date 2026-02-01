@@ -289,7 +289,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                 tooltip.insert(Message.raw("ID: " + cosmetic.getId()).color(Color.LIGHT_GRAY).italic(true));
             }
 
-            if (translationProperties.getDescriptionKey() != null) {
+            if (!translationProperties.getDescriptionKey().isEmpty()) {
                 tooltip.insert("\n");
                 tooltip.insert(cosmetic.getProperties().getTranslationProperties().getDescription().color(Color.LIGHT_GRAY));
             }
@@ -336,10 +336,10 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                             tooltip.insert(Message.raw("Option: ").color(Color.LIGHT_GRAY).italic(true));
                             tooltip.insert(newTranslation.getName().color(Color.LIGHT_GRAY).italic(true));
 
-                            if (newTranslation.getDescriptionKey() != null) {
+                            if (!newTranslation.getDescriptionKey().isEmpty()) {
                                 tooltip.insert("\n");
                                 tooltip.insert(newTranslation.getDescription().color(Color.LIGHT_GRAY));
-                            } else if (translationProperties.getDescriptionKey() != null) {
+                            } else if (!translationProperties.getDescriptionKey().isEmpty()) {
                                 tooltip.insert("\n");
                                 tooltip.insert(translationProperties.getDescription().color(Color.LIGHT_GRAY));
                             }
@@ -403,6 +403,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             String selector = "#Variants[" + row + "] #Row[" + (i % VARIANTS_PER_ROW) + "]";
 
             commandBuilder.set(selector + " #Button.TooltipText", variant.properties().getTranslationProperties().getName());
+            if (variant.properties().getIcon() != null) commandBuilder.set(selector + " #Button #Icon.AssetPath", variant.properties().getIcon());
 
             String[] colors = variant.colors();
 

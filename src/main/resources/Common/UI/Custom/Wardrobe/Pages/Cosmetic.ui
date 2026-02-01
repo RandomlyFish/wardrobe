@@ -6,7 +6,7 @@ Group {
   Padding: (Horizontal: 4, Vertical: 4);
 
   Button #Button {
-    Anchor: (Width: 92, Height: 149);
+    Anchor: (Width: 90, Height: 150);
     MaskTexturePath: "../Icons/PartMask.png";
     Background: "../Icons/PartFrame.png";
     Style: (

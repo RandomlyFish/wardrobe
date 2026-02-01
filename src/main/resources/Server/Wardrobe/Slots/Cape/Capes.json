@@ -1,0 +1,12 @@
+{
+  "Properties": {
+    "Translation": {
+      "Name": "client.myAvatar.tabs.Capes"
+    },
+    "Icon": "Icons/Wardrobe/Slots/Capes@2x.png"
+  },
+  "CosmeticType": "Capes",
+  "Category": "Cape",
+  "SelectedIcon": "Icons/Wardrobe/Slots/CapesSelected@2x.png",
+  "Order": 0
+}

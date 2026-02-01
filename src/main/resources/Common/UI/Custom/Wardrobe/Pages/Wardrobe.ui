@@ -36,13 +36,13 @@ Group {
 
     #Content {
       LayoutMode: Left;
-      Padding: (Horizontal: 10, Left: 2, Top: 2, Bottom: 5);
+      Padding: (Horizontal: 10, Top: 2, Bottom: 5);
 
       Group {
         LayoutMode: Top;
 
         Group #Categories {
-          Anchor: (Width: 65);
+          Anchor: (Width: 64, Left: 2);
           Padding: (Top: 10);
           LayoutMode: Top;
         }
@@ -60,7 +60,7 @@ Group {
         LayoutMode: Left;
 
         Group #Slots {
-          Anchor: (Width: 65, Left: 2);
+          Anchor: (Width: 64, Left: 2);
           Padding: (Top: 10);
           LayoutMode: Top;
         }
@@ -137,7 +137,7 @@ Group {
                          ChangedSound: (SoundPath: $Sounds.@Tick, Volume: 6)
                        )
                      );
-              TooltipText: %server.ui.wardrobe.hide.tooltip;
+              TooltipText: %server.wardrobe.ui.hide.tooltip;
               TextTooltipStyle: @ButtonTextTooltipStyle;
             }
           }
@@ -156,7 +156,7 @@ Group {
               Anchor: (Height: 25, Top: 30);
 
               Label #VariantsLabel {
-                Text: %server.ui.wardrobe.variants.label;
+                Text: %server.wardrobe.ui.variants.label;
                 Style: @HeadlineLabelStyle;
               }
             }
@@ -244,7 +244,7 @@ Group {
         $Common.@SecondaryButton #Camera {
           @Sounds = $Sounds.@ButtonsLight;
           @Anchor = Anchor(Right: 8);
-          TooltipText: %server.ui.wardrobe.camera.tooltip;
+          TooltipText: %server.wardrobe.ui.camera.tooltip;
           TextTooltipStyle: @ButtonTextTooltipStyle;
 
            Group {
