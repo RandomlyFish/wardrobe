@@ -223,12 +223,12 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             commandBuilder.append(tabSelector, "Wardrobe/Pages/Tab.ui");
 
             String selector = tabSelector + "[" + i + "] #Button";
-            commandBuilder.set(selector + " #Icon.AssetPath", tab.getIconPath());
+            commandBuilder.set(selector + " #Icon.AssetPath", tab.getProperties().getIcon());
 
             if (selected.test(tab.getId())) {
                 commandBuilder.set(selector + " #Selected #Icon.AssetPath", tab.getSelectedIconPath());
                 commandBuilder.set(selector + " #Selected.Visible", true);
-                commandBuilder.set(tabSelector + "Name.Text", tab.getTranslationProperties().getName());
+                commandBuilder.set(tabSelector + "Name.Text", tab.getProperties().getTranslationProperties().getName());
             }
 
             eventBuilder.addEventBinding(
@@ -279,7 +279,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             commandBuilder.append("#Cosmetics[" + row + "] #Row", "Wardrobe/Pages/Cosmetic.ui");
             String selector = "#Cosmetics[" + row + "] #Row[" + col + "]";
 
-            WardrobeTranslationProperties translationProperties = cosmetic.getTranslationProperties();
+            WardrobeTranslationProperties translationProperties = cosmetic.getProperties().getTranslationProperties();
             Message tooltip = Message.empty();
             tooltip.insert(translationProperties.getName().bold(true));
 
@@ -291,13 +291,13 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
             if (translationProperties.getDescriptionKey() != null) {
                 tooltip.insert("\n");
-                tooltip.insert(cosmetic.getTranslationProperties().getDescription().color(Color.LIGHT_GRAY));
+                tooltip.insert(cosmetic.getProperties().getTranslationProperties().getDescription().color(Color.LIGHT_GRAY));
             }
 
-            if (cosmetic.getIconPath() != null)
-                commandBuilder.set(selector + " #Icon.AssetPath", cosmetic.getIconPath());
+            if (cosmetic.getProperties().getIcon() != null)
+                commandBuilder.set(selector + " #Icon.AssetPath", cosmetic.getProperties().getIcon());
 
-            if (cosmetic.hasPermission(playerRef.getUuid())) {
+            if (cosmetic.getProperties().hasPermission(playerRef.getUuid())) {
                 eventBuilder.addEventBinding(
                         CustomUIEventBindingType.Activating,
                         selector + " #Button",
@@ -318,7 +318,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             if (worn != null && worn.getVariantId() != null) {
                 CosmeticVariantEntry entry = cosmetic.getVariantEntries().get(worn.getVariantId());
                 if (entry != null) {
-                    String variantIconPath = entry.iconPath();
+                    String variantIconPath = entry.properties().getIcon();
                     if (variantIconPath != null) {
                         commandBuilder.set(selector + " #Icon.AssetPath", variantIconPath);
                         tooltip = Message.empty();
@@ -329,7 +329,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                             tooltip.insert(Message.raw("ID: " + cosmetic.getId()).color(Color.LIGHT_GRAY).italic(true));
                         }
 
-                        WardrobeTranslationProperties newTranslation = entry.translationProperties();
+                        WardrobeTranslationProperties newTranslation = entry.properties().getTranslationProperties();
 
                         if (newTranslation != null) {
                             tooltip.insert("\n");
@@ -366,7 +366,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         for (CosmeticVariantEntry variant : variantEntries.values()) {
             entries.add(new DropdownEntryInfo(
                     LocalizableString.fromMessageId(
-                            variant.translationProperties().getName().getMessageId()
+                            variant.properties().getTranslationProperties().getName().getMessageId()
                     ),
                     variant.id()
             ));

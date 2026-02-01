@@ -13,7 +13,8 @@ import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
-import dev.hardaway.wardrobe.api.menu.WardrobeVisibility;
+import dev.hardaway.wardrobe.api.property.WardrobeProperties;
+import dev.hardaway.wardrobe.api.property.WardrobeVisibility;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.property.WardrobeTranslationProperties;
 
@@ -24,35 +25,15 @@ import java.util.function.Supplier;
 public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticAsset>> {
 
     public static final BuilderCodec<CosmeticAsset> ABSTRACT_CODEC = BuilderCodec.abstractBuilder(CosmeticAsset.class)
-            .append(new KeyedCodec<>("TranslationProperties", WardrobeTranslationProperties.CODEC, true),
-                    (t, value) -> t.translationProperties = value,
-                    t -> t.translationProperties
-            ).add()
-            .append(new KeyedCodec<>("CosmeticSlot", Codec.STRING, true),
+            .append(new KeyedCodec<>("Properties", Codec.STRING, true),
                     (t, value) -> t.cosmeticSlotId = value,
                     t -> t.cosmeticSlotId
             ).add()
 
-            .append(new KeyedCodec<>("WardrobeVisibility", new EnumCodec<>(WardrobeVisibility.class)),
-                    (t, value) -> t.wardrobeVisibility = value,
-                    t -> t.wardrobeVisibility
+            .append(new KeyedCodec<>("CosmeticSlot", Codec.STRING, true),
+                    (t, value) -> t.cosmeticSlotId = value,
+                    t -> t.cosmeticSlotId
             ).add()
-
-            .append(new KeyedCodec<>("Icon", Codec.STRING),
-                    (t, value) -> t.iconPath = value,
-                    t -> t.iconPath
-            ).add()
-
-            .append(new KeyedCodec<>("RequiresPermission", Codec.STRING),
-                    (t, value) -> t.permissionNode = value,
-                    t -> t.permissionNode
-            ).add()
-
-            .append(new KeyedCodec<>("RequiredCosmetics", Codec.STRING_ARRAY),
-                    (t, value) -> t.requiredCosmetics = value,
-                    t -> t.requiredCosmetics
-            ).add()
-
             .append(new KeyedCodec<>("HiddenCosmeticSlots", Codec.STRING_ARRAY),
                     (t, value) -> t.hiddenCosmeticSlots = value,
                     t -> t.hiddenCosmeticSlots
@@ -73,24 +54,18 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
     private String id;
     private AssetExtraInfo.Data data;
 
-    private WardrobeTranslationProperties translationProperties;
-    private WardrobeVisibility wardrobeVisibility = WardrobeVisibility.ALWAYS;
     private String cosmeticSlotId;
-    private String iconPath;
-    private String permissionNode = "";
-    private String[] requiredCosmetics = new String[0];
     private String[] hiddenCosmeticSlots = new String[0];
+    private WardrobeProperties properties;
 
     protected CosmeticAsset() {
     }
 
-    public CosmeticAsset(String id, WardrobeTranslationProperties translationProperties, WardrobeVisibility wardrobeVisibility, String cosmeticSlotId, String iconPath, String permissionNode) {
+    public CosmeticAsset(String id, String cosmeticSlotId, String[] hiddenCosmeticSlots, WardrobeProperties properties) {
         this.id = id;
-        this.translationProperties = translationProperties;
-        this.wardrobeVisibility = wardrobeVisibility;
         this.cosmeticSlotId = cosmeticSlotId;
-        this.iconPath = iconPath;
-        this.permissionNode = permissionNode;
+        this.hiddenCosmeticSlots = hiddenCosmeticSlots;
+        this.properties = properties;
     }
 
     @Override
@@ -99,13 +74,8 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
     }
 
     @Override
-    public WardrobeTranslationProperties getTranslationProperties() {
-        return translationProperties;
-    }
-
-    @Override
-    public WardrobeVisibility getWardrobeVisibility() {
-        return wardrobeVisibility;
+    public WardrobeProperties getProperties() {
+        return properties;
     }
 
     @Nonnull
@@ -113,23 +83,8 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
         return cosmeticSlotId;
     }
 
-    @Override
-    public String[] getRequiredCosmeticIds() {
-        return requiredCosmetics;
-    }
-
     public String[] getHiddenCosmeticSlotIds() {
         return hiddenCosmeticSlots;
-    }
-
-    @Override
-    public String getIconPath() {
-        return iconPath;
-    }
-
-    @Nullable
-    public String getPermissionNode() {
-        return permissionNode;
     }
 
     @Override

@@ -39,12 +39,12 @@ public class WardrobeClearCommand extends AbstractPlayerCommand {
         WardrobeCosmeticSlot cosmeticSlot = this.cosmeticSlotArg.get(context);
         PlayerCosmetic cosmeticData = wardrobeComponent.getCosmetic(cosmeticSlot);
         if (cosmeticData == null) {
-            context.sendMessage(Message.join(Message.raw("No cosmetics found in the '"), cosmeticSlot.getTranslationProperties().getName(), Message.raw("' slot")));
+            context.sendMessage(Message.join(Message.raw("No cosmetics found in the '"), cosmeticSlot.getProperties().getTranslationProperties().getName(), Message.raw("' slot")));
             return;
         }
 
 
         wardrobeComponent.removeCosmetic(cosmeticSlot.getId());
-        context.sendMessage(Message.join(Message.raw("Cleared cosmetic from the '"), cosmeticSlot.getTranslationProperties().getName(), Message.raw("' slot")));
+        context.sendMessage(Message.join(Message.raw("Cleared cosmetic from the '"), cosmeticSlot.getProperties().getTranslationProperties().getName(), Message.raw("' slot")));
     }
 }

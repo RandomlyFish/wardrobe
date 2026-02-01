@@ -11,6 +11,7 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.validation.Validators;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.menu.WardrobeCategory;
+import dev.hardaway.wardrobe.api.property.WardrobeProperties;
 import dev.hardaway.wardrobe.api.property.WardrobeTranslationProperties;
 
 import java.util.function.Supplier;
@@ -26,15 +27,10 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
                     (asset) -> asset.data
             )
 
-            .append(new KeyedCodec<>("TranslationProperties", WardrobeTranslationProperties.CODEC),
-                    (t, value) -> t.translationProperties = value,
-                    t -> t.translationProperties
+            .append(new KeyedCodec<>("Properties", WardrobeProperties.CODEC),
+                    (t, value) -> t.properties = value,
+                    t -> t.properties
             ).add()
-
-            .append(new KeyedCodec<>("Icon", Codec.STRING, true),
-                    (t, value) -> t.icon = value,
-                    t -> t.icon
-            ).addValidator(Validators.nonEmptyString()).add()
 
             .append(new KeyedCodec<>("SelectedIcon", Codec.STRING, true),
                     (t, value) -> t.selectedIcon = value,
@@ -57,9 +53,8 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
     private String id;
     private AssetExtraInfo.Data data;
 
-    private WardrobeTranslationProperties translationProperties;
+    private WardrobeProperties properties;
 
-    private String icon;
     private String selectedIcon;
     private int order = -1;
 
@@ -69,13 +64,8 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
     }
 
     @Override
-    public WardrobeTranslationProperties getTranslationProperties() {
-        return translationProperties;
-    }
-
-    @Override
-    public String getIconPath() {
-        return icon;
+    public WardrobeProperties getProperties() {
+        return properties;
     }
 
     @Override
@@ -86,10 +76,5 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
     @Override
     public int getTabOrder() {
         return order;
-    }
-
-    @Override
-    public String getPermissionNode() {
-        return "";
     }
 }

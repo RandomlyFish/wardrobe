@@ -13,7 +13,8 @@ import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.Appearance;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
-import dev.hardaway.wardrobe.api.menu.WardrobeVisibility;
+import dev.hardaway.wardrobe.api.property.WardrobeProperties;
+import dev.hardaway.wardrobe.api.property.WardrobeVisibility;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticColorEntry;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticVariantEntry;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
@@ -58,8 +59,8 @@ public class ModelAttachmentCosmetic extends CosmeticAsset implements Appearance
     protected ModelAttachmentCosmetic() {
     }
 
-    public ModelAttachmentCosmetic(String id, WardrobeTranslationProperties translationProperties, WardrobeVisibility wardrobeVisibility, String cosmeticSlotId, String iconPath, String permissionNode, Appearance appearance, @Nullable Appearance overlapAppearance, @Nullable Appearance armorAppearance) {
-        super(id, translationProperties, wardrobeVisibility, cosmeticSlotId, iconPath, permissionNode);
+    public ModelAttachmentCosmetic(String id, String[] hiddenCosmeticSlots, String cosmeticSlotId, WardrobeProperties properties, Appearance appearance, @Nullable Appearance overlapAppearance, @Nullable Appearance armorAppearance) {
+        super(id, cosmeticSlotId, hiddenCosmeticSlots, properties);
         this.appearance = appearance;
         this.overlapAppearance = overlapAppearance;
         this.armorAppearance = armorAppearance;
@@ -96,8 +97,7 @@ public class ModelAttachmentCosmetic extends CosmeticAsset implements Appearance
                 VariantAppearance.Entry entry = v.getVariants().get(variantId);
                 entries.put(variantId, new CosmeticVariantEntry(
                         variantId,
-                        entry.getTranslationProperties(),
-                        entry.getIconPath()
+                        entry.getProperties()
                 ));
             }
             return entries;
@@ -114,16 +114,19 @@ public class ModelAttachmentCosmetic extends CosmeticAsset implements Appearance
 
         List<CosmeticColorEntry> entries = new ArrayList<>();
         for (String textureId : textures) {
+            WardrobeProperties properties;
             String[] colors;
             if (textureConfig instanceof VariantTextureConfig vt) {
+                properties = vt.getVariants().get(textureId).getProperties();
                 colors = vt.getVariants().get(textureId).getColors();
             } else if (textureConfig instanceof GradientTextureConfig gt) {
+                properties = new WardrobeProperties(new WardrobeTranslationProperties(textureId, ""), WardrobeVisibility.ALWAYS, null, null);
                 colors = CosmeticsModule.get().getRegistry().getGradientSets()
                         .get(gt.getGradientSet()).getGradients().get(textureId).getBaseColor();
             } else {
                 continue;
             }
-            entries.add(new CosmeticColorEntry(textureId, colors));
+            entries.add(new CosmeticColorEntry(textureId, properties, colors));
         }
         return entries;
     }

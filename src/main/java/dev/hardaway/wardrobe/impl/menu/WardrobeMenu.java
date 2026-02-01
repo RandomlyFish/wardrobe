@@ -8,7 +8,7 @@ import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.Appearance;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.menu.WardrobeCategory;
-import dev.hardaway.wardrobe.api.menu.WardrobeVisibility;
+import dev.hardaway.wardrobe.api.property.WardrobeVisibility;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.cosmetic.CosmeticCategoryAsset;
@@ -41,7 +41,7 @@ public class WardrobeMenu {
         this.baseWardrobe = wardrobe.clone();
 
         this.categories = CosmeticCategoryAsset.getAssetMap().getAssetMap().values().stream()
-                .filter(c -> c.hasPermission(playerId))
+                .filter(c -> c.getProperties().hasPermission(playerId))
                 .sorted(Comparator.comparing(WardrobeCategory::getTabOrder))
                 .toList();
 
@@ -59,7 +59,7 @@ public class WardrobeMenu {
         }
 
         CosmeticSlotAsset.getAssetMap().getAssetMap().values().stream()
-                .filter(g -> g.hasPermission(playerId))
+                .filter(g -> g.getProperties().hasPermission(playerId))
                 .sorted(Comparator.comparing(WardrobeCosmeticSlot::getTabOrder))
                 .forEach(slot -> {
                     slotMap.computeIfAbsent(slot.getCategory().getId(), k -> new ArrayList<>()).add(slot);
@@ -69,8 +69,8 @@ public class WardrobeMenu {
 
     private void buildCosmetics() {
         CosmeticAsset.getAssetMap().getAssetMap().values().stream()
-                .filter(c -> c.getWardrobeVisibility() != WardrobeVisibility.NEVER)
-                .filter(c -> c.getWardrobeVisibility() != WardrobeVisibility.PERMISSION || c.hasPermission(playerId))
+                .filter(c -> c.getProperties().getWardrobeVisibility() != WardrobeVisibility.NEVER)
+                .filter(c -> c.getProperties().getWardrobeVisibility() != WardrobeVisibility.PERMISSION || c.getProperties().hasPermission(playerId))
                 .sorted(Comparator.comparing(Cosmetic::getId))
                 .forEach(c -> cosmeticMap.computeIfAbsent(c.getCosmeticSlotId(), k -> new ArrayList<>()).add(c));
     }

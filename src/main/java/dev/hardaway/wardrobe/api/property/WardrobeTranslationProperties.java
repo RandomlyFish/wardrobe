@@ -7,12 +7,17 @@ import com.hypixel.hytale.server.core.Message;
 
 public class WardrobeTranslationProperties {
     public static final BuilderCodec<WardrobeTranslationProperties> CODEC = BuilderCodec.builder(WardrobeTranslationProperties.class, WardrobeTranslationProperties::new)
-            .appendInherited(new KeyedCodec<>("Name", Codec.STRING), (data, s) -> data.nameKey = s, data -> data.nameKey, (o, p) -> o.nameKey = p.nameKey)
-            .add()
-            .appendInherited(
-                    new KeyedCodec<>("Description", Codec.STRING), (data, s) -> data.descriptionKey = s, data -> data.descriptionKey, (o, p) -> o.descriptionKey = p.descriptionKey
-            )
-            .add()
+            .append(
+                    new KeyedCodec<>("Name", Codec.STRING),
+                    (data, s) -> data.nameKey = s,
+                    data -> data.nameKey
+            ).add()
+
+            .append(
+                    new KeyedCodec<>("Description", Codec.STRING),
+                    (data, s) -> data.descriptionKey = s,
+                    data -> data.descriptionKey
+            ).add()
             .build();
 
     private String nameKey;

@@ -15,6 +15,7 @@ import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.menu.WardrobeCategory;
+import dev.hardaway.wardrobe.api.property.WardrobeProperties;
 import dev.hardaway.wardrobe.api.property.WardrobeTranslationProperties;
 
 import javax.annotation.Nullable;
@@ -31,9 +32,9 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
                     (asset) -> asset.data
             )
 
-            .append(new KeyedCodec<>("TranslationProperties", WardrobeTranslationProperties.CODEC),
-                    (t, value) -> t.translationProperties = value,
-                    t -> t.translationProperties
+            .append(new KeyedCodec<>("Properties", WardrobeProperties.CODEC),
+                    (t, value) -> t.properties = value,
+                    t -> t.properties
             ).add()
 
             .append(new KeyedCodec<>("CosmeticType", new EnumCodec<>(CosmeticType.class)),
@@ -49,12 +50,6 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
             .append(new KeyedCodec<>("Category", Codec.STRING, true),
                     (t, value) -> t.category = value,
                     t -> t.category
-            ).addValidator(Validators.nonEmptyString()).add()
-
-
-            .append(new KeyedCodec<>("Icon", Codec.STRING, true),
-                    (t, value) -> t.icon = value,
-                    t -> t.icon
             ).addValidator(Validators.nonEmptyString()).add()
 
             .append(new KeyedCodec<>("SelectedIcon", Codec.STRING, true),
@@ -77,13 +72,12 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
     private String id;
     private AssetExtraInfo.Data data;
 
-    private WardrobeTranslationProperties translationProperties;
+    private WardrobeProperties properties;
 
     private CosmeticType cosmeticType;
     private ItemArmorSlot armorSlot;
 
     private String category;
-    private String icon;
     private String selectedIcon;
     private int order = -1;
 
@@ -93,8 +87,8 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
     }
 
     @Override
-    public WardrobeTranslationProperties getTranslationProperties() {
-        return translationProperties;
+    public WardrobeProperties getProperties() {
+        return properties;
     }
 
     @Nullable
@@ -117,10 +111,6 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
         return armorSlot;
     }
 
-    @Override
-    public String getIconPath() {
-        return icon;
-    }
 
     @Override
     public String getSelectedIconPath() {
@@ -130,10 +120,5 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
     @Override
     public int getTabOrder() {
         return order;
-    }
-
-    @Override
-    public String getPermissionNode() {
-        return "";
     }
 }

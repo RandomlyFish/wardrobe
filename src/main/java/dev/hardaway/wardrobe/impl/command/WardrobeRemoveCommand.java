@@ -42,7 +42,7 @@ public class WardrobeRemoveCommand extends AbstractPlayerCommand {
         for (Map.Entry<String, PlayerCosmetic> cosmeticEntry : wardrobeComponent.getCosmeticMap().entrySet()) {
             if (Objects.equals(cosmeticEntry.getValue().getCosmeticId(), cosmetic.getId())) {
                 wardrobeComponent.removeCosmetic(cosmeticEntry.getKey());
-                context.sendMessage(Message.join(Message.raw("Removed '"), cosmetic.getTranslationProperties().getName(), Message.raw("' from your avatar")));
+                context.sendMessage(Message.join(Message.raw("Removed '"), cosmetic.getProperties().getTranslationProperties().getName(), Message.raw("' from your avatar")));
             }
         }
     }

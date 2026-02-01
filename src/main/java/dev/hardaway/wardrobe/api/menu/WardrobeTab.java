@@ -1,12 +1,12 @@
 package dev.hardaway.wardrobe.api.menu;
 
-import dev.hardaway.wardrobe.api.property.WardrobePermissionHolder;
-import dev.hardaway.wardrobe.api.property.WardrobeTranslatable;
+import dev.hardaway.wardrobe.api.property.WardrobeProperties;
 
-public interface WardrobeTab extends WardrobePermissionHolder, WardrobeTranslatable {
+public interface WardrobeTab {
+
     String getId();
 
-    String getIconPath();
+    WardrobeProperties getProperties();
 
     String getSelectedIconPath();
 

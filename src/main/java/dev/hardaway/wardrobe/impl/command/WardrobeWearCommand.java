@@ -56,7 +56,7 @@ public class WardrobeWearCommand extends AbstractPlayerCommand {
             return;
         }
 
-        if (!cosmetic.hasPermission(playerRef.getUuid())) {
+        if (!cosmetic.getProperties().hasPermission(playerRef.getUuid())) {
             context.sendMessage(Message.raw("You do not have permission to use this cosmetic."));
             return;
         }

@@ -6,6 +6,7 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.codec.validation.Validators;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
+import dev.hardaway.wardrobe.api.property.WardrobeProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,6 +40,12 @@ public class VariantTextureConfig implements TextureConfig {
     public static class Entry {
 
         public static final BuilderCodec<Entry> CODEC = BuilderCodec.builder(Entry.class, Entry::new)
+
+                .append(new KeyedCodec<>("Properties", WardrobeProperties.CODEC, true),
+                        (t, value) -> t.properties = value,
+                        t -> t.properties
+                ).add()
+
                 .append(new KeyedCodec<>("Texture", Codec.STRING, true),
                         (t, value) -> t.texture = value, t -> t.texture
                 ).add()
@@ -49,8 +56,13 @@ public class VariantTextureConfig implements TextureConfig {
 
                 .build();
 
+        private WardrobeProperties properties;
         private String texture;
         private String[] colors;
+
+        public WardrobeProperties getProperties() {
+            return properties;
+        }
 
         @Nonnull
         public String getTexture() {

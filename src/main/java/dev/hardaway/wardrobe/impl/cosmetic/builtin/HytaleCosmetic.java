@@ -88,9 +88,4 @@ public class HytaleCosmetic implements Cosmetic {
     public void applyCosmetic(WardrobeContext context, WardrobeCosmeticSlot slot, PlayerCosmetic playerCosmetic) {
         context.addAttachment(slot.getId(), this.createAttachment(context, slot, playerCosmetic));
     }
-
-    @Override
-    public String getPermissionNode() {
-        return "";
-    }
 }
