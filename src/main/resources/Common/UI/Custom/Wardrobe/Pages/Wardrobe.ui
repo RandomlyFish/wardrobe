@@ -49,10 +49,8 @@ Group {
 
         Group {
           FlexWeight: 1;
-          Anchor: (Width: 47, Height: 47, Bottom: 5);
+          Anchor: (Width: 48, Height: 48, Bottom: 10);
           Background: "../Icons/Logo.png";
-          TooltipText: "Wardrobe";
-          TextTooltipStyle: @ButtonTextTooltipStyle;
         }
       }
 
