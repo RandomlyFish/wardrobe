@@ -29,8 +29,8 @@ public class VariantTextureConfig implements TextureConfig {
 
     @Nonnull
     @Override
-    public String getTexture(@Nullable String textureId) {
-        Entry entry = this.getVariants().get(textureId);
+    public String getTexture(@Nullable String variantId) {
+        Entry entry = this.getVariants().get(variantId);
         return entry.getTexture();
     }
 

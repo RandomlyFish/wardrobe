@@ -58,7 +58,7 @@ public class WardrobePlugin extends JavaPlugin {
                 .register(Priority.NORMAL, "Gradient", GradientTextureConfig.class, GradientTextureConfig.CODEC)
                 .register(Priority.NORMAL, "Variant", VariantTextureConfig.class, VariantTextureConfig.CODEC);
 
-        this.getCodecRegistry(Cosmetic.CODEC)
+        this.getCodecRegistry(CosmeticAsset.CODEC)
                 .register(Priority.DEFAULT, "ModelAttachment", ModelAttachmentCosmetic.class, ModelAttachmentCosmetic.CODEC)
                 .register(Priority.NORMAL, "PlayerModel", PlayerModelCosmetic.class, PlayerModelCosmetic.CODEC);
 
@@ -66,24 +66,24 @@ public class WardrobePlugin extends JavaPlugin {
                 .register(Priority.DEFAULT, "Model", ModelAppearance.class, ModelAppearance.CODEC)
                 .register(Priority.NORMAL, "Variant", VariantAppearance.class, VariantAppearance.CODEC);
 
-        AssetRegistry.register(HytaleAssetStore.builder(CosmeticCategory.class, new DefaultAssetMap<>())
+        AssetRegistry.register(HytaleAssetStore.builder(CosmeticCategoryAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Categories")
-                .setCodec(CosmeticCategory.CODEC)
-                .setKeyFunction(CosmeticCategory::getId)
+                .setCodec(CosmeticCategoryAsset.CODEC)
+                .setKeyFunction(CosmeticCategoryAsset::getId)
                 .build()
         );
-        AssetRegistry.register(HytaleAssetStore.builder(CosmeticSlot.class, new DefaultAssetMap<>())
+        AssetRegistry.register(HytaleAssetStore.builder(CosmeticSlotAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Slots")
-                .setCodec(CosmeticSlot.CODEC)
-                .setKeyFunction(CosmeticSlot::getId)
-                .loadsAfter(CosmeticCategory.class)
+                .setCodec(CosmeticSlotAsset.CODEC)
+                .setKeyFunction(CosmeticSlotAsset::getId)
+                .loadsAfter(CosmeticCategoryAsset.class)
                 .build()
         );
-        AssetRegistry.register(HytaleAssetStore.builder(Cosmetic.class, new DefaultAssetMap<>())
+        AssetRegistry.register(HytaleAssetStore.builder(CosmeticAsset.class, new DefaultAssetMap<>())
                 .setPath("Wardrobe/Cosmetics")
-                .setCodec(Cosmetic.CODEC)
-                .setKeyFunction(Cosmetic::getId)
-                .loadsAfter(ModelAsset.class, CosmeticSlot.class)
+                .setCodec(CosmeticAsset.CODEC)
+                .setKeyFunction(CosmeticAsset::getId)
+                .loadsAfter(ModelAsset.class, CosmeticSlotAsset.class)
                 .build()
         );
 

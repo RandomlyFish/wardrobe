@@ -13,14 +13,14 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
-import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlot;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlotAsset;
 import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;
 
 public class WardrobeClearCommand extends AbstractPlayerCommand {
 
-    private final RequiredArg<CosmeticSlot> cosmeticSlotArg;
+    private final RequiredArg<CosmeticSlotAsset> cosmeticSlotArg;
 
     public WardrobeClearCommand() {
         super("clear", "server.commands.wardrobe.clear.description");

@@ -24,7 +24,7 @@ public class StaticTextureConfig implements TextureConfig {
     private String texture;
 
     @Nonnull
-    public String getTexture(@Nullable String textureId) {
+    public String getTexture(@Nullable String variantId) {
         return texture;
     }
 

@@ -15,6 +15,6 @@ commands.wardrobe.wear.description = Wear a Wardrobe cosmetic
 commands.wardrobe.wear.args.cosmetic.description = The cosmetic to wear
 commands.wardrobe.wear.args.option.description = The cosmetic option to use
 commands.wardrobe.wear.args.variant.description = The cosmetic variant to use
-uwardrobe.ui.hide.tooltip = Hide Default Cosmetic
+wardrobe.ui.hide.tooltip = Hide Default Cosmetic
 wardrobe.ui.camera.tooltip = Toggle Mirror View
 wardrobe.ui.variants.label = Variants

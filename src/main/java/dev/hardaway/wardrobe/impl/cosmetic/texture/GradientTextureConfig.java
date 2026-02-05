@@ -5,6 +5,8 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.schema.metadata.ui.UIEditor;
 import com.hypixel.hytale.server.core.asset.common.CommonAssetValidator;
+import com.hypixel.hytale.server.core.cosmetics.CosmeticAssetValidator;
+import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticsModule;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 
@@ -18,6 +20,7 @@ public class GradientTextureConfig implements TextureConfig {
                     (t, value) -> t.gradientSet = value,
                     t -> t.gradientSet
             )
+            .addValidator(new CosmeticAssetValidator(CosmeticType.GRADIENT_SETS))
             .metadata(new UIEditor(new UIEditor.Dropdown("GradientSets")))
             .add()
 
@@ -43,7 +46,7 @@ public class GradientTextureConfig implements TextureConfig {
 
     @Nonnull
     @Override
-    public String getTexture(@Nullable String textureId) {
+    public String getTexture(@Nullable String variantId) {
         return grayscaleTexture;
     }
 

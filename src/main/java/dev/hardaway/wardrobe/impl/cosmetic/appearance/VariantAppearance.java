@@ -27,13 +27,13 @@ public class VariantAppearance implements Appearance {
     }
 
     @Override
-    public String getModel(String cosmeticVariantId) {
-        return variants.get(cosmeticVariantId).getModel();
+    public String getModel(String variantId) {
+        return variants.get(variantId).getModel();
     }
 
     @Override
-    public TextureConfig getTextureConfig(String cosmeticVariantId) {
-        Entry entry = variants.get(cosmeticVariantId);
+    public TextureConfig getTextureConfig(String optionId) {
+        Entry entry = variants.get(optionId);
         return entry == null ? null : entry.getTextureConfig();
     }
 

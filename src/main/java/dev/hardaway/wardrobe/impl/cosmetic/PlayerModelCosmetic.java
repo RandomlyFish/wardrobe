@@ -27,9 +27,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PlayerModelCosmetic extends Cosmetic implements AppearanceCosmetic {
+public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosmetic {
 
-    public static final BuilderCodec<PlayerModelCosmetic> CODEC = BuilderCodec.builder(PlayerModelCosmetic.class, PlayerModelCosmetic::new, Cosmetic.ABSTRACT_CODEC)
+    public static final BuilderCodec<PlayerModelCosmetic> CODEC = BuilderCodec.builder(PlayerModelCosmetic.class, PlayerModelCosmetic::new, CosmeticAsset.ABSTRACT_CODEC)
             .append(new KeyedCodec<>("Appearance", Appearance.CODEC, true),
                     (t, value) -> t.appearance = value,
                     t -> t.appearance

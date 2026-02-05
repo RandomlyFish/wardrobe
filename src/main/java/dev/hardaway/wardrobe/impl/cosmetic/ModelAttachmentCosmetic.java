@@ -31,9 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModelAttachmentCosmetic extends Cosmetic implements AppearanceCosmetic {
+public class ModelAttachmentCosmetic extends CosmeticAsset implements AppearanceCosmetic {
 
-    public static final BuilderCodec<ModelAttachmentCosmetic> CODEC = AssetBuilderCodec.builder(ModelAttachmentCosmetic.class, ModelAttachmentCosmetic::new, Cosmetic.ABSTRACT_CODEC)
+    public static final BuilderCodec<ModelAttachmentCosmetic> CODEC = AssetBuilderCodec.builder(ModelAttachmentCosmetic.class, ModelAttachmentCosmetic::new, CosmeticAsset.ABSTRACT_CODEC)
             .appendInherited(new KeyedCodec<>("OverlapCosmeticSlots", Codec.STRING_ARRAY),
                     (c, value) -> c.overlapCosmeticSlotIds = value,
                     c -> c.overlapCosmeticSlotIds,

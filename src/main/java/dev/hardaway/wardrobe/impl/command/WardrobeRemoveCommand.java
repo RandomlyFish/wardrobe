@@ -13,7 +13,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
-import dev.hardaway.wardrobe.impl.cosmetic.Cosmetic;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;
@@ -22,7 +22,7 @@ import java.util.Objects;
 
 public class WardrobeRemoveCommand extends AbstractPlayerCommand {
 
-    private final RequiredArg<Cosmetic> cosmeticArg;
+    private final RequiredArg<CosmeticAsset> cosmeticArg;
 
     public WardrobeRemoveCommand() {
         super("remove", "server.commands.wardrobe.remove.description");

@@ -9,9 +9,9 @@ import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.menu.WardrobeCategory;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.property.WardrobeVisibility;
-import dev.hardaway.wardrobe.impl.cosmetic.Cosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.CosmeticCategory;
-import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlot;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticCategoryAsset;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlotAsset;
 import dev.hardaway.wardrobe.impl.player.CosmeticSaveData;
 import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -39,7 +39,7 @@ public class WardrobeMenu {
         this.wardrobe = wardrobe;
         this.baseWardrobe = wardrobe.clone();
 
-        this.categories = CosmeticCategory.getAssetMap().getAssetMap().values().stream()
+        this.categories = CosmeticCategoryAsset.getAssetMap().getAssetMap().values().stream()
                 .filter(c -> c.getProperties().hasPermission(playerId))
                 .sorted(Comparator.comparing(WardrobeCategory::getTabOrder))
                 .toList();
@@ -57,7 +57,7 @@ public class WardrobeMenu {
             slotMap.put(category.getId(), new ArrayList<>());
         }
 
-        CosmeticSlot.getAssetMap().getAssetMap().values().stream()
+        CosmeticSlotAsset.getAssetMap().getAssetMap().values().stream()
                 .filter(g -> g.getProperties().hasPermission(playerId))
                 .sorted(Comparator.comparing(WardrobeCosmeticSlot::getTabOrder))
                 .forEach(slot -> {
@@ -67,7 +67,7 @@ public class WardrobeMenu {
     }
 
     private void buildCosmetics() {
-        Cosmetic.getAssetMap().getAssetMap().values().stream()
+        CosmeticAsset.getAssetMap().getAssetMap().values().stream()
                 .filter(c -> c.getProperties().getWardrobeVisibility() != WardrobeVisibility.NEVER)
                 .filter(c -> c.getProperties().getWardrobeVisibility() != WardrobeVisibility.PERMISSION || c.getProperties().hasPermission(playerId))
                 .sorted(Comparator.comparing(dev.hardaway.wardrobe.api.cosmetic.Cosmetic::getId))
@@ -139,7 +139,7 @@ public class WardrobeMenu {
 
         if (cosmetic == null) {
             if (worn == null) return;
-            cosmetic = Objects.requireNonNull(Cosmetic.getAssetMap().getAsset(worn.getCosmeticId())); // TODO: registry
+            cosmetic = Objects.requireNonNull(CosmeticAsset.getAssetMap().getAsset(worn.getCosmeticId())); // TODO: registry
         }
 
         if (cosmetic instanceof AppearanceCosmetic a) {
@@ -166,7 +166,7 @@ public class WardrobeMenu {
     }
 
     public void toggleCosmeticType() {
-        CosmeticSlot slot = CosmeticSlot.getAssetMap().getAsset(getSelectedSlot());
+        CosmeticSlotAsset slot = CosmeticSlotAsset.getAssetMap().getAsset(getSelectedSlot());
         if (slot != null && slot.getHytaleCosmeticType() != null && WardrobeUtil.canBeHidden(slot.getHytaleCosmeticType())) {
             wardrobe.toggleCosmeticType(slot.getHytaleCosmeticType());
             wardrobe.rebuild();

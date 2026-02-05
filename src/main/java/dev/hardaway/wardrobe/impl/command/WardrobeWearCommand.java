@@ -17,7 +17,7 @@ import dev.hardaway.wardrobe.api.cosmetic.appearance.Appearance;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.AppearanceCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
-import dev.hardaway.wardrobe.impl.cosmetic.Cosmetic;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.player.CosmeticSaveData;
 import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 
@@ -26,7 +26,7 @@ import java.util.List;
 
 public class WardrobeWearCommand extends AbstractPlayerCommand {
 
-    private final RequiredArg<Cosmetic> cosmeticArg;
+    private final RequiredArg<CosmeticAsset> cosmeticArg;
     private final OptionalArg<String> optionArg;
     private final OptionalArg<String> variantArg;
 

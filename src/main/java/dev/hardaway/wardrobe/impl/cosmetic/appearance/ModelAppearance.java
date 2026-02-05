@@ -33,12 +33,12 @@ public class ModelAppearance implements Appearance {
     private TextureConfig textureConfig;
 
     @Override
-    public String getModel(String cosmetic) {
+    public String getModel(String variantId) {
         return model;
     }
 
     @Override
-    public TextureConfig getTextureConfig(@Nullable String cosmeticVariantId) {
+    public TextureConfig getTextureConfig(@Nullable String optionId) {
         return textureConfig;
     }
 

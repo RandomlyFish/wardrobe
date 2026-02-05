@@ -16,10 +16,10 @@ import dev.hardaway.wardrobe.api.property.validator.WardrobeValidators;
 
 import java.util.function.Supplier;
 
-public class CosmeticCategory implements WardrobeCategory, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticCategory>> {
+public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap<String, DefaultAssetMap<String, CosmeticCategoryAsset>> {
 
-    public static final AssetBuilderCodec<String, CosmeticCategory> CODEC = AssetBuilderCodec
-            .builder(CosmeticCategory.class, CosmeticCategory::new,
+    public static final AssetBuilderCodec<String, CosmeticCategoryAsset> CODEC = AssetBuilderCodec
+            .builder(CosmeticCategoryAsset.class, CosmeticCategoryAsset::new,
                     Codec.STRING,
                     (t, k) -> t.id = k,
                     (t) -> t.id,
@@ -48,10 +48,10 @@ public class CosmeticCategory implements WardrobeCategory, JsonAssetWithMap<Stri
 
             .build();
 
-    public static final Supplier<AssetStore<String, CosmeticCategory, DefaultAssetMap<String, CosmeticCategory>>> ASSET_STORE = WardrobePlugin.createAssetStore(CosmeticCategory.class);
-    public static final ValidatorCache<String> VALIDATOR_CACHE = new ValidatorCache(new AssetKeyValidator(CosmeticCategory.ASSET_STORE));
+    public static final Supplier<AssetStore<String, CosmeticCategoryAsset, DefaultAssetMap<String, CosmeticCategoryAsset>>> ASSET_STORE = WardrobePlugin.createAssetStore(CosmeticCategoryAsset.class);
+    public static final ValidatorCache<String> VALIDATOR_CACHE = new ValidatorCache(new AssetKeyValidator(CosmeticCategoryAsset.ASSET_STORE));
 
-    public static DefaultAssetMap<String, CosmeticCategory> getAssetMap() {
+    public static DefaultAssetMap<String, CosmeticCategoryAsset> getAssetMap() {
         return ASSET_STORE.get().getAssetMap();
     }
 

@@ -8,7 +8,7 @@ public interface TextureConfig {
 
     BuilderCodecMapCodec<TextureConfig> CODEC = new BuilderCodecMapCodec<>("Type", true);
 
-    String getTexture(@Nullable String textureId);
+    String getTexture(@Nullable String variantId);
 
     @Nullable
     default String getGradientSet() {

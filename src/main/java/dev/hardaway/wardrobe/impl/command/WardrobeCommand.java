@@ -12,8 +12,8 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.impl.cosmetic.Cosmetic;
-import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlot;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
+import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlotAsset;
 import dev.hardaway.wardrobe.impl.menu.WardrobePage;
 import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 
@@ -22,8 +22,8 @@ import javax.annotation.Nonnull;
 
 public class WardrobeCommand extends AbstractPlayerCommand {
 
-    public static final SingleArgumentType<Cosmetic> COSMETIC_ARGUMENT_TYPE = new AssetArgumentType<>("server.commands.parsing.argtype.asset.wardrobe.cosmetic.name", Cosmetic.class, "server.commands.parsing.argtype.asset.wardrobe.cosmetic.usage");
-    public static final SingleArgumentType<CosmeticSlot> COSMETIC_SLOT_ARGUMENT_TYPE = new AssetArgumentType<>("server.commands.parsing.argtype.asset.wardrobe.slot.name", CosmeticSlot.class, "server.commands.parsing.argtype.asset.wardrobe.cosmetic_slot.usage");
+    public static final SingleArgumentType<CosmeticAsset> COSMETIC_ARGUMENT_TYPE = new AssetArgumentType<>("server.commands.parsing.argtype.asset.wardrobe.cosmetic.name", CosmeticAsset.class, "server.commands.parsing.argtype.asset.wardrobe.cosmetic.usage");
+    public static final SingleArgumentType<CosmeticSlotAsset> COSMETIC_SLOT_ARGUMENT_TYPE = new AssetArgumentType<>("server.commands.parsing.argtype.asset.wardrobe.slot.name", CosmeticSlotAsset.class, "server.commands.parsing.argtype.asset.wardrobe.cosmetic_slot.usage");
 
     public WardrobeCommand() {
         super("wardrobe", "server.commands.wardrobe.description");
