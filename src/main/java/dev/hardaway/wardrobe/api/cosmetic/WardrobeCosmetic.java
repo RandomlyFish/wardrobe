@@ -12,6 +12,8 @@ public interface WardrobeCosmetic extends Cosmetic {
 
     WardrobeProperties getProperties();
 
+    String getIconPath();
+
     String getCosmeticSlotId();
 
     Map<String, CosmeticOptionEntry> getOptionEntries();

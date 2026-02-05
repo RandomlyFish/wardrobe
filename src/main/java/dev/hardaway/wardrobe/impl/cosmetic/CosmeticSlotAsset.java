@@ -37,7 +37,6 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
                     (t, value) -> t.properties = value,
                     t -> t.properties
             )
-            .addValidator(WardrobeValidators.PROPERTIES_ICON)
             .add()
 
             .append(new KeyedCodec<>("CosmeticType", new EnumCodec<>(CosmeticType.class)),
@@ -55,6 +54,13 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
                     t -> t.category
             )
             .addValidator(CosmeticCategoryAsset.VALIDATOR_CACHE.getValidator().late())
+            .add()
+
+            .append(new KeyedCodec<>("Icon", Codec.STRING, true),
+                    (t, value) -> t.icon = value,
+                    t -> t.icon
+            )
+            .addValidator(WardrobeValidators.ICON)
             .add()
 
             .append(new KeyedCodec<>("SelectedIcon", Codec.STRING, true),
@@ -90,6 +96,7 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
     private ItemArmorSlot armorSlot;
 
     private String category;
+    private String icon;
     private String selectedIcon;
     private int order = -1;
 
@@ -102,6 +109,7 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
     public WardrobeProperties getProperties() {
         return properties;
     }
+
 
     @Nullable
     @Override
@@ -123,6 +131,10 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
         return armorSlot;
     }
 
+    @Override
+    public String getIconPath() {
+        return icon;
+    }
 
     @Override
     public String getSelectedIconPath() {

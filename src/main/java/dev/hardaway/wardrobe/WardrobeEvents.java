@@ -113,7 +113,7 @@ public class WardrobeEvents {
     private static void sendCosmeticPacket(CosmeticAsset cosmetic, PacketHandler packetHandler, AssetPath assetPath) {
         if (!(cosmetic instanceof AppearanceCosmetic appearanceCosmetic)) return;
 
-        com.hypixel.hytale.server.core.asset.type.item.config.AssetIconProperties iconProperties = cosmetic.getProperties().getIconProperties();
+        com.hypixel.hytale.server.core.asset.type.item.config.AssetIconProperties iconProperties = cosmetic.getIconProperties();
         AssetIconProperties defaultIconProperties = new AssetIconProperties(0.58823F, new Vector2f(0.0F, -60F), new Vector3f(22.5F, 45.0F, 22.5F));
         if (iconProperties == null) {
             iconProperties = defaultIconProperties;

@@ -50,6 +50,13 @@ public class VariantTextureConfig implements TextureConfig {
                 .addValidator(Validators.nonNull())
                 .add()
 
+                .append(new KeyedCodec<>("Icon", Codec.STRING),
+                        (t, value) -> t.icon = value,
+                        t -> t.icon
+                )
+                .addValidator(WardrobeValidators.ICON)
+                .add()
+
                 .append(new KeyedCodec<>("Texture", Codec.STRING, true),
                         (t, value) -> t.texture = value, t -> t.texture
                 )
@@ -65,6 +72,7 @@ public class VariantTextureConfig implements TextureConfig {
                 .build();
 
         private WardrobeProperties properties;
+        private String icon;
         private String texture;
         private String[] colors;
 
@@ -72,10 +80,16 @@ public class VariantTextureConfig implements TextureConfig {
             return properties;
         }
 
+        @Nullable
+        public String getIcon() {
+            return icon;
+        }
+
         @Nonnull
         public String getTexture() {
             return texture;
         }
+
 
         @Nonnull
         public String[] getColors() {

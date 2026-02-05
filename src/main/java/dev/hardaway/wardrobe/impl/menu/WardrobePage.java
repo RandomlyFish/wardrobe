@@ -223,7 +223,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             commandBuilder.append(tabSelector, "Wardrobe/Pages/Tab.ui");
 
             String selector = tabSelector + "[" + i + "] #Button";
-            commandBuilder.set(selector + " #Icon.AssetPath", tab.getProperties().getIcon());
+            commandBuilder.set(selector + " #Icon.AssetPath", tab.getIconPath());
 
             if (selected.test(tab.getId())) {
                 commandBuilder.set(selector + " #Selected #Icon.AssetPath", tab.getSelectedIconPath());
@@ -294,8 +294,8 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                 tooltip.insert(cosmetic.getProperties().getTranslationProperties().getDescription().color(Color.LIGHT_GRAY));
             }
 
-            if (cosmetic.getProperties().getIcon() != null)
-                commandBuilder.set(selector + " #Icon.AssetPath", cosmetic.getProperties().getIcon());
+            if (cosmetic.getIconPath() != null)
+                commandBuilder.set(selector + " #Icon.AssetPath", cosmetic.getIconPath());
 
             if (cosmetic.getProperties().hasPermission(playerRef.getUuid())) {
                 eventBuilder.addEventBinding(
@@ -318,7 +318,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             if (worn != null && worn.getOptionId() != null) {
                 CosmeticOptionEntry entry = cosmetic.getOptionEntries().get(worn.getOptionId());
                 if (entry != null) {
-                    String variantIconPath = entry.properties().getIcon();
+                    String variantIconPath = entry.icon();
                     if (variantIconPath != null) {
                         commandBuilder.set(selector + " #Icon.AssetPath", variantIconPath);
                         tooltip = Message.empty();
@@ -403,7 +403,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             String selector = "#Variants[" + row + "] #Row[" + (i % VARIANTS_PER_ROW) + "]";
 
             if (variant.properties().getTranslationProperties() != null) commandBuilder.set(selector + " #Button.TooltipText", variant.properties().getTranslationProperties().getName());
-            if (variant.properties().getIcon() != null) commandBuilder.set(selector + " #Button #Icon.AssetPath", variant.properties().getIcon());
+            if (variant.icon() != null) commandBuilder.set(selector + " #Button #Icon.AssetPath", variant.icon());
 
             String[] colors = variant.colors();
 

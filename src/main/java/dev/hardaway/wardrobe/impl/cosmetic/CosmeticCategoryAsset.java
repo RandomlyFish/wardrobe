@@ -31,7 +31,13 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
                     (t, value) -> t.properties = value,
                     t -> t.properties
             )
-            .addValidator(WardrobeValidators.PROPERTIES_ICON)
+            .add()
+
+            .append(new KeyedCodec<>("Icon", Codec.STRING, true),
+                    (t, value) -> t.icon = value,
+                    t -> t.icon
+            )
+            .addValidator(WardrobeValidators.ICON)
             .add()
 
             .append(new KeyedCodec<>("SelectedIcon", Codec.STRING, true),
@@ -61,6 +67,7 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
 
     private WardrobeProperties properties;
 
+    private String icon;
     private String selectedIcon;
     private int order = -1;
 
@@ -72,6 +79,11 @@ public class CosmeticCategoryAsset implements WardrobeCategory, JsonAssetWithMap
     @Override
     public WardrobeProperties getProperties() {
         return properties;
+    }
+
+    @Override
+    public String getIconPath() {
+        return icon;
     }
 
     @Override

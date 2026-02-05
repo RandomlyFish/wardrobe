@@ -8,14 +8,19 @@ import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.schema.metadata.ui.UIDisplayMode;
+import com.hypixel.hytale.codec.schema.metadata.ui.UIEditor;
 import com.hypixel.hytale.codec.schema.metadata.ui.UIEditorPreview;
+import com.hypixel.hytale.codec.schema.metadata.ui.UIRebuildCaches;
 import com.hypixel.hytale.codec.validation.Validators;
+import com.hypixel.hytale.server.core.asset.type.item.config.AssetIconProperties;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeContext;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.player.PlayerCosmetic;
 import dev.hardaway.wardrobe.api.property.WardrobeProperties;
+import dev.hardaway.wardrobe.api.property.validator.WardrobeValidators;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -24,6 +29,25 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
 
     public static final BuilderCodec<CosmeticAsset> ABSTRACT_CODEC = BuilderCodec.abstractBuilder(CosmeticAsset.class)
             .metadata(new UIEditorPreview(UIEditorPreview.PreviewType.ITEM)) // TODO: proper model preview & icon
+            .append(
+                    new KeyedCodec<>("Icon", Codec.STRING),
+                    (data, s) -> data.icon = s,
+                    data -> data.icon
+            )
+            .addValidator(WardrobeValidators.ICON)
+            .metadata(new UIRebuildCaches(UIRebuildCaches.ClientCache.MODELS))
+            .metadata(new UIEditor(new UIEditor.Icon(
+                    "Icons/Wardrobe/CosmeticsGenerated/{assetId}.png", 64, 64
+            )))
+            .add()
+
+            .append(
+                    new KeyedCodec<>("IconProperties", AssetIconProperties.CODEC),
+                    (p, i) -> p.iconProperties = i,
+                    (item) -> item.iconProperties
+            )
+            .metadata(UIDisplayMode.HIDDEN)
+            .add()
 
             .appendInherited(new KeyedCodec<>("Properties", WardrobeProperties.CODEC, true),
                     (c, value) -> c.properties = value,
@@ -64,6 +88,9 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
     private String id;
     private AssetExtraInfo.Data data;
 
+    private String icon;
+    private AssetIconProperties iconProperties;
+
     private String cosmeticSlotId;
     private String[] hiddenCosmeticSlots = new String[0];
     private WardrobeProperties properties;
@@ -86,6 +113,15 @@ public abstract class CosmeticAsset implements WardrobeCosmetic, JsonAssetWithMa
     @Override
     public WardrobeProperties getProperties() {
         return properties;
+    }
+
+    @Override
+    public String getIconPath() {
+        return icon;
+    }
+
+    public AssetIconProperties getIconProperties() {
+        return iconProperties;
     }
 
     @Nonnull

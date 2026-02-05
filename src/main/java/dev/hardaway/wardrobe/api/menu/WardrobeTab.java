@@ -8,6 +8,8 @@ public interface WardrobeTab {
 
     WardrobeProperties getProperties();
 
+    String getIconPath();
+
     String getSelectedIconPath();
 
     int getTabOrder();

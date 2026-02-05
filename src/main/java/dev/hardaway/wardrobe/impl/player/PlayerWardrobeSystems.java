@@ -36,7 +36,6 @@ import java.util.*;
 public class PlayerWardrobeSystems {
     public static class Tick extends EntityTickingSystem<EntityStore> {
 
-        // TODO: rebuild on asset reload
         @Override
         public void tick(float v, int i, @Nonnull ArchetypeChunk<EntityStore> chunk, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
             PlayerWardrobeComponent wardrobe = chunk.getComponent(i, PlayerWardrobeComponent.getComponentType());
@@ -73,7 +72,7 @@ public class PlayerWardrobeSystems {
 
         public static Model buildWardrobeModel(Player player, PlayerSettings playerSettings, com.hypixel.hytale.protocol.PlayerSkin skin, PlayerWardrobe wardrobeComponent, PlayerRef playerRef) {
             // Build context
-            Model playerModel = CosmeticsModule.get().createModel(skin); // TODO: apply body characteristics
+            Model playerModel = CosmeticsModule.get().createModel(skin);
             PlayerWardrobeContext context = new PlayerWardrobeContext(
                     player,
                     playerSettings,

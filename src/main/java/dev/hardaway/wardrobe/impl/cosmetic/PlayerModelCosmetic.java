@@ -96,7 +96,8 @@ public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosm
                 VariantAppearance.Entry entry = v.getVariants().get(variantId);
                 entries.put(variantId, new CosmeticOptionEntry(
                         variantId,
-                        entry.getProperties()
+                        entry.getProperties(),
+                        entry.getIcon()
                 ));
             }
             return entries;
@@ -115,17 +116,20 @@ public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosm
         for (String textureId : textures) {
             WardrobeProperties properties;
             String[] colors;
+            String icon = null;
             if (textureConfig instanceof VariantTextureConfig vt) {
-                properties = vt.getVariants().get(textureId).getProperties();
-                colors = vt.getVariants().get(textureId).getColors();
+                VariantTextureConfig.Entry entry = vt.getVariants().get(textureId);
+                properties = entry.getProperties();
+                colors = entry.getColors();
+                icon = entry.getIcon();
             } else if (textureConfig instanceof GradientTextureConfig gt) {
-                properties = new WardrobeProperties(new WardrobeTranslationProperties(textureId, ""), WardrobeVisibility.ALWAYS, null, null);
+                properties = new WardrobeProperties(new WardrobeTranslationProperties(textureId, ""), WardrobeVisibility.ALWAYS, null);
                 colors = CosmeticsModule.get().getRegistry().getGradientSets()
                         .get(gt.getGradientSet()).getGradients().get(textureId).getBaseColor();
             } else {
                 continue;
             }
-            entries.add(new CosmeticVariantEntry(textureId, properties, colors));
+            entries.add(new CosmeticVariantEntry(textureId, properties, colors, icon));
         }
         return entries;
     }

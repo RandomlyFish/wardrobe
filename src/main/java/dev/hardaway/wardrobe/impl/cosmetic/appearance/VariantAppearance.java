@@ -10,6 +10,7 @@ import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
 import dev.hardaway.wardrobe.api.property.WardrobeProperties;
 import dev.hardaway.wardrobe.api.property.validator.WardrobeValidators;
 
+import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -52,6 +53,13 @@ public class VariantAppearance implements Appearance {
                 .addValidator(Validators.nonNull())
                 .add()
 
+                .append(new KeyedCodec<>("Icon", Codec.STRING),
+                        (t, value) -> t.icon = value,
+                        t -> t.icon
+                )
+                .addValidator(WardrobeValidators.ICON)
+                .add()
+
                 .append(new KeyedCodec<>("Model", Codec.STRING, true),
                         (t, value) -> t.model = value, t -> t.model
                 )
@@ -67,11 +75,17 @@ public class VariantAppearance implements Appearance {
                 .build();
 
         private WardrobeProperties properties;
+        private String icon;
         private String model;
         private TextureConfig textureConfig;
 
         public WardrobeProperties getProperties() {
             return properties;
+        }
+
+        @Nullable
+        public String getIcon() {
+            return icon;
         }
 
         public String getModel() {

@@ -35,46 +35,22 @@ public class WardrobeProperties {
             .add()
 
             .append(
-                    new KeyedCodec<>("Icon", Codec.STRING),
-                    (data, s) -> data.icon = s,
-                    data -> data.icon
-            )
-            .addValidator(WardrobeValidators.ICON)
-            .metadata(new UIRebuildCaches(UIRebuildCaches.ClientCache.MODELS))
-            .metadata(new UIEditor(new UIEditor.Icon(
-                    "Icons/Wardrobe/CosmeticsGenerated/{assetId}.png", 64, 64
-            )))
-            .add()
-
-            .append(
-                    new KeyedCodec<>("IconProperties", AssetIconProperties.CODEC),
-                    (p, i) -> p.iconProperties = i,
-                    (item) -> item.iconProperties
-            )
-            .metadata(UIDisplayMode.HIDDEN)
-            .add() // TODO: proper asset editor icon
-
-            .append(
                     new KeyedCodec<>("PermissionNode", Codec.STRING),
                     (data, s) -> data.permissionNode = s,
                     data -> data.permissionNode
             ).add()
-
             .build();
 
     private WardrobeTranslationProperties translationProperties;
     private @Nonnull WardrobeVisibility visibility = WardrobeVisibility.ALWAYS;
-    private @Nullable String icon;
     private @Nullable String permissionNode;
-    private AssetIconProperties iconProperties;
 
     protected WardrobeProperties() {
     }
 
-    public WardrobeProperties(WardrobeTranslationProperties translationProperties, @Nonnull WardrobeVisibility visibility, @Nullable String icon, @Nullable String permissionNode) {
+    public WardrobeProperties(WardrobeTranslationProperties translationProperties, @Nonnull WardrobeVisibility visibility, @Nullable String permissionNode) {
         this.translationProperties = translationProperties;
         this.visibility = visibility;
-        this.icon = icon;
         this.permissionNode = permissionNode;
     }
 
@@ -85,16 +61,6 @@ public class WardrobeProperties {
     @Nonnull
     public WardrobeVisibility getWardrobeVisibility() {
         return visibility;
-    }
-
-    @Nullable
-    public String getIcon() {
-        return icon;
-    }
-
-    @Nullable
-    public AssetIconProperties getIconProperties() {
-        return iconProperties;
     }
 
     @Nullable
