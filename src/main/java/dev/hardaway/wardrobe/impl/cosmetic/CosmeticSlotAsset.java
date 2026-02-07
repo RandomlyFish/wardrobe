@@ -10,6 +10,7 @@ import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
+import com.hypixel.hytale.codec.schema.metadata.ui.UIDisplayMode;
 import com.hypixel.hytale.codec.validation.ValidatorCache;
 import com.hypixel.hytale.protocol.ItemArmorSlot;
 import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
@@ -42,7 +43,9 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
             .append(new KeyedCodec<>("CosmeticType", new EnumCodec<>(CosmeticType.class)),
                     (t, value) -> t.cosmeticType = value,
                     t -> t.cosmeticType
-            ).add()
+            )
+            .metadata(UIDisplayMode.HIDDEN)
+            .add()
 
             .append(new KeyedCodec<>("ArmorSlot", new EnumCodec<>(ItemArmorSlot.class)),
                     (t, value) -> t.armorSlot = value,
