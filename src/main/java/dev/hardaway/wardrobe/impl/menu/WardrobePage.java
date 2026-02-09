@@ -141,7 +141,9 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                 buildCosmetics(commandBuilder, eventBuilder, ref, store);
             }
             case Discard -> {
-                store.putComponent(ref, PlayerWardrobeComponent.getComponentType(), menu.getBaseWardrobe());
+                store.getExternalData().getWorld().execute(() -> {
+                    store.putComponent(ref, PlayerWardrobeComponent.getComponentType(), menu.getBaseWardrobe());
+                });
 
                 shouldClose = true;
                 close();
@@ -283,7 +285,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             Message tooltip = Message.empty();
             tooltip.insert(translationProperties.getName().bold(true));
 
-            Player player = store.ensureAndGetComponent(ref, Player.getComponentType());
+            Player player = store.getComponent(ref, Player.getComponentType());
             if (player.getGameMode() == GameMode.Creative) {
                 tooltip.insert("\n");
                 tooltip.insert(Message.raw("ID: " + cosmetic.getId()).color(Color.LIGHT_GRAY).italic(true));
