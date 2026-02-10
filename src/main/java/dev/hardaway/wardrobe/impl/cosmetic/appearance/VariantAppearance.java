@@ -35,12 +35,14 @@ public class VariantAppearance implements Appearance {
 
     @Override
     public String getModel(String variantId) {
-        return variants.get(variantId).getModel();
+        Entry entry = variants.get(variantId);
+        return entry == null ? null : entry.getModel();
     }
 
     @Override
     public float getScale(String variantId) {
-        return variants.get(variantId).getScale();
+        Entry entry = variants.get(variantId);
+        return entry == null ? 1.0F : entry.getScale();
     }
 
     @Override
