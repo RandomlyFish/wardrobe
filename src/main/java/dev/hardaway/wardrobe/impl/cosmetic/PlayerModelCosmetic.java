@@ -60,19 +60,17 @@ public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosm
         Appearance appearance = this.getAppearance();
 
         String option = playerCosmetic.getOptionId();
-        if (appearance.collectVariants().length > 0) {
-            if (!Arrays.stream(appearance.collectVariants()).toList().contains(playerCosmetic.getOptionId())) {
-                option = appearance.collectVariants()[0];
-            }
+        if (appearance.getModel(option) == null) {
+            option = appearance.collectVariants()[0];
         }
+
+
 
         TextureConfig textureConfig = this.getAppearance().getTextureConfig(option);
 
         String variant = playerCosmetic.getVariantId();
-        if (textureConfig.collectVariants().length > 0) {
-            if (!Arrays.stream(textureConfig.collectVariants()).toList().contains(playerCosmetic.getVariantId())) {
-                variant = textureConfig.collectVariants()[0];
-            }
+        if (textureConfig.getTexture(variant) == null) {
+            variant = textureConfig.collectVariants()[0];
         }
 
         ModelAsset modelAsset = ModelAsset.getAssetMap().getAsset(this.getAppearance().getModel(option));
