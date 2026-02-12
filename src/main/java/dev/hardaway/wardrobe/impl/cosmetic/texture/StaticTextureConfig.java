@@ -17,7 +17,7 @@ public class StaticTextureConfig implements TextureConfig {
                     (t, value) -> t.texture = value,
                     t -> t.texture
             )
-            .addValidator(CommonAssetValidator.TEXTURE_CHARACTER)
+            .addValidator(CommonAssetValidator.TEXTURE_CHARACTER_ATTACHMENT)
             .metadata(new UIPropertyTitle("Texture")).documentation("The texture to use.")
             .add()
 

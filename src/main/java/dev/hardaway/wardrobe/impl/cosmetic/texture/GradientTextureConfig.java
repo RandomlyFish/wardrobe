@@ -30,7 +30,7 @@ public class GradientTextureConfig implements TextureConfig {
                     (t, value) -> t.grayscaleTexture = value,
                     t -> t.grayscaleTexture
             )
-            .addValidator(CommonAssetValidator.TEXTURE_CHARACTER)
+            .addValidator(CommonAssetValidator.TEXTURE_CHARACTER_ATTACHMENT)
             .metadata(new UIPropertyTitle("Grayscale Texture")).documentation("The Grayscale Texture to use. The Texture will be colored according to the Gradient Set and the selected Variant.")
             .add()
 

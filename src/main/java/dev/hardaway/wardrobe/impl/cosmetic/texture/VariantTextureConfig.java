@@ -67,7 +67,7 @@ public class VariantTextureConfig implements TextureConfig {
                 .append(new KeyedCodec<>("Texture", Codec.STRING, true),
                         (t, value) -> t.texture = value, t -> t.texture
                 )
-                .addValidator(CommonAssetValidator.TEXTURE_CHARACTER)
+                .addValidator(CommonAssetValidator.TEXTURE_CHARACTER_ATTACHMENT)
                 .metadata(new UIPropertyTitle("Texture")).documentation("The texture to use.")
                 .add()
 

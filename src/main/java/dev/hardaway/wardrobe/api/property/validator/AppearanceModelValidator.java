@@ -20,7 +20,7 @@ public class AppearanceModelValidator implements Validator<String> {
         ValidationResults attachmentResults = new ValidationResults(results.getExtraInfo());
         ValidationResults modelResults = new ValidationResults(results.getExtraInfo());
 
-        CommonAssetValidator.MODEL_CHARACTER.accept(string, attachmentResults);
+        CommonAssetValidator.MODEL_CHARACTER_ATTACHMENT.accept(string, attachmentResults);
         ModelAsset.VALIDATOR_CACHE.getValidator().accept(string, modelResults);
 
         if (attachmentResults.hasFailed() && modelResults.hasFailed()) {
@@ -30,7 +30,7 @@ public class AppearanceModelValidator implements Validator<String> {
 
     @Override
     public void updateSchema(SchemaContext schemaContext, Schema schema) {
-        CommonAssetValidator.MODEL_CHARACTER.updateSchema(schemaContext, schema); // TODO: properly split this class so two schemas can exist
+        CommonAssetValidator.MODEL_CHARACTER_ATTACHMENT.updateSchema(schemaContext, schema); // TODO: properly split this class so two schemas can exist
     }
 }
 
