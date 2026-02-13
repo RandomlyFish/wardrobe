@@ -33,7 +33,7 @@ import java.util.Map;
 public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosmetic {
 
     public static final BuilderCodec<PlayerModelCosmetic> CODEC = BuilderCodec.builder(PlayerModelCosmetic.class, PlayerModelCosmetic::new, CosmeticAsset.ABSTRACT_CODEC)
-            .append(new KeyedCodec<>("ModelAssetAppearance", Appearance.MODELASSET_CODEC, true),
+            .append(new KeyedCodec<>("Appearance", Appearance.MODELASSET_CODEC, true),
                     (t, value) -> t.appearance = value,
                     t -> t.appearance
             )
