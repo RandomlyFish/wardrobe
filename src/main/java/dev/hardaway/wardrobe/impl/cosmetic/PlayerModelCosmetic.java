@@ -25,7 +25,10 @@ import dev.hardaway.wardrobe.impl.cosmetic.texture.GradientTextureConfig;
 import dev.hardaway.wardrobe.impl.cosmetic.texture.VariantTextureConfig;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosmetic {
 
@@ -56,39 +59,10 @@ public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosm
                     }
                     cosmetic.optionEntries = entries;
                 } else cosmetic.optionEntries = Map.of();
-
-                for (String option : cosmetic.optionEntries.keySet()) {
-                    TextureConfig textureConfig = cosmetic.appearance.getTextureConfig(option);
-                    if (textureConfig == null) return;
-                    String[] textures = textureConfig.collectVariants();
-
-                    List<CosmeticVariantEntry> entries = new ArrayList<>();
-                    for (String textureId : textures) {
-                        WardrobeProperties properties;
-                        String[] colors;
-                        String icon = null;
-                        if (textureConfig instanceof VariantTextureConfig vt) {
-                            VariantTextureConfig.Entry entry = vt.getVariants().get(textureId);
-                            properties = entry.getProperties();
-                            colors = entry.getColors();
-                            icon = entry.getIcon();
-                        } else if (textureConfig instanceof GradientTextureConfig gt) {
-                            properties = new WardrobeProperties(new WardrobeTranslationProperties(textureId, null), WardrobeVisibility.ALWAYS, null);
-                            colors = CosmeticsModule.get().getRegistry().getGradientSets()
-                                    .get(gt.getGradientSet()).getGradients().get(textureId).getBaseColor();
-                        } else {
-                            continue;
-                        }
-                        entries.add(new CosmeticVariantEntry(textureId, properties, colors, icon));
-                    }
-
-                    cosmetic.optionToVariantEntries.put(option, entries);
-                }
             }).build();
 
     private Appearance appearance;
     private Map<String, CosmeticOptionEntry> optionEntries;
-    private final Map<String, List<CosmeticVariantEntry>> optionToVariantEntries = new HashMap<>();
 
     private PlayerModelCosmetic() {
     }
@@ -154,6 +128,29 @@ public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosm
 
     @Override
     public List<CosmeticVariantEntry> getVariantEntries(@Nullable String variantId) {
-        return variantId == null ? null : optionToVariantEntries.get(variantId);
+        TextureConfig textureConfig = this.appearance.getTextureConfig(variantId);
+        String[] textures = textureConfig.collectVariants();
+        if (textures.length == 0) return List.of();
+
+        List<CosmeticVariantEntry> entries = new ArrayList<>();
+        for (String textureId : textures) {
+            WardrobeProperties properties;
+            String[] colors;
+            String icon = null;
+            if (textureConfig instanceof VariantTextureConfig vt) {
+                VariantTextureConfig.Entry entry = vt.getVariants().get(textureId);
+                properties = entry.getProperties();
+                colors = entry.getColors();
+                icon = entry.getIcon();
+            } else if (textureConfig instanceof GradientTextureConfig gt) {
+                properties = new WardrobeProperties(new WardrobeTranslationProperties(textureId, ""), WardrobeVisibility.ALWAYS, null);
+                colors = CosmeticsModule.get().getRegistry().getGradientSets()
+                        .get(gt.getGradientSet()).getGradients().get(textureId).getBaseColor();
+            } else {
+                continue;
+            }
+            entries.add(new CosmeticVariantEntry(textureId, properties, colors, icon));
+        }
+        return entries;
     }
 }
