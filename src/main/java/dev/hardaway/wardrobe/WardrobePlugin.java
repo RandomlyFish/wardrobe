@@ -61,8 +61,8 @@ public class WardrobePlugin extends JavaPlugin {
                 .register(Priority.NORMAL, "Variant", VariantTextureConfig.class, VariantTextureConfig.CODEC);
 
         this.getCodecRegistry(CosmeticAsset.CODEC)
-                .register(Priority.DEFAULT, "PlayerModel", PlayerModelCosmetic.class, PlayerModelCosmetic.CODEC)
-                .register(Priority.NORMAL, "ModelAttachment", ModelAttachmentCosmetic.class, ModelAttachmentCosmetic.CODEC);
+                .register(Priority.DEFAULT, "ModelAttachment", ModelAttachmentCosmetic.class, ModelAttachmentCosmetic.CODEC)
+                .register(Priority.NORMAL, "PlayerModel", PlayerModelCosmetic.class, PlayerModelCosmetic.CODEC);
 
         this.getCodecRegistry(Appearance.MODELASSET_CODEC)
                 .register(Priority.DEFAULT, "Model", ModelAssetModelAppearance.class, ModelAssetModelAppearance.CODEC)
