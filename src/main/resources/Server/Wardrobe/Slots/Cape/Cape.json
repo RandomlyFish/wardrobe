@@ -8,5 +8,10 @@
   "Category": "Capes",
   "Icon": "Icons/Wardrobe/Slots/Cape.png",
   "SelectedIcon": "Icons/Wardrobe/Slots/CapeSelected.png",
-  "Order": 0
+  "Order": 0,
+  "Camera": {
+    "Yaw": 0,
+    "Distance": 2,
+    "Y": -0.5
+  }
 }

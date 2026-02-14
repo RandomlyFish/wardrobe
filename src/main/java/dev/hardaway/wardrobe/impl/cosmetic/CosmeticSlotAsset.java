@@ -20,6 +20,7 @@ import com.hypixel.hytale.server.core.cosmetics.CosmeticType;
 import dev.hardaway.wardrobe.WardrobePlugin;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.menu.WardrobeCategory;
+import dev.hardaway.wardrobe.api.property.WardrobeCamera;
 import dev.hardaway.wardrobe.api.property.WardrobeProperties;
 import dev.hardaway.wardrobe.api.property.validator.WardrobeValidators;
 
@@ -50,7 +51,6 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
                     t -> t.cosmeticType
             )
             .metadata(UIDisplayMode.HIDDEN)
-            .metadata(new UIPropertyTitle("Wardrobe Properties")).documentation("Properties for the Cosmetic Category to display in the Wardrobe Menu.")
             .add()
 
             .append(new KeyedCodec<>("ArmorSlot", new EnumCodec<>(ItemArmorSlot.class)),
@@ -66,6 +66,13 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
             )
             .addValidator(CosmeticCategoryAsset.VALIDATOR_CACHE.getValidator().late())
             .metadata(new UIPropertyTitle("Cosmetic Category")).documentation("The Cosmetic Category this Cosmetic Slot should appear under in the Wardrobe Menu.")
+            .add()
+
+            .append(new KeyedCodec<>("Camera", WardrobeCamera.CODEC),
+                    (t, value) -> t.camera = value,
+                    t -> t.camera
+            )
+            .metadata(new UIPropertyTitle("Wardrobe Camera")).documentation("The Camera to use when this slot is selected in the Wardrobe Menu. The camera's position is relative to the player while its rotation to the world.")
             .add()
 
             .append(new KeyedCodec<>("Icon", Codec.STRING, true),
@@ -115,6 +122,7 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
     private CosmeticType cosmeticType;
     private ItemArmorSlot armorSlot;
 
+    private WardrobeCamera camera;
     private String category;
     private String icon;
     private String selectedIcon;
@@ -137,6 +145,12 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
         return cosmeticType;
     }
 
+    @Nullable
+    @Override
+    public ItemArmorSlot getArmorSlot() {
+        return armorSlot;
+    }
+
     public WardrobeCategory getCategory() {
         WardrobeCategory category = CosmeticCategoryAsset.getAssetMap().getAsset(this.category);
         if (category == null) {
@@ -147,8 +161,8 @@ public class CosmeticSlotAsset implements WardrobeCosmeticSlot, JsonAssetWithMap
 
     @Nullable
     @Override
-    public ItemArmorSlot getArmorSlot() {
-        return armorSlot;
+    public WardrobeCamera getCamera() {
+        return camera;
     }
 
     @Override

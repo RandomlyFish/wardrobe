@@ -6,15 +6,17 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.protocol.*;
+import com.hypixel.hytale.event.IEventDispatcher;
+import com.hypixel.hytale.protocol.ClientCameraView;
+import com.hypixel.hytale.protocol.GameMode;
+import com.hypixel.hytale.protocol.ServerCameraSettings;
 import com.hypixel.hytale.protocol.packets.camera.SetServerCamera;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
+import com.hypixel.hytale.server.core.HytaleServer;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
-import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
-import com.hypixel.hytale.server.core.modules.entity.teleport.Teleport;
 import com.hypixel.hytale.server.core.ui.Anchor;
 import com.hypixel.hytale.server.core.ui.DropdownEntryInfo;
 import com.hypixel.hytale.server.core.ui.LocalizableString;
@@ -26,6 +28,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.WardrobeUtil;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
+import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
 import dev.hardaway.wardrobe.api.menu.WardrobeTab;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticOptionEntry;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticVariantEntry;
@@ -37,11 +40,9 @@ import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEventData> {
 
@@ -49,29 +50,20 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     private static final int VARIANTS_PER_ROW = 13;
 
     private final WardrobeMenu menu;
-    private final Position position;
-    private final int rotationIndex;
-    private final ServerCameraSettings cameraSettings;
+    public final ServerCameraSettings defaultCamera;
+    public final boolean canChangeCamera;
     private boolean shouldClose = true;
 
-    public WardrobePage(@Nonnull PlayerRef playerRef, PlayerWardrobeComponent wardrobe, @Nullable Position position, int rotationIndex) {
+    public WardrobePage(@Nonnull PlayerRef playerRef, PlayerWardrobeComponent wardrobe, ServerCameraSettings defaultCamera, boolean canChangeCamera) {
         super(playerRef, CustomPageLifetime.CanDismiss, PageEventData.CODEC);
         this.menu = new WardrobeMenu(playerRef.getUuid(), wardrobe);
-        this.position = position;
-        if (this.position != null) {
-            this.position.x += 0.5;
-            this.position.y += 1.5;
-            this.position.z += 0.5;
-        }
+        this.defaultCamera = defaultCamera;
+        this.canChangeCamera = canChangeCamera;
 
-        this.rotationIndex = rotationIndex+2;
-        this.cameraSettings = new ServerCameraSettings();
-        cameraSettings.isFirstPerson = false;
-        cameraSettings.positionLerpSpeed = 0.2F;
-        cameraSettings.rotationType = RotationType.Custom;
-        cameraSettings.rotationLerpSpeed = 0.3F;
-        cameraSettings.mouseInputType = MouseInputType.LookAtPlane;
-        cameraSettings.displayCursor = true;
+        IEventDispatcher<WardrobeMenuEvents.Open, WardrobeMenuEvents.Open> dispatchFor = HytaleServer.get().getEventBus().dispatchFor(WardrobeMenuEvents.Open.class);
+        if (dispatchFor.hasListener()) {
+            dispatchFor.dispatch(new WardrobeMenuEvents.Open(playerRef, this));
+        }
     }
 
     @Override
@@ -84,13 +76,6 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#ResetAvatar", MenuAction.Reset.getEvent(), false);
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Discard", MenuAction.Discard.getEvent(), false);
         eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Save", MenuAction.Save.getEvent(), false);
-
-        if (position != null) {
-            commandBuilder.set("#Mirror.Visible", true);
-            eventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#Camera", MenuAction.Camera.getEvent(), false);
-        }
-
-        changeCamera(ref, store);
     }
 
     @Override
@@ -107,14 +92,14 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
 
         if (data.category != null) {
             menu.selectCategory(data.category);
-            buildWardrobeTabs(commandBuilder, eventBuilder, ref, store);
         }
 
         if (data.slot != null) {
             menu.selectSlot(data.slot);
-            buildTabs(commandBuilder, eventBuilder, "Slots", s -> s.equals(menu.getSelectedSlot()), menu.getSlots().toArray(WardrobeTab[]::new));
-            buildCheckbox(commandBuilder, eventBuilder);
-            buildCosmetics(commandBuilder, eventBuilder, ref, store);
+        }
+
+        if (data.category != null || data.slot != null) {
+            buildWardrobeTabs(commandBuilder, eventBuilder, ref, store);
         }
 
         if (data.cosmetic != null || data.option != null || data.variant != null) {
@@ -152,7 +137,6 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
                 shouldClose = true;
                 close();
             }
-            case Camera -> changeCamera(ref, store);
         }
 
         shouldClose = menu.getWardrobe().equals(menu.getBaseWardrobe());
@@ -171,52 +155,38 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
         }
 
         super.onDismiss(ref, store);
+
+        IEventDispatcher<WardrobeMenuEvents.Close, WardrobeMenuEvents.Close> dispatchFor = HytaleServer.get().getEventBus().dispatchFor(WardrobeMenuEvents.Close.class);
+        if (dispatchFor.hasListener()) {
+            dispatchFor.dispatch(new WardrobeMenuEvents.Close(playerRef));
+        }
+
         playerRef.getPacketHandler().writeNoCache(new SetServerCamera(ClientCameraView.FirstPerson, false, null));
     }
 
-    private void changeCamera(Ref<EntityStore> ref, Store<EntityStore> store) {
-        TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
-        float rotation;
-
-        if (cameraSettings.displayCursor && position != null) {
-            rotation = (float) ((Math.PI / 2) * rotationIndex);
-
-            cameraSettings.displayCursor = false;
-            cameraSettings.positionType = PositionType.Custom;
-            cameraSettings.position = position;
-
-            store.getExternalData().getWorld().execute(() -> {
-                transform.getRotation().setY((float) (rotation + Math.PI));
-                Teleport teleport = Teleport.createForPlayer(transform.getTransform());
-                store.addComponent(ref, Teleport.getComponentType(), teleport);
-            });
-        } else {
-            rotation = transform.getRotation().y;
-
-            cameraSettings.displayCursor = true;
-            cameraSettings.positionType = PositionType.AttachedToPlusOffset;
-
-            cameraSettings.eyeOffset = true;
-            cameraSettings.distance = 3F;
-            cameraSettings.positionDistanceOffsetType = PositionDistanceOffsetType.DistanceOffsetRaycast;
-            cameraSettings.planeNormal = new Vector3f((float) Math.sin(rotation), -2f, (float) Math.cos(rotation));
-        }
-
-        cameraSettings.rotation = new Direction(rotation, 0, 0);
-
-        playerRef.getPacketHandler().writeNoCache(
-                new SetServerCamera(ClientCameraView.Custom, false, cameraSettings)
-        );
-    }
-
     private void buildWardrobeTabs(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Ref<EntityStore> ref, Store<EntityStore> store) {
-        buildTabs(commandBuilder, eventBuilder, "Categories", s -> s.equals(menu.getSelectedCategory()), menu.getCategories().toArray(WardrobeTab[]::new));
-        buildTabs(commandBuilder, eventBuilder, "Slots", s -> s.equals(menu.getSelectedSlot()), menu.getSlots().toArray(WardrobeTab[]::new));
+        buildTabs(commandBuilder, eventBuilder, "Categories", menu.getSelectedCategory(), menu.getCategories().toArray(WardrobeTab[]::new));
+        buildTabs(commandBuilder, eventBuilder, "Slots", menu.getSelectedSlot(), menu.getSlots().toArray(WardrobeTab[]::new));
         buildCheckbox(commandBuilder, eventBuilder);
         buildCosmetics(commandBuilder, eventBuilder, ref, store);
+
+        ServerCameraSettings camera = defaultCamera;
+        if (canChangeCamera) {
+            for (WardrobeCosmeticSlot slot : menu.getSlots()) {
+                if (slot.getId().equals(menu.getSelectedSlot())) {
+                    if (slot.getCamera() != null) {
+                        camera = slot.getCamera().toServerSettings(ref, store);
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        playerRef.getPacketHandler().writeNoCache(new SetServerCamera(ClientCameraView.Custom, true, camera));
     }
 
-    private void buildTabs(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, String tabGroup, Predicate<String> selected, WardrobeTab... tabs) {
+    private void buildTabs(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, String tabGroup, String selected, WardrobeTab... tabs) {
         String tabSelector = "#" + tabGroup;
         commandBuilder.clear(tabSelector);
 
@@ -227,7 +197,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
             String selector = tabSelector + "[" + i + "] #Button";
             commandBuilder.set(selector + " #Icon.AssetPath", tab.getIconPath());
 
-            if (selected.test(tab.getId())) {
+            if (tab.getId().equals(selected)) {
                 commandBuilder.set(selector + " #Selected #Icon.AssetPath", tab.getSelectedIconPath());
                 commandBuilder.set(selector + " #Selected.Visible", true);
                 commandBuilder.set(tabSelector + "Name.Text", tab.getProperties().getTranslationProperties().getName());
@@ -453,7 +423,7 @@ public class WardrobePage extends InteractiveCustomUIPage<WardrobePage.PageEvent
     }
 
     public enum MenuAction {
-        Reset, Discard, Save, Camera;
+        Reset, Discard, Save;
 
         private final EventData eventData;
 

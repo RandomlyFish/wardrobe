@@ -20,9 +20,9 @@ public class ModelAssetModelAppearance extends ModelAppearance {
             .metadata(new UIPropertyTitle("Model")).documentation("The model asset to use for the Player Model.")
             .add()
 
-            .append(new KeyedCodec<>("Scale", Codec.DOUBLE),
-                    (a, d) -> a.scale = d.floatValue(),
-                    (a) -> (double) a.scale
+            .append(new KeyedCodec<>("Scale", Codec.FLOAT),
+                    (a, d) -> a.scale = d,
+                    (a) -> a.scale
             )
             .metadata(new UIPropertyTitle("Player Model Scale")).documentation("The scale to use for the Player Model.")
             .add()

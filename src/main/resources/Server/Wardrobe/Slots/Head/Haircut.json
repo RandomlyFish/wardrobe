@@ -8,5 +8,11 @@
   "Category": "Head",
   "Icon": "Icons/Wardrobe/Slots/Haircut.png",
   "SelectedIcon": "Icons/Wardrobe/Slots/HaircutSelected.png",
-  "Order": 0
+  "Order": 0,
+  "Camera": {
+    "Distance": 1.75,
+    "Y": 0.2,
+    "Yaw": 200,
+    "Pitch": -30
+  }
 }

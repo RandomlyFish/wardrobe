@@ -8,5 +8,11 @@
   "Category": "Legs",
   "Icon": "Icons/Wardrobe/Slots/Overpants.png",
   "SelectedIcon": "Icons/Wardrobe/Slots/OverpantsSelected.png",
-  "Order": 1
+  "Order": 1,
+  "Camera": {
+    "Y": -0.75,
+    "Pitch": -30,
+    "Yaw": 200,
+    "Distance": 2
+  }
 }

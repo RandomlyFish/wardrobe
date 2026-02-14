@@ -5,17 +5,21 @@ import com.hypixel.hytale.assetstore.AssetStore;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.lookup.Priority;
+import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.ComponentType;
-import com.hypixel.hytale.protocol.BlockPosition;
-import com.hypixel.hytale.protocol.Position;
+import com.hypixel.hytale.math.vector.Transform;
+import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAsset;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.modules.entity.teleport.Teleport;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.server.OpenCustomUIInteraction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.Appearance;
 import dev.hardaway.wardrobe.api.cosmetic.appearance.TextureConfig;
+import dev.hardaway.wardrobe.api.property.WardrobeCamera;
 import dev.hardaway.wardrobe.impl.command.WardrobeCommand;
 import dev.hardaway.wardrobe.impl.cosmetic.*;
 import dev.hardaway.wardrobe.impl.cosmetic.appearance.ModelAppearance;
@@ -49,10 +53,35 @@ public class WardrobePlugin extends JavaPlugin {
     @Override
     protected void setup() {
         OpenCustomUIInteraction.registerCustomPageSupplier(this, WardrobePage.class, "Wardrobe", (ref, componentAccessor, playerRef, context) -> {
-            PlayerWardrobeComponent wardrobe = context.getCommandBuffer().ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
-            BlockPosition position = context.getTargetBlock();
-            int rotationIndex = position == null ? 0 : context.getCommandBuffer().getExternalData().getWorld().getBlockRotationIndex(position.x, position.y, position.z);
-            return new WardrobePage(playerRef, wardrobe, position == null ? null : new Position(position.x, position.y, position.z), rotationIndex);
+            CommandBuffer<EntityStore> commandBuffer = context.getCommandBuffer();
+            PlayerWardrobeComponent wardrobe = commandBuffer.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
+            BlockPosition blockPosition = context.getTargetBlock();
+            ServerCameraSettings camera = WardrobeCamera.DEFAULT_CAMERA.toServerSettings(ref, componentAccessor);
+
+            if (blockPosition != null) {
+                int rotationIndex = commandBuffer.getExternalData().getWorld().getBlockRotationIndex(blockPosition.x, blockPosition.y, blockPosition.z) + 2;
+                float rotation = (float) ((Math.PI / 2) * rotationIndex);
+
+                Transform transform = commandBuffer.ensureAndGetComponent(ref, TransformComponent.getComponentType()).getTransform();
+                commandBuffer.getExternalData().getWorld().execute(() -> {
+                    transform.getRotation().setY((float) (rotation + Math.PI));
+                    Teleport teleport = Teleport.createForPlayer(transform);
+                    commandBuffer.addComponent(ref, Teleport.getComponentType(), teleport);
+                });
+
+                camera.eyeOffset = false;
+
+                Position position = new Position(blockPosition.x, blockPosition.y, blockPosition.z);
+                position.x += 0.5;
+                position.y += 1.5;
+                position.z += 0.5;
+
+                camera.positionType = PositionType.Custom;
+                camera.position = position;
+                camera.rotation = new Direction(rotation, camera.rotation.pitch, camera.rotation.roll);
+            }
+
+            return new WardrobePage(playerRef, wardrobe, camera, true);
         });
 
         this.getCodecRegistry(TextureConfig.CODEC)
@@ -101,11 +130,7 @@ public class WardrobePlugin extends JavaPlugin {
         );
 
         // TODO: groups
-        this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystems.Tick());
-        this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystems.EntityAdded());
-        this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystems.WardrobeChanged());
-        this.getEntityStoreRegistry().registerSystem(new PlayerWardrobeSystems.ArmorVisibilityChanged());
-
+        PlayerWardrobeSystems.registerSystems(this);
         WardrobeEvents.registerEvents(this);
 
         this.getCommandRegistry().registerCommand(new WardrobeCommand());

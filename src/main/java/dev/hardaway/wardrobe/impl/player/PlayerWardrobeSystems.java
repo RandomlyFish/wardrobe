@@ -18,6 +18,7 @@ import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
 import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
 import com.hypixel.hytale.server.core.modules.entity.player.PlayerSettings;
 import com.hypixel.hytale.server.core.modules.entity.player.PlayerSkinComponent;
+import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.WardrobeUtil;
@@ -34,6 +35,13 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class PlayerWardrobeSystems {
+    public static void registerSystems(JavaPlugin plugin) {
+        plugin.getEntityStoreRegistry().registerSystem(new Tick());
+        plugin.getEntityStoreRegistry().registerSystem(new EntityAdded());
+        plugin.getEntityStoreRegistry().registerSystem(new WardrobeChanged());
+        plugin.getEntityStoreRegistry().registerSystem(new ArmorVisibilityChanged());
+    }
+
     public static class Tick extends EntityTickingSystem<EntityStore> {
 
         @Override

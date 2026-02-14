@@ -8,5 +8,11 @@
   "Category": "Legs",
   "Icon": "Icons/Wardrobe/Slots/Shoes.png",
   "SelectedIcon": "Icons/Wardrobe/Slots/ShoesSelected.png",
-  "Order": 2
+  "Order": 2,
+  "Camera": {
+    "Y": -1,
+    "Pitch": -30,
+    "Yaw": 200,
+    "Distance": 1.5
+  }
 }

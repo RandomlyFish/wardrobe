@@ -8,5 +8,11 @@
   "Category": "Head",
   "Icon": "Icons/Wardrobe/Slots/HeadAccessory.png",
   "SelectedIcon": "Icons/Wardrobe/Slots/HeadAccessorySelected.png",
-  "Order": 4
+  "Order": 4,
+  "Camera": {
+    "Distance": 1.5,
+    "Y": 0.2,
+    "Yaw": 180,
+    "Pitch": -25
+  }
 }

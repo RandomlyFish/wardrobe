@@ -232,27 +232,28 @@ Group {
         @Anchor = Anchor(Right: 8, MinWidth: $Common.@DefaultButtonMinWidth);
       }
 
-      Group #Mirror {
-        Visible: false;
-        LayoutMode: Left;
-
-        Group {
-          Anchor: (Width: 4, Right: 8);
-          Background: (Color: #a6afba(0.20));
-        }
-
-        $Common.@SecondaryButton #Camera {
-          @Sounds = $Sounds.@ButtonsLight;
-          @Anchor = Anchor(Right: 8);
-          TooltipText: %server.wardrobe.ui.camera.tooltip;
-          TextTooltipStyle: @ButtonTextTooltipStyle;
-
-           Group {
-            Background: "../Icons/CameraSwitchIcon.png";
-            Anchor: (Width: 24, Height: 21);
-          }
-        }
-      }
+// FIXME
+//      Group #Mirror {
+//        Visible: false;
+//        LayoutMode: Left;
+//
+//        Group {
+//          Anchor: (Width: 4, Right: 8);
+//          Background: (Color: #a6afba(0.20));
+//        }
+//
+//        $Common.@SecondaryButton #Camera {
+//          @Sounds = $Sounds.@ButtonsLight;
+//          @Anchor = Anchor(Right: 8);
+//          TooltipText: %server.wardrobe.ui.camera.tooltip;
+//          TextTooltipStyle: @ButtonTextTooltipStyle;
+//
+//           Group {
+//            Background: "../Icons/CameraSwitchIcon.png";
+//            Anchor: (Width: 24, Height: 21);
+//          }
+//        }
+//      }
     }
   }
 }

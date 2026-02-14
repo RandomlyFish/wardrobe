@@ -4,6 +4,7 @@ package dev.hardaway.wardrobe.impl.command;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.GameMode;
+import com.hypixel.hytale.protocol.ServerCameraSettings;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.types.AssetArgumentType;
 import com.hypixel.hytale.server.core.command.system.arguments.types.SingleArgumentType;
@@ -12,6 +13,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import dev.hardaway.wardrobe.api.property.WardrobeCamera;
 import dev.hardaway.wardrobe.impl.cosmetic.CosmeticAsset;
 import dev.hardaway.wardrobe.impl.cosmetic.CosmeticSlotAsset;
 import dev.hardaway.wardrobe.impl.menu.WardrobePage;
@@ -40,7 +42,8 @@ public class WardrobeCommand extends AbstractPlayerCommand {
 
         if (player != null) {
             PlayerWardrobeComponent wardrobe = store.ensureAndGetComponent(ref, PlayerWardrobeComponent.getComponentType());
-            player.getPageManager().openCustomPage(ref, store, new WardrobePage(playerRef, wardrobe, null, 0));
+            ServerCameraSettings camera = WardrobeCamera.DEFAULT_CAMERA.toServerSettings(ref, store);
+            player.getPageManager().openCustomPage(ref, store, new WardrobePage(playerRef, wardrobe, camera, true));
         }
     }
 }

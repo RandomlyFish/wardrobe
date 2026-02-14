@@ -8,5 +8,9 @@
   "Category": "Head",
   "Icon": "Icons/Wardrobe/Slots/EarAccessory.png",
   "SelectedIcon": "Icons/Wardrobe/Slots/EarAccessorySelected.png",
-  "Order": 6
+  "Order": 6,
+  "Camera": {
+    "Distance": 1.5,
+    "Yaw": 245
+  }
 }

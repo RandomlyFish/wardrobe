@@ -9,7 +9,6 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.hardaway.wardrobe.api.player.PlayerWardrobe;
 import dev.hardaway.wardrobe.impl.cosmetic.builtin.HytaleBodyCharacteristicCosmetic;
 import dev.hardaway.wardrobe.impl.cosmetic.builtin.HytaleCosmetic;
 import dev.hardaway.wardrobe.impl.cosmetic.builtin.HytaleHaircutCosmetic;
@@ -26,8 +25,9 @@ public class WardrobeUtil {
             world.execute(() -> {
                 Store<EntityStore> store = world.getEntityStore().getStore();
 
-                PlayerWardrobe wardrobe = store.getComponent(playerRef.getReference(), PlayerWardrobeComponent.getComponentType());
+                PlayerWardrobeComponent wardrobe = store.getComponent(playerRef.getReference(), PlayerWardrobeComponent.getComponentType());
                 if (wardrobe != null) wardrobe.rebuild();
+                // TODO: close or update all wardrobe pages
             });
         });
     }
