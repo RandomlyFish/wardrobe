@@ -29,6 +29,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import dev.hardaway.wardrobe.WardrobeUtil;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmetic;
 import dev.hardaway.wardrobe.api.cosmetic.WardrobeCosmeticSlot;
+import dev.hardaway.wardrobe.api.event.WardrobeMenuEvents;
 import dev.hardaway.wardrobe.api.menu.WardrobeTab;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticOptionEntry;
 import dev.hardaway.wardrobe.api.menu.variant.CosmeticVariantEntry;

@@ -16,6 +16,7 @@ import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import dev.hardaway.wardrobe.api.event.WardrobeMenuEvents;
 import dev.hardaway.wardrobe.impl.player.PlayerWardrobeComponent;
 
 import javax.annotation.Nonnull;

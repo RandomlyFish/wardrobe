@@ -1,7 +1,8 @@
-package dev.hardaway.wardrobe.impl.menu;
+package dev.hardaway.wardrobe.api.event;
 
 import com.hypixel.hytale.event.IEvent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
+import dev.hardaway.wardrobe.impl.menu.WardrobePage;
 
 public class WardrobeMenuEvents {
     public record Open(PlayerRef playerRef, WardrobePage menu) implements IEvent<Void> {
