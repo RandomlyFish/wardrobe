@@ -108,6 +108,8 @@ public class PlayerModelCosmetic extends CosmeticAsset implements AppearanceCosm
                 textureConfig.getGradientSet() != null ? variant : null,
                 model.getEyeHeight(),
                 model.getCrouchOffset(),
+                model.getSittingOffset(),
+                model.getSleepingOffset(),
                 model.getAnimationSetMap(),
                 model.getCamera(),
                 model.getLight(),

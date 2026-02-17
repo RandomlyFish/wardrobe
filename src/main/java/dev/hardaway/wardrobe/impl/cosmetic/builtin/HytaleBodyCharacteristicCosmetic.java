@@ -27,6 +27,8 @@ public class HytaleBodyCharacteristicCosmetic extends HytaleCosmetic {
                 playerCosmetic.getVariantId(),
                 model.getEyeHeight(),
                 model.getCrouchOffset(),
+                model.getSittingOffset(),
+                model.getSleepingOffset(),
                 model.getAnimationSetMap(),
                 model.getCamera(),
                 model.getLight(),

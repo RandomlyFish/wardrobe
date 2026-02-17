@@ -190,6 +190,8 @@ public class PlayerWardrobeSystems {
                     contextModel.getGradientId(), // Skin gradient id
                     contextModel.getEyeHeight(),
                     contextModel.getCrouchOffset(),
+                    contextModel.getSittingOffset(),
+                    contextModel.getSleepingOffset(),
                     contextModel.getAnimationSetMap(),
                     contextModel.getCamera(),
                     contextModel.getLight(),
