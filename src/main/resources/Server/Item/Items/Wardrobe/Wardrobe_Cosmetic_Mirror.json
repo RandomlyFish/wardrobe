@@ -9,12 +9,12 @@
   "Recipe": {
     "Input": [
       {
-        "Quantity": 5,
+        "Quantity": 4,
         "ResourceTypeId": "Metal_Bars"
       },
       {
         "Quantity": 3,
-        "ItemId": "Ingredient_Crystal_White"
+        "ItemId": "Ingredient_Bar_Silver"
       }
     ],
     "TimeSeconds": 3,
