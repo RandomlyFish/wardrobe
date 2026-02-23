@@ -207,7 +207,6 @@ public class ModelAttachmentCosmetic extends CosmeticAsset implements Appearance
             option = appearance.collectVariants()[0];
         }
 
-        // EDIT
         String variant = gradientId == null ? playerCosmetic.getVariantId() : gradientId;
         if (appearance.getTextureConfig(option).getTexture(variant) == null) {
             variant = appearance.getTextureConfig(option).collectVariants()[0];
